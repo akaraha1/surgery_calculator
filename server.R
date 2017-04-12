@@ -17,6 +17,8 @@ shinyServer(function(input, output) {
 
     #test comment ---1
     
+    #sagwrh
+    
     # draw the histogram with the specified number of bins
     hist(x, breaks = bins, col = 'darkgray', border = 'white')
 
