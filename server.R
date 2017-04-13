@@ -19,6 +19,14 @@ shinyServer(function(input, output) {
     #new comment
     #sagwrh
     
+    output$pred2 <- renderText({
+      "some text"
+    })
+    
+    #put the tab 2 text box data on tab 2
+    output$out2 <- renderText(input$box2)
+    
+    
     # draw the histogram with the specified number of bins
     hist(x, breaks = bins, col = 'darkgray', border = 'white')
 
