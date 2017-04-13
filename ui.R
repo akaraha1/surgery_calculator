@@ -16,9 +16,9 @@ shinyUI(fluidPage(
   sidebarLayout(
     sidebarPanel(
       sliderInput("bins",
-                  "Number of bins:",
+                  "Patient's Age:",
                   min = 1,
-                  max = 50,
+                  max = 100,
                   value = 30)
     ),
 
