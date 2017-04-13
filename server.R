@@ -11,9 +11,9 @@ shinyServer(function(input, output) {
 
   output$distPlot <- renderPlot({
 
-    # generate bins based on input$bins from ui.R
+    # generate bins based on input$PtAge from ui.R
     x    <- faithful[, 2]
-    bins <- seq(min(x), max(x), length.out = input$bins + 1)
+    bins <- seq(min(x), max(x), length.out = input$PtAge + 1)
 
     #test comment ---1
     #new comment

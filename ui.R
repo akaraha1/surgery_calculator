@@ -16,9 +16,26 @@ shinyUI(fluidPage(
   sidebarLayout(
     sidebarPanel(
       h1("Patient Demographics"),
-      h3("H3 Text"),
+      h3("Enter the patient's current demographics below:"),
       
-      sliderInput("bins", "Patient's Age:", min = 1, max = 100, value = 30),
+      # Gender Button
+      radioButtons("GenderButton","Gender:", inline = TRUE,
+                   choices = c("Male", "Female"),
+                   selected = "Male"),
+
+      #Patient's race
+      radioButtons("RaceButton","Race:", inline = TRUE,
+                   choices = c("White", "Non-White"),
+                   selected = "White"),
+      
+      # Age Button
+      sliderInput("PtAge", "Patient's Age:", min = 1, max = 100, value = 30),
+      
+      # Radio button for the type of surgery
+      h4("What type of surgery will the patient have?"),
+      radioButtons("SurgeryType","Surgery:", inline = FALSE,
+                   choices = c("Pancreas", "stomach", "colon"),
+                   selected = "Pancreas"),
       
       em("Emphasized Text"),
       
@@ -28,7 +45,6 @@ shinyUI(fluidPage(
       checkboxInput("checkBoxID", "check box input", value = TRUE),
       
       textInput("box2", "This value will appear on Tab 2:", value = "..."),
-      
       
 
       submitButton("Submit")
