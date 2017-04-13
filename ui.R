@@ -12,19 +12,28 @@ shinyUI(fluidPage(
   # Application title
   titlePanel("Surgery Risk Calculator"),
 
-  # Sidebar with a slider input for number of bins
+  
   sidebarLayout(
     sidebarPanel(
+      h1("Patient Demographics"),
+      h3("H3 Text"),
+      
       sliderInput("bins",
                   "Patient's Age:",
                   min = 1,
                   max = 100,
-                  value = 30)
-    ),
+                  value = 30),
+      
+      em("Emphasized Text")
 
-    # Show a plot of the generated distribution
+    ),
     mainPanel(
-      plotOutput("distPlot")
-    )
-  )
+      h3("Main Panel Text"),
+      
+      # Show a plot of the generated distribution
+      mainPanel(
+        plotOutput("distPlot")
+      )
+     # code("Some Code!")
+  ))
 ))
