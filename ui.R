@@ -22,19 +22,49 @@ dashboardPage(
     tabItems(
       tabItem(tabName = "predictor",
               fluidRow(
-                column(width = 8,
+                column(width = 12,
                        box(width = NULL,
-                           h3("Day of the Week with the Most Crime")
-                       )
+                           h3("Basic Demograpghics"),
+                           # Gender Button
+                           radioButtons("GenderButton","Gender:", inline = TRUE,
+                                        choices = c("Male", "Female"),
+                                        selected = "Male"),
+                           
+                           #Patient's race
+                           radioButtons("RaceButton","Race:", inline = TRUE,
+                                        choices = c("White", "Non-White"),
+                                        selected = "White"),
+                           
+                           # Age Button
+                           sliderInput("PtAge", "Patient's Age:", min = 1, max = 100, value = 30)
+                       ),
+                       box(width = NULL,
+                           h3("Surgery Profile"),
+                           # Radio button for the type of surgery
+                           radioButtons("SurgeryType","Surgery:", inline = FALSE,
+                                        choices = c("Pancreas", "stomach", "colon"),
+                                        selected = "Pancreas"),
+                           
+                           radioButtons("GICancer","GI Cancer Surgery:", inline = TRUE,
+                                        choices = c("Yes", "No"),
+                                        selected = "No")
+                           ),
+                       box(width = NULL,
+                           h3("Section title 1"),
+                           h4(textOutput("common_crime"))),
+                       box(width = NULL,
+                           h3("Section title 2"),
+                           h4(textOutput("weekday_crime"))),
+                       box(width = NULL,
+                           plotOutput("distPlot"))
                 )
-                
               )
       ),
       tabItem(tabName = "about",
               fluidRow(
-                column(width = 6,
+                column(width = 12,
                        box(width = NULL,
-                           h3("Day of the Week with the Most Crime")))#includeMarkdown("about.md")))
+                           includeMarkdown("about.md")))
               )
       )
     )
