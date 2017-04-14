@@ -22,7 +22,7 @@ dashboardPage(
     tabItems(
       tabItem(tabName = "predictor",
               fluidRow(
-                column(width = 12,
+                column(width = 4,
                        box(width = NULL,
                            h3("Basic Demograpghics"),
                            # Gender Button
@@ -50,11 +50,26 @@ dashboardPage(
                                         selected = "No")
                            ),
                        box(width = NULL,
-                           h3("Section title 1"),
-                           h4(textOutput("common_crime"))),
+                           h3("Other"),
+                           
+                           #Functional Status
+                           radioButtons("FunctionalStatus","Functional Status:", inline = FALSE,
+                                        choices = c("Totally Depdendent", "Partially Dependent", "Fully Independent"),
+                                        selected = "Totally Depdendent"),
+                           
+                           #Other medical problems
+                           radioButtons("OtherMedical","Other Medical Problems:", inline = FALSE,
+                                        choices = c("Totally Healthy", "Mild diseases", "Severe diseases", "Near death"),
+                                        selected = "Totally Healthy")
+                           ),
                        box(width = NULL,
                            h3("Section title 2"),
                            h4(textOutput("weekday_crime"))),
+                       box(width = NULL,
+                           submitButton("Submit")
+                       )
+                ),
+                column(width = 7, 
                        box(width = NULL,
                            plotOutput("distPlot"))
                 )
