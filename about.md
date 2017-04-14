@@ -1,6 +1,6 @@
 # Surgery Risk Calculator
 
-This project .....
+This project is .....
 
 Text here
 
