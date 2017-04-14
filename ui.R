@@ -10,7 +10,7 @@ library(shinydashboard)
 library(leaflet)
 
 dashboardPage(
-  dashboardHeader(title = "Surgery Risk Predictor", titleWidth = 250,),
+  dashboardHeader(title = "Surgery Risk Predictor", titleWidth = 250),
   dashboardSidebar(
     sidebarMenu(style = "position: fixed; overflow: visible;",
       menuItem("Surgery Risk Predictor", tabName = "predictor", icon = icon("signal", lib = "glyphicon")),
@@ -25,6 +25,7 @@ dashboardPage(
                 column(width = 4,
                        box(width = NULL,
                            h3("Basic Demograpghics"),
+                          
                            # Gender Button
                            radioButtons("GenderButton","Gender:", inline = TRUE,
                                         choices = c("Male", "Female"),
@@ -39,7 +40,11 @@ dashboardPage(
                            sliderInput("PtAge", "Patient's Age:", min = 1, max = 100, value = 30),
                        
                            #BMI Section
-                           h5("Height/Weight OR BMI"),
+                           #h5(""),
+                           helpText("Enter the patient's Height/Weight or BMI.",
+                                    "The program will calculate BMI if it isn't entered.",
+                                    ""),                                    
+                                    
                            splitLayout(
                              textInput("weight", "Weight (kg):", value = ""),
                              textInput("height", "Height (m):", value = "")
@@ -121,14 +126,19 @@ dashboardPage(
                                         choices = c("Yes ", "No"),
                                         selected = "No")
                            ),
-                       box(width = NULL,
-                           submitButton("Submit")
-                       )
+                       submitButton(width = '210px', "Submit", icon("refresh"))#box(width = NULL)
                 ),
                 column(width = 8, 
                        box(width = NULL,
                            title = "Any Complications", background = "maroon", solidHeader = TRUE,
-                           plotOutput("distPlot")),
+                           plotOutput("distPlot"),
+                          # textOutput("overallComplicationRisk")
+                           
+                          numericInput("num", label = "Make changes", value = 1),
+                          submitButton("Update View", icon("refresh")),
+                          verbatimTextOutput("AnyCompValue")
+                          
+                           ),
                        
                        fluidRow(width = 8,
                          # A static infoBox
