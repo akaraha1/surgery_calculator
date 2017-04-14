@@ -10,9 +10,9 @@ library(shinydashboard)
 library(leaflet)
 
 dashboardPage(
-  dashboardHeader(title = "Surgery Risk Predictor", titleWidth = 250),
+  dashboardHeader(title = "Surgery Risk Predictor", titleWidth = 250,),
   dashboardSidebar(
-    sidebarMenu(
+    sidebarMenu(style = "position: fixed; overflow: visible;",
       menuItem("Surgery Risk Predictor", tabName = "predictor", icon = icon("signal", lib = "glyphicon")),
       menuItem("About", tabName = "about", icon = icon("question-circle")),
       menuItem("Source Code", href = "https://github.com/akaraha1/surgery_calculator", icon = icon("github-alt"))
@@ -125,10 +125,18 @@ dashboardPage(
                            submitButton("Submit")
                        )
                 ),
-                column(width = 7, 
+                column(width = 8, 
                        box(width = NULL,
-                           plotOutput("distPlot"))
+                           title = "Any Complications", background = "maroon", solidHeader = TRUE,
+                           plotOutput("distPlot")),
+                       
+                       fluidRow(width = 8,
+                         # A static infoBox
+                         valueBoxOutput("rate")
+                         
+                       )
                 )
+  
               )
       ),
       tabItem(tabName = "about",

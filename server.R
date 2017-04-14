@@ -31,5 +31,16 @@ shinyServer(function(input, output) {
     hist(x, breaks = bins, col = 'darkgray', border = 'white')
 
   })
+  
+  
+  output$rate <- renderValueBox({
+    valueBox(
+      value = formatC(5.232523, digits = 1, format = "f"),
+      subtitle = "Downloads per sec (last 5 min)",
+      icon = icon("area-chart"),
+      color = "yellow",
+      width = 10
+    )
+  })
 
 })
