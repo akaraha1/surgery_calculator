@@ -36,8 +36,16 @@ dashboardPage(
                                         selected = "White"),
                            
                            # Age Button
-                           sliderInput("PtAge", "Patient's Age:", min = 1, max = 100, value = 30)
-                       ),
+                           sliderInput("PtAge", "Patient's Age:", min = 1, max = 100, value = 30),
+                       
+                           #BMI Section
+                           h5("Height/Weight OR BMI"),
+                           splitLayout(
+                             textInput("weight", "Weight (kg):", value = ""),
+                             textInput("height", "Height (m):", value = "")
+                           ),
+                           textInput("BMI", "BMI (kg/m2):", value = "")),
+                       
                        box(width = NULL,
                            h3("Surgery Profile"),
                            # Radio button for the type of surgery
@@ -50,7 +58,7 @@ dashboardPage(
                                         selected = "No")
                            ),
                        box(width = NULL,
-                           h3("Other"),
+                           h3("Overall Health"),
                            
                            #Functional Status
                            radioButtons("FunctionalStatus","Functional Status:", inline = FALSE,
@@ -60,11 +68,59 @@ dashboardPage(
                            #Other medical problems
                            radioButtons("OtherMedical","Other Medical Problems:", inline = FALSE,
                                         choices = c("Totally Healthy", "Mild diseases", "Severe diseases", "Near death"),
-                                        selected = "Totally Healthy")
+                                        selected = "Totally Healthy"),
+                           
+                           radioButtons("septic","Septic:", inline = TRUE,
+                                        choices = c("Yes ", "No"),
+                                        selected = "No"),
+                           
+                           radioButtons("vent","Ventilator:", inline = TRUE,
+                                        choices = c("Yes ", "No"),
+                                        selected = "No"),
+                           
+                           radioButtons("DMall","DMall:", inline = TRUE,
+                                        choices = c("Yes ", "No"),
+                                        selected = "No"),
+                           
+                           radioButtons("Dialysis","Dialysis:", inline = TRUE,
+                                        choices = c("Yes ", "No"),
+                                        selected = "No"),
+                           
+                           radioButtons("RenalFailure","Renal Failure:", inline = TRUE,
+                                        choices = c("Yes ", "No"),
+                                        selected = "No"),
+                           
+                           radioButtons("ascites","Ascites:", inline = TRUE,
+                                        choices = c("Yes ", "No"),
+                                        selected = "No"),
+                           
+                           radioButtons("steroids","Steroids:", inline = TRUE,
+                                        choices = c("Yes ", "No"),
+                                        selected = "No")
                            ),
                        box(width = NULL,
-                           h3("Section title 2"),
-                           h4(textOutput("weekday_crime"))),
+                           h3("Cardiac/Respiratory Factors"),
+                           
+                           radioButtons("Smoker","Smoker:", inline = TRUE,
+                                        choices = c("Yes ", "No"),
+                                        selected = "No"),
+                           
+                           radioButtons("SOB","Shortness of Breath:", inline = TRUE,
+                                        choices = c("Yes ", "No"),
+                                        selected = "No"),
+                           
+                           radioButtons("HxCHF","History of CHF:", inline = TRUE,
+                                        choices = c("Yes ", "No"),
+                                        selected = "No"),
+                           
+                           radioButtons("HxCHF","History of COPD:", inline = TRUE,
+                                        choices = c("Yes ", "No"),
+                                        selected = "No"),
+                           
+                           radioButtons("HTNMeds","HTN Meds:", inline = TRUE,
+                                        choices = c("Yes ", "No"),
+                                        selected = "No")
+                           ),
                        box(width = NULL,
                            submitButton("Submit")
                        )
