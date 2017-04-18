@@ -8,6 +8,8 @@
 library(shiny)
 library(shinydashboard)
 library(leaflet)
+library(ggplot2)
+
 
 dashboardPage(
   dashboardHeader(title = "Surgery Risk Predictor", titleWidth = 250),
@@ -126,27 +128,22 @@ dashboardPage(
                                         choices = c("Yes ", "No"),
                                         selected = "No")
                            ),
-                       submitButton(width = '210px', "Submit", icon("refresh"))#box(width = NULL)
+                       submitButton(width = '210px', "Submit", icon("refresh"))
                 ),
                 column(width = 8, 
                        box(width = NULL,
                            title = "Any Complications", background = "maroon", solidHeader = TRUE,
-                           plotOutput("distPlot"),
-                          # textOutput("overallComplicationRisk")
+                         #  plotOutput("distPlot"),
+                           plotOutput("riskPlot")  
                            
-                          numericInput("num", label = "Make changes", value = 1),
-                          submitButton("Update View", icon("refresh")),
-                          verbatimTextOutput("AnyCompValue")
-                          
                            ),
                        
                        fluidRow(width = 8,
                          # A static infoBox
-                         valueBoxOutput("rate")
-                         
+                         valueBoxOutput("rate"),
+                         infoBoxOutput("BMIBox")
                        )
                 )
-  
               )
       ),
       tabItem(tabName = "about",
