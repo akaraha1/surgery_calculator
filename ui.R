@@ -14,8 +14,9 @@ library(ggplot2)
 dashboardPage(
   dashboardHeader(title = "Surgery Risk Predictor", titleWidth = 250),
   dashboardSidebar(
-    sidebarMenu(style = "position: fixed; overflow: visible;",
-      menuItem("Surgery Risk Predictor", tabName = "predictor", icon = icon("signal", lib = "glyphicon")),
+    sidebarMenu(style = "position: fixed; overflow: visible;", id = "tab",
+      menuItem("Patient Questionnaire", tabName = "predictor", icon = icon("signal", lib = "glyphicon")),
+      menuItem("Risk Prediction Viewer", tabName = "dataViewer", icon = icon("stats", lib = "glyphicon")),
       menuItem("About", tabName = "about", icon = icon("question-circle")),
       menuItem("Source Code", href = "https://github.com/akaraha1/surgery_calculator", icon = icon("github-alt"))
     )
@@ -26,7 +27,7 @@ dashboardPage(
               fluidRow(
                 column(width = 4,
                        box(width = NULL,
-                           h3("Basic Demograpghics"),
+                           h3("Basic Demograpghics", align = "center"),
                           
                            # Gender Button
                            radioButtons("GenderButton","Gender:", inline = TRUE,
@@ -42,7 +43,6 @@ dashboardPage(
                            sliderInput("PtAge", "Patient's Age:", min = 1, max = 100, value = 30),
                        
                            #BMI Section
-                           #h5(""),
                            helpText("Enter the patient's Height/Weight or BMI.",
                                     "The program will calculate BMI if it isn't entered.",
                                     ""),                                    
@@ -51,21 +51,12 @@ dashboardPage(
                              textInput("weight", "Weight (kg):", value = ""),
                              textInput("height", "Height (m):", value = "")
                            ),
-                           textInput("BMI", "BMI (kg/m2):", value = "")),
-                       
+                           textInput("BMI", "BMI (kg/m2):", value = "")
+                           )
+                       ),
+                column(width = 4,
                        box(width = NULL,
-                           h3("Surgery Profile"),
-                           # Radio button for the type of surgery
-                           radioButtons("SurgeryType","Surgery:", inline = FALSE,
-                                        choices = c("Pancreas", "stomach", "colon"),
-                                        selected = "Pancreas"),
-                           
-                           radioButtons("GICancer","GI Cancer Surgery:", inline = TRUE,
-                                        choices = c("Yes", "No"),
-                                        selected = "No")
-                           ),
-                       box(width = NULL,
-                           h3("Overall Health"),
+                           h3("Overall Health", align = "center"),
                            
                            #Functional Status
                            radioButtons("FunctionalStatus","Functional Status:", inline = FALSE,
@@ -104,9 +95,10 @@ dashboardPage(
                            radioButtons("steroids","Steroids:", inline = TRUE,
                                         choices = c("Yes ", "No"),
                                         selected = "No")
-                           ),
+                           )),
+                column(width = 4,
                        box(width = NULL,
-                           h3("Cardiac/Respiratory Factors"),
+                           h3("Cardiac & Respiratory Factors", align = "center"),
                            
                            radioButtons("Smoker","Smoker:", inline = TRUE,
                                         choices = c("Yes ", "No"),
@@ -128,24 +120,44 @@ dashboardPage(
                                         choices = c("Yes ", "No"),
                                         selected = "No")
                            ),
-                       submitButton(width = '210px', "Submit", icon("refresh"))
-                ),
-                column(width = 8, 
-                       box(width = NULL,
-                           title = "Any Complications", background = "maroon", solidHeader = TRUE,
-                         #  plotOutput("distPlot"),
-                           plotOutput("riskPlot")  
-                           
-                           ),
                        
-                       fluidRow(width = 8,
-                         # A static infoBox
-                         valueBoxOutput("rate"),
-                         infoBoxOutput("BMIBox")
-                       )
+                       box(width = NULL,
+                           h3("Surgery Profile", align = "center"),
+                           # Radio button for the type of surgery
+                           radioButtons("SurgeryType","Surgery:", inline = FALSE,
+                                        choices = c("Pancreas", "stomach", "colon"),
+                                        selected = "Pancreas"),
+                           
+                           radioButtons("GICancer","GI Cancer Surgery:", inline = TRUE,
+                                        choices = c("Yes", "No"),
+                                        selected = "No")
+                       ),
+                       actionButton("Submit", "Submit", width = '210px', icon("refresh"))
+                       
+                       #submitButton(width = '210px', "Submit", icon("refresh"))
                 )
+
               )
       ),
+      tabItem(tabName = "dataViewer",
+              fluidRow(
+                column(width = 8,
+                       box(width = NULL,
+                           title = "Any Complications", background = "maroon", solidHeader = TRUE,
+                           #  plotOutput("distPlot"),
+                           plotOutput("riskPlot")  
+                           
+                       ),
+                       
+                       fluidRow(width = 8,
+                                # A static infoBox
+                                valueBoxOutput("rate"),
+                                infoBoxOutput("anyComplBox")
+                       )
+                       )
+              )),
+ 
+                       
       tabItem(tabName = "about",
               fluidRow(
                 column(width = 12,
