@@ -150,7 +150,11 @@ dashboardPage(
                        fluidRow(width = 8,
                                 # A static infoBox
                                 valueBoxOutput("rate"),
+<<<<<<< HEAD
                                 infoBoxOutput("anyComplBox")
+=======
+                                infoBoxOutput("BMIBox")
+>>>>>>> 8070fcee60c0ddfe4362e9e292eaf4eb0719335e
                        )
                        )
               )),
