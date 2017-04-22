@@ -40,6 +40,20 @@ shinyServer(function(input, output, session) {
     calcBMI()
     calcAnyComp()
     
+<<<<<<< HEAD
+=======
+  })
+  
+  # output$BMI <- renderText({
+  #   print("in here")
+  #   input$weight
+  #   })
+  
+  observeEvent(input$weight, {
+    if(input$weight!='')
+      if(input$weight!='')
+      updateTextInput(session, "BMI", value="success")
+>>>>>>> 8070fcee60c0ddfe4362e9e292eaf4eb0719335e
   })
   
   observeEvent(input$weight, {
@@ -61,7 +75,11 @@ shinyServer(function(input, output, session) {
   
   calcAnyComp <- reactive({
     anyCompl <- 0 #ensure we're starting with a 0'd variable
+<<<<<<< HEAD
    # calcBMI()     #make sure we have an updated BMI value
+=======
+    calcBMI()     #make sure we have an updated BMI value
+>>>>>>> 8070fcee60c0ddfe4362e9e292eaf4eb0719335e
 
     #gender
     gender <- switch(input$GenderButton, "Male" = 1, "Female" = 0)
@@ -75,8 +93,14 @@ shinyServer(function(input, output, session) {
     anyCompl <- anyCompl + (0.0028318*input$PtAge)
     
     # There are three categories of surgery (instead of the near infinite number of procedure codes in the real NSQIP: pancreas (ref category), stomach(GastRxn), and colon
+<<<<<<< HEAD
     #CancerGI is a binary variable we introduced, 1 = surgery for cancer, 0 = surgery for benign disease
     #Functional is functional status, 0 = total dependent, 1 = partially dependent, 2 = fully independent
+=======
+    #                                        CancerGI is a binary variable we introduced, 1 = surgery for cancer, 0 = surgery for benign disease
+    #                                        Functional is functional status, 0 = total dependent, 1 = partially dependent, 2 = fully independent
+    #                                        asaclass is a measure of other medical problems 1 = totally healthy, 2 = mild diseases, 3 = severe diseases, 4 = near death
+>>>>>>> 8070fcee60c0ddfe4362e9e292eaf4eb0719335e
     # 
     
     
@@ -111,7 +135,18 @@ shinyServer(function(input, output, session) {
     #hxcopd |   .2158972
     #dialysis |   .1193262 
     # renafail |   .3735297
+<<<<<<< HEAD
+=======
+    #bmi
+    print(BMI)
+    anyCompl <- anyCompl + (0.0094137*BMI)
     
+    
+    #_cons |  -1.761664 
+>>>>>>> 8070fcee60c0ddfe4362e9e292eaf4eb0719335e
+    
+    print(anyCompl)
+
     
     #bmi
    # calcBMI()
