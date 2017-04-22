@@ -61,7 +61,7 @@ dashboardPage(
                            #Functional Status
                            radioButtons("FunctionalStatus","Functional Status:", inline = FALSE,
                                         choices = c("Totally Depdendent", "Partially Dependent", "Fully Independent"),
-                                        selected = "Totally Depdendent"),
+                                        selected = "Fully Independent"),
                            
                            #Other medical problems
                            radioButtons("OtherMedical","Other Medical Problems:", inline = FALSE,
@@ -101,23 +101,23 @@ dashboardPage(
                            h3("Cardiac & Respiratory Factors", align = "center"),
                            
                            radioButtons("Smoker","Smoker:", inline = TRUE,
-                                        choices = c("Yes ", "No"),
+                                        choices = c("Yes", "No"),
                                         selected = "No"),
                            
                            radioButtons("SOB","Shortness of Breath:", inline = TRUE,
-                                        choices = c("Yes ", "No"),
+                                        choices = c("Yes", "No"),
                                         selected = "No"),
                            
                            radioButtons("HxCHF","History of CHF:", inline = TRUE,
-                                        choices = c("Yes ", "No"),
+                                        choices = c("Yes", "No"),
                                         selected = "No"),
                            
-                           radioButtons("HxCHF","History of COPD:", inline = TRUE,
-                                        choices = c("Yes ", "No"),
+                           radioButtons("HxCOPD","History of COPD:", inline = TRUE,
+                                        choices = c("Yes", "No"),
                                         selected = "No"),
                            
                            radioButtons("HTNMeds","HTN Meds:", inline = TRUE,
-                                        choices = c("Yes ", "No"),
+                                        choices = c("Yes", "No"),
                                         selected = "No")
                            ),
                        
@@ -125,12 +125,10 @@ dashboardPage(
                            h3("Surgery Profile", align = "center"),
                            # Radio button for the type of surgery
                            radioButtons("SurgeryType","Surgery:", inline = FALSE,
-                                        choices = c("Pancreas", "stomach", "colon"),
-                                        selected = "Pancreas"),
+                                        choices = c("Pancreas", "stomach", "colon")),
                            
                            radioButtons("GICancer","GI Cancer Surgery:", inline = TRUE,
-                                        choices = c("Yes", "No"),
-                                        selected = "No")
+                                        choices = c("Yes", "No"))
                        ),
                        actionButton("Submit", "Submit", width = '210px', icon("refresh"))
                        

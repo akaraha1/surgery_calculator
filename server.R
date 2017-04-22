@@ -39,9 +39,6 @@ shinyServer(function(input, output, session) {
     title(main = list("Some Data...", font = 4))
     calcBMI()
     calcAnyComp()
-    
-<<<<<<< HEAD
-=======
   })
   
   # output$BMI <- renderText({
@@ -53,7 +50,6 @@ shinyServer(function(input, output, session) {
     if(input$weight!='')
       if(input$weight!='')
       updateTextInput(session, "BMI", value="success")
->>>>>>> 8070fcee60c0ddfe4362e9e292eaf4eb0719335e
   })
   
   observeEvent(input$weight, {
@@ -75,11 +71,7 @@ shinyServer(function(input, output, session) {
   
   calcAnyComp <- reactive({
     anyCompl <- 0 #ensure we're starting with a 0'd variable
-<<<<<<< HEAD
    # calcBMI()     #make sure we have an updated BMI value
-=======
-    calcBMI()     #make sure we have an updated BMI value
->>>>>>> 8070fcee60c0ddfe4362e9e292eaf4eb0719335e
 
     #gender
     gender <- switch(input$GenderButton, "Male" = 1, "Female" = 0)
@@ -93,14 +85,11 @@ shinyServer(function(input, output, session) {
     anyCompl <- anyCompl + (0.0028318*input$PtAge)
     
     # There are three categories of surgery (instead of the near infinite number of procedure codes in the real NSQIP: pancreas (ref category), stomach(GastRxn), and colon
-<<<<<<< HEAD
     #CancerGI is a binary variable we introduced, 1 = surgery for cancer, 0 = surgery for benign disease
     #Functional is functional status, 0 = total dependent, 1 = partially dependent, 2 = fully independent
-=======
-    #                                        CancerGI is a binary variable we introduced, 1 = surgery for cancer, 0 = surgery for benign disease
-    #                                        Functional is functional status, 0 = total dependent, 1 = partially dependent, 2 = fully independent
-    #                                        asaclass is a measure of other medical problems 1 = totally healthy, 2 = mild diseases, 3 = severe diseases, 4 = near death
->>>>>>> 8070fcee60c0ddfe4362e9e292eaf4eb0719335e
+    #CancerGI is a binary variable we introduced, 1 = surgery for cancer, 0 = surgery for benign disease
+    #Functional is functional status, 0 = total dependent, 1 = partially dependent, 2 = fully independent
+    #asaclass is a measure of other medical problems 1 = totally healthy, 2 = mild diseases, 3 = severe diseases, 4 = near death
     # 
     
     
@@ -108,9 +97,13 @@ shinyServer(function(input, output, session) {
       #GastRxn -.5105275
       #colonRxn -.8071903
       #CancerGI .0870107
+   # radioButtons("SurgeryType","Surgery:", inline = FALSE, choices = c("Pancreas", "stomach", "colon"),
     
-    #Functional |  -.5353748
+  #  radioButtons("GICancer","GI Cancer Surgery:", inline = TRUE, choices = c("Yes", "No"),
+
     
+    #Functional |  -.5353748 -- radioButtons("FunctionalStatus","Functional Status:", inline = FALSE, choices = c("Totally Depdendent", "Partially Dependent", "Fully Independent"),
+
     #asaclass
     #totally healthy=1
     #mild diseases=2
@@ -123,31 +116,44 @@ shinyServer(function(input, output, session) {
     anyCompl <- anyCompl + (0.4420653*asaClass)
     
     
-    #steroid |   .4215457
-    #ascites |   .7761558
-    #  Septic |   .7766535
-    #ventilat |    .904599 
-    #DMall |   .0697649
-    #hypermed |   .0406726 
-    #hxchf |   .2994934 
-    #  SOB |   .2186209 
-    #smoker |   .1309884 
-    #hxcopd |   .2158972
-    #dialysis |   .1193262 
-    # renafail |   .3735297
-<<<<<<< HEAD
-=======
-    #bmi
-    print(BMI)
-    anyCompl <- anyCompl + (0.0094137*BMI)
+    #steroid
+    anyCompl <- anyCompl + (0.4215457*switch(input$steroids, "Yes" = 1, "No" = 0, 0))
     
+    #ascites
+    anyCompl <- anyCompl + (0.7761558*switch(input$ascites, "Yes" = 1, "No" = 0, 0))
     
-    #_cons |  -1.761664 
->>>>>>> 8070fcee60c0ddfe4362e9e292eaf4eb0719335e
+    #  Septic
+    anyCompl <- anyCompl + (0.7766535*switch(input$septic, "Yes" = 1, "No" = 0, 0))
     
-    print(anyCompl)
+    #ventilat
+    anyCompl <- anyCompl + (0.904599*switch(input$vent, "Yes" = 1, "No" = 0, 0))
+    
+    #DMall
+    anyCompl <- anyCompl + (0.0697649*switch(input$DMall, "Yes" = 1, "No" = 0, 0))
+    
+    #hypermed
+    anyCompl <- anyCompl + (0.0406726*switch(input$HTNMeds, "Yes" = 1, "No" = 0, 0))
+    
+    #hxchf
+    anyCompl <- anyCompl + (0.2994934*switch(input$HxCHF, "Yes" = 1, "No" = 0, 0))
+    
+    #SOB
+    anyCompl <- anyCompl + (0.2186209*switch(input$SOB, "Yes" = 1, "No" = 0, 0))
+    
+    #smoker
+    anyCompl <- anyCompl + (0.1309884*switch(input$Smoker, "Yes" = 1, "No" = 0, 0))
+                                    
+    #hxcopd
+    anyCompl <- anyCompl + (0.2158972*switch(input$HxCOPD, "Yes" = 1, "No" = 0, 0))
+    
+    #dialysis
+    anyCompl <- anyCompl + (0.1193262*switch(input$Dialysis, "Yes" = 1, "No" = 0, 0))
+                                      
+     # renafail
+    anyCompl <- anyCompl + (0.3735297*switch(input$RenalFailure, "Yes" = 1, "No" = 0, 0))
+    
 
-    
+
     #bmi
    # calcBMI()
     if(is.numeric(input$BMI) == FALSE) {
@@ -169,14 +175,13 @@ shinyServer(function(input, output, session) {
     print(BMI)
     anyCompl <- anyCompl + (0.0094137*BMI)
     
-    
     #_cons
     anyCompl <- anyCompl-1.761664 
-    
-    print("Raw anyCompl:")
-    print(anyCompl)
-    
+
+    #Exponate the value and multiple by 100 to get a %
     anyCompl <- exp(anyCompl)*100
+  
+    #Print the final result ot the console
     print("Calculated anyCompl:")
     print(anyCompl)
     
