@@ -84,37 +84,30 @@ shinyServer(function(input, output, session) {
     #age 
     anyCompl <- anyCompl + (0.0028318*input$PtAge)
     
-    # There are three categories of surgery (instead of the near infinite number of procedure codes in the real NSQIP: pancreas (ref category), stomach(GastRxn), and colon
-    #CancerGI is a binary variable we introduced, 1 = surgery for cancer, 0 = surgery for benign disease
-    #Functional is functional status, 0 = total dependent, 1 = partially dependent, 2 = fully independent
-    #CancerGI is a binary variable we introduced, 1 = surgery for cancer, 0 = surgery for benign disease
-    #Functional is functional status, 0 = total dependent, 1 = partially dependent, 2 = fully independent
-    #asaclass is a measure of other medical problems 1 = totally healthy, 2 = mild diseases, 3 = severe diseases, 4 = near death
-    # 
-    
-    
     #0 is no, 1 is yes
-      #GastRxn -.5105275
-      #colonRxn -.8071903
-      #CancerGI .0870107
-   # radioButtons("SurgeryType","Surgery:", inline = FALSE, choices = c("Pancreas", "stomach", "colon"),
-    
-  #  radioButtons("GICancer","GI Cancer Surgery:", inline = TRUE, choices = c("Yes", "No"),
+    #Surgery Type
+    anyCompl <- anyCompl + (switch(input$SurgeryType,
+                                   "Pancreas" = 0,
+                                   "Stomach" = -0.5105275,
+                                   "Colon" = -0.8071903, 0))
+  
+    #CancerGI 
+    anyCompl <- anyCompl + (0.0870107*switch(input$GICancer,
+                                           "Cancer Surgery" = 1,
+                                           "Benign disease" = 0, 0))
 
+    #Functional Status
+    anyCompl <- anyCompl + (-0.5353748*switch(input$FunctionalStatus,
+                                        "Totally Depdendent" = 0,
+                                        "Partially Dependent" = 1,
+                                        "Fully Independent" = 2, 2))
     
-    #Functional |  -.5353748 -- radioButtons("FunctionalStatus","Functional Status:", inline = FALSE, choices = c("Totally Depdendent", "Partially Dependent", "Fully Independent"),
-
+    
     #asaclass
-    #totally healthy=1
-    #mild diseases=2
-    #severe diseases=3
-    #near death=4
-    asaClass <- switch(input$OtherMedical, "Totally Healthy" = 1,
-                       "Mild diseases" = 2,
-                       "Severe diseases" = 3,
-                       "Near death" = 4)
-    anyCompl <- anyCompl + (0.4420653*asaClass)
-    
+    anyCompl <- anyCompl + (0.4420653*switch(input$OtherMedical, "Totally Healthy" = 1,
+                                             "Mild diseases" = 2,
+                                             "Severe diseases" = 3,
+                                             "Near death" = 4, 1))
     
     #steroid
     anyCompl <- anyCompl + (0.4215457*switch(input$steroids, "Yes" = 1, "No" = 0, 0))
@@ -159,7 +152,7 @@ shinyServer(function(input, output, session) {
     if(is.numeric(input$BMI) == FALSE) {
       weight <- as.numeric(input$weight)
       height <- as.numeric(input$height)
-      BMI <- weight/(height^2)
+      BMI <- (weight/height/height) * 10000
     }
     else {
       BMI <- input$BMI
@@ -168,7 +161,7 @@ shinyServer(function(input, output, session) {
     output$rate <- renderValueBox({
       valueBox(formatC(BMI, digits = 1, format = "f"), subtitle = "BMI",
                icon = icon("area-chart"),
-               color ="yellow"
+               color = if (BMI > 25) "red" else "aqua"
       )
     })
     print("BMI:")
@@ -179,18 +172,80 @@ shinyServer(function(input, output, session) {
     anyCompl <- anyCompl-1.761664 
 
     #Exponate the value and multiple by 100 to get a %
-    anyCompl <- exp(anyCompl)*100
+   # anyCompl <- exp(anyCompl)*100
   
-    #Print the final result ot the console
-    print("Calculated anyCompl:")
-    print(anyCompl)
+    # #Print the final result ot the console
+    # print("Calculated anyCompl:")
+    # print(anyCompl)
     
-    output$anyComplBox <- renderInfoBox({
-      infoBox(
-        "Risk of Complications", formatC(anyCompl, digits = 1, format = "f"), icon = icon("list"),
+
+    output$anyComplBox <- renderValueBox({
+      valueBox(
+        paste0(formatC(exp(anyCompl)*100, digits = 1, format = "f"), "%"),
+        "Major Complication Risk",
+        icon = icon("list"),
         color = "purple"
+        )
+    })
+    
+    #generic fields
+    
+    #Row 1 generic 3rd
+    output$generic1 <- renderValueBox({
+      valueBox(
+        paste0(formatC(25.0, digits = 1, format = "f"), "%"),
+        "Some Other Info",
+        icon = icon("list"),
+        color = "yellow"
       )
     })
+    (anyCompl)*100
+    #Row 2 generic 1st
+    ###SMOKER - Modified Risk
+      if(input$Smoker == "Yes")
+      tmpRisk <- exp(anyCompl-0.1309884)*100 else tmpRisk <- exp(anyCompl)*100
+      output$generic2 <- renderValueBox({
+        valueBox(
+          paste0(formatC(tmpRisk, digits = 1, format = "f"), "%"),
+          "If you stopped smoking",
+          icon = icon("list"),
+          color = "yellow"
+        )
+        })
+
+    
+    #Row 2 generic 1st
+    output$generic3 <- renderValueBox({
+      valueBox(
+        paste0(formatC(25.0, digits = 1, format = "f"), "%"),
+        "Some Other Info",
+        icon = icon("list"),
+        color = "blue"
+      )
+    })
+    #Row 2 generic 2nd
+    output$generic4 <- renderValueBox({
+      valueBox(
+        paste0(formatC(25.0, digits = 1, format = "f"), "%"),
+        "Some Other Info",
+        icon = icon("list"),
+        color = "red"
+      )
+    })
+    
+    #Row 2 generic 3rd
+    output$generic5 <- renderValueBox({
+      valueBox(
+        paste0(formatC(25.0, digits = 1, format = "f"), "%"),
+        "Some Other Info",
+        icon = icon("list"),
+        color = "green"
+      )
+    })
+    
+    
+    
+    
 
   })
   
