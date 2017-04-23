@@ -49,7 +49,7 @@ dashboardPage(
                                     
                            splitLayout(
                              textInput("weight", "Weight (kg):", value = ""),
-                             textInput("height", "Height (m):", value = "")
+                             textInput("height", "Height (cm):", value = "")
                            ),
                            textInput("BMI", "BMI (kg/m2):", value = "")
                            )
@@ -125,10 +125,10 @@ dashboardPage(
                            h3("Surgery Profile", align = "center"),
                            # Radio button for the type of surgery
                            radioButtons("SurgeryType","Surgery:", inline = FALSE,
-                                        choices = c("Pancreas", "stomach", "colon")),
+                                        choices = c("Pancreas", "Stomach", "Colon")),
                            
                            radioButtons("GICancer","GI Cancer Surgery:", inline = TRUE,
-                                        choices = c("Yes", "No"))
+                                        choices = c("Cancer Surgery", "Benign disease"))
                        ),
                        actionButton("Submit", "Submit", width = '210px', icon("refresh"))
                        
@@ -139,7 +139,7 @@ dashboardPage(
       ),
       tabItem(tabName = "dataViewer",
               fluidRow(
-                column(width = 8,
+                column(width = 12,
                        box(width = NULL,
                            title = "Any Complications", background = "maroon", solidHeader = TRUE,
                            #  plotOutput("distPlot"),
@@ -147,16 +147,22 @@ dashboardPage(
                            
                        ),
                        
-                       fluidRow(width = 8,
-                                # A static infoBox
+                       fluidRow(width = 12,
                                 valueBoxOutput("rate"),
-<<<<<<< HEAD
-                                infoBoxOutput("anyComplBox")
-=======
-                                infoBoxOutput("BMIBox")
->>>>>>> 8070fcee60c0ddfe4362e9e292eaf4eb0719335e
+                                valueBoxOutput("anyComplBox"),
+                                valueBoxOutput("generic1")
+                       ),
+                       #Modifiable Risk Factors
+                       fluidRow(width = 12,
+                                h3("Modifiable Risk Factors", align = "center"),
+                                helpText("The following are mofifiable risk factors which could improve you surgery risk profile", align = "center"),
+                                         
+                                # A static infoBox
+                                valueBoxOutput("generic2"),
+                                valueBoxOutput("generic3"),
+                                valueBoxOutput("generic4")
                        )
-                       )
+                )
               )),
  
                        
