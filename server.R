@@ -183,7 +183,7 @@ shinyServer(function(input, output, session) {
       valueBox(
         paste0(formatC(exp(anyCompl)*100, digits = 1, format = "f"), "%"),
         "Major Complication Risk",
-        icon = icon("list"),
+        icon = icon("plus-square"),
         color = "purple"
         )
     })
@@ -229,9 +229,7 @@ shinyServer(function(input, output, session) {
       valueBox(
         paste0(formatC(tmpRisk, digits = 1, format = "f"), "%"),
         paste0("If you lost ", lbsLose, " lbs"),
-        
-        
-        icon = icon("list"),
+        icon = icon("scale", lib = "glyphicon"),
         color = "blue"
       )
     })
@@ -254,14 +252,7 @@ shinyServer(function(input, output, session) {
         color = "green"
       )
     })
-    
-    
-    
-    
-
   })
-  
-  
 })
 
 

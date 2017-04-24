@@ -15,8 +15,8 @@ dashboardPage(
   dashboardHeader(title = "Surgery Risk Predictor", titleWidth = 250),
   dashboardSidebar(
     sidebarMenu(style = "position: fixed; overflow: visible;", id = "tab",
-      menuItem("Patient Questionnaire", tabName = "predictor", icon = icon("signal", lib = "glyphicon")),
-      menuItem("Risk Prediction Viewer", tabName = "dataViewer", icon = icon("stats", lib = "glyphicon")),
+      menuItem("Patient Questionnaire", tabName = "predictor", icon = icon("medkit")),
+      menuItem("Risk Prediction Viewer", tabName = "dataViewer", icon = icon("line-chart")),
       menuItem("About", tabName = "about", icon = icon("question-circle")),
       menuItem("Source Code", href = "https://github.com/akaraha1/surgery_calculator", icon = icon("github-alt"))
     )
