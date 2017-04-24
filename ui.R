@@ -124,7 +124,7 @@ dashboardPage(
                        box(width = NULL,
                            h3("Surgery Profile", align = "center"),
                            # Radio button for the type of surgery
-                           radioButtons("SurgeryType","Surgery:", inline = FALSE,
+                           radioButtons("SurgeryTypeButton","Surgery:", inline = FALSE,
                                         choices = c("Pancreas", "Stomach", "Colon")),
                            
                            radioButtons("GICancer","GI Cancer Surgery:", inline = TRUE,
