@@ -215,10 +215,22 @@ shinyServer(function(input, output, session) {
 
     
     #Row 2 generic 1st
+    ###BMI - 10% weight reduction
     output$generic3 <- renderValueBox({
+      
+      anyCompl <- anyCompl - (0.0094137*BMI)
+      weight <- as.numeric(input$weight)
+      height <- as.numeric(input$height)
+      BMI <- ((weight-0.1*weight)/height/height) * 10000
+      anyCompl <- anyCompl + (0.0094137*BMI)
+      tmpRisk <- exp(anyCompl)*100
+      lbsLose <- formatC(0.1*weight/2.20462, digits = 1, format = "f")
+      
       valueBox(
-        paste0(formatC(25.0, digits = 1, format = "f"), "%"),
-        "Some Other Info",
+        paste0(formatC(tmpRisk, digits = 1, format = "f"), "%"),
+        paste0("If you lost ", lbsLose, " lbs"),
+        
+        
         icon = icon("list"),
         color = "blue"
       )
