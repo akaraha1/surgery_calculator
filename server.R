@@ -12,46 +12,46 @@ library(emoGG)
 BMI <- 0.00
 anyCompl <- 0.00
 
-
-sexFactor     <-  -0.0242882
-raceFactor    <-   0.0596692
-ageFactor     <-   0.0028318
-GastRxnFactor <-  -0.5105275
-ColonRxnFactor <- -0.8071903
+### Regression coefficents
+sexFactor           <-  -0.0242882
+raceFactor          <-   0.0596692
+ageFactor           <-   0.0028318
+GastRxnFactor       <-  -0.5105275
+ColonRxnFactor      <-  -0.8071903
 CancerGIFactor      <-   0.0870107
 FunctionalFactor    <-  -0.5353748
 asaclassFactor      <-   0.4420653  
 steroidFactor       <-   0.4215457   
 ascitesFactor       <-   0.7761558  
 SepticFactor        <-   0.7766535  
-ventilarFactor <-  0.904599   
-DMallFactor   <-   0.0697649  
-hypermedFactor <-  0.0406726   
-hxchfFactor   <-   0.2994934
-SOBFactor     <-   0.2186209   
-smokerFactor  <-   0.1309884   
-hxcopdFactor  <-   0.2158972   
-dialysisFactor <-   0.1193262     
-renafailFactor <-   0.3735297 
-BMIFactor     <-   0.0094137
-consFactor    <-  -1.761664 
+ventilarFactor      <-   0.904599   
+DMallFactor         <-   0.0697649  
+hypermedFactor      <-   0.0406726   
+hxchfFactor         <-   0.2994934
+SOBFactor           <-   0.2186209   
+smokerFactor        <-   0.1309884   
+hxcopdFactor        <-   0.2158972   
+dialysisFactor      <-   0.1193262     
+renafailFactor      <-   0.3735297 
+BMIFactor           <-   0.0094137
+consFactor          <-  -1.761664 
 
 shinyServer(function(input, output, session) {
 
-  #Change to the data view tab to display the results
+  #Switches from the quertionaire view to the data view
+  ## when the submit button is pressed
   observeEvent(input$Submit, {
       updateTabsetPanel(session, "tab", 'dataViewer')
   
   #Create the risk plot graph
   output$riskPlot <- renderPlot ({
-    print("render")
-    
-    ####THIS WORKs
-    barplot(VADeaths, angle = 15+10*1:5, density = 20, col = "black",
+    ### Dummy data graph
+    barplot(VADeaths,
+            angle = 15+10*1:5,
+            density = 20,
+            col = "black",
             legend = rownames(VADeaths))
     title(main = list("Some Data...", font = 4))
-    
-
   })
   
   ###Calculate BMI
@@ -60,7 +60,8 @@ shinyServer(function(input, output, session) {
   else
     BMI <- calcBMI(weight=as.numeric(input$weight), height=as.numeric(input$height))
   
-  ####Calculate the Risk
+  ###Calculate the Major Complication Risk
+  anyCompl <- 0.00  #Make sure we're starting from 0
   anyCompl <- sexFactor*switch(input$GenderButton, "Male" = 1, "Female" = 0)
   anyCompl <- anyCompl + raceFactor*switch(input$RaceButton, "White" = 1, "Non-White" = 0, 1)
   anyCompl <- anyCompl + ageFactor*input$PtAge
@@ -102,19 +103,14 @@ shinyServer(function(input, output, session) {
   anyCompl <- anyCompl + BMIFactor*BMI
   anyCompl <- anyCompl + consFactor
 
-
-  
-
-
-
-
-  ###BMI BOX - Setup
-  output$rate <- renderValueBox({
+  ###BMI valuebox - Setup
+  output$BMIBox <- renderValueBox({
     valueBox(formatC(BMI, digits = 1, format = "f"), subtitle = "BMI",
              icon = icon("area-chart"),
              color = if (BMI > 25) "red" else "aqua"
     )
   })
+  #Update the text in the BMI text field
   updateTextInput(session, 'BMI', value = formatC(BMI, digits = 2, format = "f"))
   
   ###MAJOR RISK COMPLICATION BOX

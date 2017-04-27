@@ -148,7 +148,7 @@ dashboardPage(
                        ),
                        
                        fluidRow(width = 12,
-                                valueBoxOutput("rate"),
+                                valueBoxOutput("BMIBox"),
                                 valueBoxOutput("anyComplBox"),
                                 valueBoxOutput("generic1")
                        ),
