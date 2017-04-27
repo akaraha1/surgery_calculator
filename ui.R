@@ -161,7 +161,9 @@ dashboardPage(
                                 valueBoxOutput("generic2"),
                                 valueBoxOutput("generic3"),
                                 valueBoxOutput("generic4")
-                       )
+                       ),
+                       plotOutput("riskPlot2")  
+                       
                 )
               )),
  

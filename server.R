@@ -7,8 +7,7 @@
 
 library(shiny)
 library(ggplot2)
-library(png)
-source(file="pictogram.R")
+library(emoGG)
 
 BMI <- 0.00
 anyCompl <- 0.00
@@ -179,6 +178,35 @@ shinyServer(function(input, output, session) {
     )
   })
   
+  #Create the risk plot graph
+  output$riskPlot2 <- renderPlot ({
+
+    
+    df3 <- data.frame(units = c(4.7, 6.7, 20),
+                      what = c('If you lost X lbs', 'If you stopped smoking',
+                               'Your Current Risk')
+                      )
+    
+    posx <- runif(1000, 0, 10)
+    posy <- data.frame(1, 2, 3)#runif(1000, 0, 5)
+    ggplot(data.frame(x = c(85, 70, 20), y =c(1, 2, 3)), aes(x, y)) + geom_emoji(emoji="1f63b")
+    
+    
+    # ggplot(df3, aes(units, what)) + 
+    #   geom_bar(fill="white",
+    #            colour="darkgreen",
+    #            alpha=0.5,
+    #            stat="identity") +
+    #   coord_flip() + 
+    #   scale_x_discrete() + geom_emoji(emoji="1f697") + 
+    #  theme_bw() +
+    #   theme(axis.title.x  = element_blank(), axis.title.y  = element_blank())
+    
+    # scale_y_continuous(breaks=seq(1, 20, 40)) + 
+  })
+  
+  
+  
   }) # end submit button method
 
 })
@@ -251,9 +279,7 @@ calcBMI <- function(weight=0, height=0){
 
 
 
-# df3 <- data.frame(units = c(4.7, 6.7, 20), 
-#                   what = c('If you lost X lbs', 'If you stopped smoking', 
-#                            'Your Current Risk'))
+
 # 
 # # make gs an ordered factor
 # df3$what <- factor(df3$what, levels = df3$what, ordered = TRUE)
