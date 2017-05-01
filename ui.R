@@ -69,31 +69,31 @@ dashboardPage(
                                         selected = "Totally Healthy"),
                            
                            radioButtons("septic","Septic:", inline = TRUE,
-                                        choices = c("Yes ", "No"),
+                                        choices = c("Yes", "No"),
                                         selected = "No"),
                            
                            radioButtons("vent","Ventilator:", inline = TRUE,
-                                        choices = c("Yes ", "No"),
+                                        choices = c("Yes", "No"),
                                         selected = "No"),
                            
                            radioButtons("DMall","DMall:", inline = TRUE,
-                                        choices = c("Yes ", "No"),
+                                        choices = c("Yes", "No"),
                                         selected = "No"),
                            
                            radioButtons("Dialysis","Dialysis:", inline = TRUE,
-                                        choices = c("Yes ", "No"),
+                                        choices = c("Yes", "No"),
                                         selected = "No"),
                            
-                           radioButtons("RenalFailure","Renal Failure:", inline = TRUE,
-                                        choices = c("Yes ", "No"),
+                           radioButtons(inputId ="RenalFailure","Renal Failure:", inline = TRUE,
+                                        choices = c("Yes", "No"),
                                         selected = "No"),
                            
                            radioButtons("ascites","Ascites:", inline = TRUE,
-                                        choices = c("Yes ", "No"),
+                                        choices = c("Yes", "No"),
                                         selected = "No"),
                            
                            radioButtons("steroids","Steroids:", inline = TRUE,
-                                        choices = c("Yes ", "No"),
+                                        choices = c("Yes", "No"),
                                         selected = "No")
                            )),
                 column(width = 4,
@@ -131,8 +131,6 @@ dashboardPage(
                                         choices = c("Cancer Surgery", "Benign disease"))
                        ),
                        actionButton("Submit", "Submit", width = '210px', icon("refresh"))
-                       
-                       #submitButton(width = '210px', "Submit", icon("refresh"))
                 )
 
               )
@@ -140,30 +138,54 @@ dashboardPage(
       tabItem(tabName = "dataViewer",
               fluidRow(
                 column(width = 12,
-                       box(width = NULL,
-                           title = "Any Complications", background = "maroon", solidHeader = TRUE,
-                           #  plotOutput("distPlot"),
-                           plotOutput("riskPlot")  
-                           
+                       tabBox(width = 12,
+                              title = tagList(shiny::icon("gear"), "Risk Graphs"),
+                              side = "right", height = "500px",
+                         tabPanel("Tab1", "Tab content 1",
+                                  plotOutput("riskPlot3")
+                                  ),
+                         tabPanel("Tab2",
+                                  "Tab content 2",
+                                  plotOutput("riskPlot2")  
+                                  ),
+                         tabPanel(id = "Tab3", 
+                                  title = "Tab3",
+                                  color = "olive",
+                                  plotOutput("riskPlot")),
+                         selected = "Tab3"
+                        
                        ),
+                       # box(width = NULL,
+                       #     title = "Any Complications", background = "maroon", solidHeader = TRUE,
+                       #     #  plotOutput("distPlot"),
+                       #     
+                       # ),
                        
                        fluidRow(width = 12,
+                                box(width = 12,
+                                  title = "Section Title", status = "warning", solidHeader = TRUE,
+                                  #"Box content here", br(), "More box content",
+                                 # sliderInput("slider", "Slider input:", 1, 100, 50),
+                                  #textInput("text", "Text input:")
+                               
                                 valueBoxOutput("BMIBox"),
                                 valueBoxOutput("anyComplBox"),
                                 valueBoxOutput("generic1")
+                                )
                        ),
                        #Modifiable Risk Factors
                        fluidRow(width = 12,
-                                h3("Modifiable Risk Factors", align = "center"),
+                                box(width = 12,
+                                    title = "Modifiable Risk Factors", status = "info", solidHeader = TRUE,
+                                #h3("", align = "center"),
                                 helpText("The following are mofifiable risk factors which could improve you surgery risk profile", align = "center"),
                                          
                                 # A static infoBox
                                 valueBoxOutput("generic2"),
                                 valueBoxOutput("generic3"),
                                 valueBoxOutput("generic4")
-                       ),
-                       plotOutput("riskPlot2")  
-                       
+                                )
+                       )
                 )
               )),
  
