@@ -1,4 +1,3 @@
-
 # This is the server logic for a Shiny web application.
 # You can find out more about building applications with Shiny here:
 #
@@ -10,6 +9,7 @@ library(ggplot2)
 library(emoGG)
 library(emojifont)
 library(png)
+library(googleVis)
 
 library(grid)
 library(gridSVG)
@@ -50,6 +50,20 @@ shinyServer(function(input, output, session) {
   ## when the submit button is pressed
   observeEvent(input$Submit, {
       updateTabsetPanel(session, "tab", 'dataViewer')
+    
+    output$hp<-renderGvis({
+      
+      #gvisGauge(data.frame(Item='BMI',Value=vle),numvar = "f", options=list(min=0, max=10,height=200,width=200))
+      gvisGauge(data.frame(Item='BMI',Value=BMI),
+                options=list(min=0,
+                             max=100,
+                             greenFrom=18.6,
+                             greenTo=25,
+                             yellowFrom=25.1,
+                             yellowTo=30,
+                             redFrom=31.1, redTo=100)
+                )
+    })    
   
   #Create the risk plot graph
   output$riskPlot <- renderPlot ({
@@ -169,7 +183,7 @@ shinyServer(function(input, output, session) {
   
   ###SMOKER - Modified Risk
   if(input$Smoker == "Yes")
-    tmpRisk <- exp(anyCompl-0.1309884)*100 else tmpRisk <- exp(anyCompl)*100
+    tmpRisk <- exp(anyCompl-smokerFactor)*100 else tmpRisk <- exp(anyCompl)*100
   output$generic2 <- renderValueBox({
     valueBox(
       paste0(formatC(tmpRisk, digits = 1, format = "f"), "%"),

@@ -164,13 +164,9 @@ dashboardPage(
                        fluidRow(width = 12,
                                 box(width = 12,
                                   title = "Section Title", status = "warning", solidHeader = TRUE,
-                                  #"Box content here", br(), "More box content",
-                                 # sliderInput("slider", "Slider input:", 1, 100, 50),
-                                  #textInput("text", "Text input:")
-                               
-                                valueBoxOutput("BMIBox"),
-                                valueBoxOutput("anyComplBox"),
-                                valueBoxOutput("generic1")
+                                  valueBoxOutput("BMIBox"),
+                                  valueBoxOutput("anyComplBox"),
+                                  valueBoxOutput("generic1")
                                 )
                        ),
                        #Modifiable Risk Factors
@@ -185,6 +181,9 @@ dashboardPage(
                                 valueBoxOutput("generic3"),
                                 valueBoxOutput("generic4")
                                 )
+                       ),
+                       fluidRow(width=12,
+                                htmlOutput("hp")
                        )
                 )
               )),
