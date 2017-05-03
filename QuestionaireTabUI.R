@@ -17,15 +17,21 @@ fluidRow(
              sliderInput("PtAge", "Patient's Age:", min = 1, max = 100, value = 30),
              
              #BMI Section
-             helpText("Enter the patient's Height/Weight or BMI.",
-                      "The program will calculate BMI if it isn't entered.",
-                      ""),                                    
-             
+             helpText("Enter the patient's Height/Weight or BMI."),
              splitLayout(
                textInput("weight", "Weight (kg):", value = ""),
                textInput("height", "Height (cm):", value = "")
              ),
              textInput("BMI", "BMI (kg/m2):", value = "")
+         ),
+         box(width = NULL,
+             h3("Surgery Profile", align = "center"),
+             # Radio button for the type of surgery
+             radioButtons("SurgeryTypeButton","Surgery:", inline = FALSE,
+                          choices = c("Pancreas", "Stomach", "Colon")),
+             
+             radioButtons("GICancer","GI Cancer Surgery:", inline = TRUE,
+                          choices = c("Cancer Surgery", "Benign disease"))
          )
   ),
   column(width = 4,
@@ -99,16 +105,6 @@ fluidRow(
              radioButtons("SOB","Shortness of Breath:", inline = TRUE,
                           choices = c("Yes", "No"),
                           selected = "No")
-         ),
-         
-         box(width = NULL,
-             h3("Surgery Profile", align = "center"),
-             # Radio button for the type of surgery
-             radioButtons("SurgeryTypeButton","Surgery:", inline = FALSE,
-                          choices = c("Pancreas", "Stomach", "Colon")),
-             
-             radioButtons("GICancer","GI Cancer Surgery:", inline = TRUE,
-                          choices = c("Cancer Surgery", "Benign disease"))
          ),
          actionButton("Submit", "Submit", width = '210px', icon("refresh"))
   )
