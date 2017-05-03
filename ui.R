@@ -9,6 +9,8 @@ library(shiny)
 library(shinydashboard)
 library(leaflet)
 library(ggplot2)
+library(shinyjs)
+
 
 
 dashboardPage(
@@ -21,7 +23,7 @@ dashboardPage(
       menuItem("Source Code", href = "https://github.com/akaraha1/surgery_calculator", icon = icon("github-alt"))
     )
   ),
-  dashboardBody(
+  dashboardBody(useShinyjs(),
     tabItems(
       tabItem(tabName = "predictor",
               fluidRow(

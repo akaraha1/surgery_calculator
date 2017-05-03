@@ -53,7 +53,6 @@ shinyServer(function(input, output, session) {
     
     output$hp<-renderGvis({
       
-      #gvisGauge(data.frame(Item='BMI',Value=vle),numvar = "f", options=list(min=0, max=10,height=200,width=200))
       gvisGauge(data.frame(Item='BMI',Value=BMI),
                 options=list(min=0,
                              max=100,
@@ -262,6 +261,23 @@ shinyServer(function(input, output, session) {
   
   }) # end submit button method
 
+  ###To collapse the Menuside bar but keep the icons visible
+  runjs({'
+        var el2 = document.querySelector(".skin-blue");
+    el2.className = "skin-blue sidebar-mini";
+    var clicker = document.querySelector(".sidebar-toggle");
+    clicker.id = "switchState";
+    '})
+  
+  onclick('switchState', runjs({'
+    var title = document.querySelector(".logo")
+    if (title.style.visibility == "hidden") {
+    title.style.visibility = "visible";
+    } else {
+    title.style.visibility = "hidden";
+    }
+    '}))
+  
 })
 
 calcBMI <- function(weight=0, height=0){
