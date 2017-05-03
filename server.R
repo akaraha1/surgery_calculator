@@ -286,40 +286,6 @@ calcBMI <- function(weight=0, height=0){
 
 
 
-  # #Exponate the value and multiple by 100 to get a %
-  # # anyCompl <- exp(anyCompl)*100
-  # 
-  # # #Print the final result ot the console
-  # # print("Calculated anyCompl:")
-  # # print(anyCompl)
-  # 
-  # 
-
-  # 
-  # #generic fields
-  # 
-
-  # (anyCompl)*100
-
-  # 
-  # 
-  # #Row 2 generic 1st
-
-  # #Row 2 generic 2nd
-  # output$generic4 <- renderValueBox({
-  #   valueBox(
-  #     paste0(formatC(25.0, digits = 1, format = "f"), "%"),
-  #     "Some Other Info",
-  #     icon = icon("list"),
-  #     color = "red"
-  #   )
-  # })
-  # 
-  # #Row 2 generic 3rd
-
-#}
-
-
 
 
 # output$distPlot <- renderPlot({

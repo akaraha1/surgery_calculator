@@ -30,7 +30,7 @@ fluidRow(
   ),
   column(width = 4,
          box(width = NULL,
-             h3("Overall Health", align = "center"),
+             h3("Common Risk Factors", align = "center"),
              
              #Functional Status
              radioButtons("FunctionalStatus","Functional Status:", inline = FALSE,
@@ -42,15 +42,41 @@ fluidRow(
                           choices = c("Totally Healthy", "Mild diseases", "Severe diseases", "Near death"),
                           selected = "Totally Healthy"),
              
+             #DM All
+             radioButtons("DMall","DM All:", inline = TRUE,
+                          choices = c("Yes", "No"),
+                          selected = "No"), 
+             
+             #Smoker
+             radioButtons("Smoker","Smoker:", inline = TRUE,
+                          choices = c("Yes", "No"),
+                          selected = "No"),
+             
+             #CHF
+             radioButtons("HxCHF","History of CHF:", inline = TRUE,
+                          choices = c("Yes", "No"),
+                          selected = "No"), 
+             #COPD
+             radioButtons("HxCOPD","History of COPD:", inline = TRUE,
+                          choices = c("Yes", "No"),
+                          selected = "No"),
+             
+             #HTN
+             radioButtons("HTNMeds","HTN Meds:", inline = TRUE,
+                          choices = c("Yes", "No"),
+                          selected = "No")
+             
+             )
+         ),
+  column(width = 4,
+         box(width = NULL,
+             h3("Additional Risk Factors", align = "center"),
+             
              radioButtons("septic","Septic:", inline = TRUE,
                           choices = c("Yes", "No"),
                           selected = "No"),
              
              radioButtons("vent","Ventilator:", inline = TRUE,
-                          choices = c("Yes", "No"),
-                          selected = "No"),
-             
-             radioButtons("DMall","DMall:", inline = TRUE,
                           choices = c("Yes", "No"),
                           selected = "No"),
              
@@ -68,30 +94,9 @@ fluidRow(
              
              radioButtons("steroids","Steroids:", inline = TRUE,
                           choices = c("Yes", "No"),
-                          selected = "No")
-             )
-         ),
-  column(width = 4,
-         box(width = NULL,
-             h3("Cardiac & Respiratory Factors", align = "center"),
-             
-             radioButtons("Smoker","Smoker:", inline = TRUE,
-                          choices = c("Yes", "No"),
                           selected = "No"),
              
              radioButtons("SOB","Shortness of Breath:", inline = TRUE,
-                          choices = c("Yes", "No"),
-                          selected = "No"),
-             
-             radioButtons("HxCHF","History of CHF:", inline = TRUE,
-                          choices = c("Yes", "No"),
-                          selected = "No"),
-             
-             radioButtons("HxCOPD","History of COPD:", inline = TRUE,
-                          choices = c("Yes", "No"),
-                          selected = "No"),
-             
-             radioButtons("HTNMeds","HTN Meds:", inline = TRUE,
                           choices = c("Yes", "No"),
                           selected = "No")
          ),

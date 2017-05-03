@@ -11,8 +11,6 @@ library(leaflet)
 library(ggplot2)
 library(shinyjs)
 
-
-
 dashboardPage(
   dashboardHeader(title = "Surgery Risk Predictor", titleWidth = 250),
   dashboardSidebar(
