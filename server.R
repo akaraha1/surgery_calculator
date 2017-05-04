@@ -53,26 +53,112 @@ shinyServer(function(input, output, session) {
     # when the submit button is pressed
     updateTabsetPanel(session, "tab", 'dataViewer')
     
-    ###Calculate BMI
-    # if(is.numeric(input$BMI))
-    #   BMI <- as.numeric(input$BMI)
-    # else
-    #   BMI <- calcBMI(weight=as.numeric(input$weight), height=as.numeric(input$height))    
-      BMI <- input$BMI
+    #Set the BMI variable
+    BMI <- input$BMI
+    functStatus <- switch(input$FunctionalStatus,
+                          "Totally Depdendent" = 0,
+                          "Partially Dependent" = 1,
+                          "Fully Independent" = 2, 2)
     
-    
-    output$hp<-renderGvis({
+  ###Calculate the Major Complication Risk
+  anyComplRaw <- 0.00  #Make sure we're starting from 0
+  anyComplRaw <- sexFactor*switch(input$GenderButton, "Male" = 1, "Female" = 0)
+  anyComplRaw <- anyComplRaw + raceFactor*switch(input$RaceButton, "White" = 1, "Non-White" = 0, 1)
+  anyComplRaw <- anyComplRaw + ageFactor*input$PtAge
+  anyComplRaw <- anyComplRaw + switch(input$SurgeryTypeButton,
+                                "Pancreas" = 0,
+                                "Stomach" = GastRxnFactor,
+                                "Colon" = ColonRxnFactor)
+  anyComplRaw <- anyComplRaw + switch(input$SurgeryTypeButton,
+                                "Pancreas" = 0,
+                                "Stomach" = -0.5105275,
+                                "Colon" = -0.8071903, 0)
+  anyComplRaw <- anyComplRaw + FunctionalFactor*functStatus
+  anyComplRaw <- anyComplRaw + CancerGIFactor*switch(input$GICancer,
+                                               "Cancer Surgery" = 1,
+                                               "Benign disease" = 0, 0)
+  anyComplRaw <- anyComplRaw + asaclassFactor*switch(input$OtherMedical, "1: Totally Healthy" = 1,
+                                               "2: Mild diseases" = 2,
+                                               "3: Severe diseases" = 3,
+                                               "4: Near death" = 4, 1)
+  anyComplRaw <- anyComplRaw + steroidFactor*switch(input$steroids,
+                                              "Yes" = 1,
+                                              "No" = 0, 0)
+  anyComplRaw <- anyComplRaw + ascitesFactor*switch(input$ascites,
+                                              "Yes" = 1,
+                                              "No" = 0, 0)
+  anyComplRaw <- anyComplRaw + SepticFactor*switch(input$septic, "Yes" = 1, "No" = 0, 0)
+  anyComplRaw <- anyComplRaw + ventilarFactor*switch(input$vent, "Yes" = 1, "No" = 0, 0)
+  anyComplRaw <- anyComplRaw + DMallFactor*switch(input$DMall, "Yes" = 1, "No" = 0, 0)
+  anyComplRaw <- anyComplRaw + hypermedFactor*switch(input$HTNMeds, "Yes" = 1, "No" = 0, 0)
+  anyComplRaw <- anyComplRaw + hxchfFactor*switch(input$HxCHF, "Yes" = 1, "No" = 0, 0)
+  anyComplRaw <- anyComplRaw + SOBFactor*switch(input$SOB, "Yes" = 1, "No" = 0, 0)
+  anyComplRaw <- anyComplRaw + smokerFactor*switch(input$Smoker, "Yes" = 1, "No" = 0, 0)
+  anyComplRaw <- anyComplRaw + hxcopdFactor*switch(input$HxCOPD, "Yes" = 1, "No" = 0, 0)
+  anyComplRaw <- anyComplRaw + dialysisFactor*switch(input$Dialysis, "Yes" = 1, "No" = 0, 0)
+  anyComplRaw <- anyComplRaw + renafailFactor*switch(input$RenalFailure, "Yes" = 1, "No" = 0, 0)
+  anyComplRaw <- anyComplRaw + BMIFactor*BMI
+  anyComplRaw <- anyComplRaw + consFactor
+  
+  ###MAJOR RISK COMPLICATION BOX
+  output$majorComplicationBox <- renderValueBox({
+    valueBox(
+      paste0(formatC(calcRiskFinal(anyComplRaw), digits = 1, format = "f"), "%"),
+      "Major Complication Risk",
+      icon = icon("plus-square"),
+      color = "purple"
+    )
+  })
+  
+  ###Modifiable Risk Factors - in order by contribution
+  # Functional Status
+  # Steroids
+  # CHF
+  # SOB
+  # COPD
+  # smoker
+  # DM
+  # HTN
+  
+  ##Show functional Status Box if applicable
+  output$FunctStatus <- renderUI({
+    if(functStatus < 2) {#if the person is less than fully independent
+      tmpRisk <- anyComplRaw - FunctionalFactor*functStatus + FunctionalFactor*2
+      newRisk <- calcRiskFinal(tmpRisk) - calcRiskFinal(anyComplRaw) 
       
-      gvisGauge(data.frame(Item='BMI',Value=BMI),
-                options=list(min=0,
-                             max=55,
-                             greenFrom=15,
-                             greenTo=25,
-                             yellowFrom=25,
-                             yellowTo=35,
-                             redFrom=35, redTo=55)
-                )
-    })    
+      valueBox(
+        paste0(formatC(newRisk, digits = 1, format = "f"), "%"),
+        "Functional Status Contribution",
+        icon = icon("list"),
+        color = "green"
+      )
+    }
+  })
+  
+  
+  
+  output$modRisk2 <- renderUI({
+    if(BMI > 20)
+      valueBox(
+        paste0(formatC(25.0, digits = 1, format = "f"), "%"),
+        "Mod risk 1 Other Info",
+        icon = icon("list"),
+        color = "green"
+      )
+  })
+  
+  output$hp<-renderGvis({
+    
+    gvisGauge(data.frame(Item='BMI',Value=BMI),
+              options=list(min=0,
+                           max=55,
+                           greenFrom=15,
+                           greenTo=25,
+                           yellowFrom=25,
+                           yellowTo=35,
+                           redFrom=35, redTo=55)
+    )
+  })    
   
   #Create the risk plot graph
   output$riskPlot <- renderPlot ({
@@ -80,7 +166,7 @@ shinyServer(function(input, output, session) {
     df3 <- data.frame(units = c(8, 7, 2), 
                       what = c('Risk Profile 1',
                                'Risk Profile 2', 'Risk Profile 3'
-                               ))
+                      ))
     df3$what <- factor(df3$what, levels = df3$what, ordered = TRUE)
     
     library(png)
@@ -108,85 +194,43 @@ shinyServer(function(input, output, session) {
       theme_bw() + 
       theme(axis.title.x  = element_blank(), axis.title.y  = element_blank()) + 
       fill_images()
-   
+    
   })
   
-  ###Calculate the Major Complication Risk
-  anyComplRaw <- 0.00  #Make sure we're starting from 0
-  anyComplRaw <- sexFactor*switch(input$GenderButton, "Male" = 1, "Female" = 0)
-  anyComplRaw <- anyComplRaw + raceFactor*switch(input$RaceButton, "White" = 1, "Non-White" = 0, 1)
-  anyComplRaw <- anyComplRaw + ageFactor*input$PtAge
-  anyComplRaw <- anyComplRaw + switch(input$SurgeryTypeButton,
-                                "Pancreas" = 0,
-                                "Stomach" = GastRxnFactor,
-                                "Colon" = ColonRxnFactor)
-  anyComplRaw <- anyComplRaw + switch(input$SurgeryTypeButton,
-                                "Pancreas" = 0,
-                                "Stomach" = -0.5105275,
-                                "Colon" = -0.8071903, 0)
-  anyComplRaw <- anyComplRaw + FunctionalFactor*switch(input$FunctionalStatus,
-                                                 "Totally Depdendent" = 0,
-                                                 "Partially Dependent" = 1,
-                                                 "Fully Independent" = 2, 2)
-  anyComplRaw <- anyComplRaw + CancerGIFactor*switch(input$GICancer,
-                                               "Cancer Surgery" = 1,
-                                               "Benign disease" = 0, 0)
-  anyComplRaw <- anyComplRaw + asaclassFactor*switch(input$OtherMedical, "1: Totally Healthy" = 1,
-                                               "2: Mild diseases" = 2,
-                                               "3: Severe diseases" = 3,
-                                               "4: Near death" = 4, 1)
-  anyComplRaw <- anyComplRaw + steroidFactor*switch(input$steroids,
-                                              "Yes" = 1,
-                                              "No" = 0, 0)
-  anyComplRaw <- anyComplRaw + ascitesFactor*switch(input$ascites,
-                                              "Yes" = 1,
-                                              "No" = 0, 0)
-  anyComplRaw <- anyComplRaw + SepticFactor*switch(input$septic, "Yes" = 1, "No" = 0, 0)
-  anyComplRaw <- anyComplRaw + ventilarFactor*switch(input$vent, "Yes" = 1, "No" = 0, 0)
-  anyComplRaw <- anyComplRaw + DMallFactor*switch(input$DMall, "Yes" = 1, "No" = 0, 0)
-  anyComplRaw <- anyComplRaw + hypermedFactor*switch(input$HTNMeds, "Yes" = 1, "No" = 0, 0)
-  anyComplRaw <- anyComplRaw + hxchfFactor*switch(input$HxCHF, "Yes" = 1, "No" = 0, 0)
-  anyComplRaw <- anyComplRaw + SOBFactor*switch(input$SOB, "Yes" = 1, "No" = 0, 0)
-  anyComplRaw <- anyComplRaw + smokerFactor*switch(input$Smoker, "Yes" = 1, "No" = 0, 0)
-  anyComplRaw <- anyComplRaw + hxcopdFactor*switch(input$HxCOPD, "Yes" = 1, "No" = 0, 0)
-  anyComplRaw <- anyComplRaw + dialysisFactor*switch(input$Dialysis, "Yes" = 1, "No" = 0, 0)
-  anyComplRaw <- anyComplRaw + renafailFactor*switch(input$RenalFailure, "Yes" = 1, "No" = 0, 0)
-  anyComplRaw <- anyComplRaw + BMIFactor*BMI
-  anyComplRaw <- anyComplRaw + consFactor
   
-  print(anyComplRaw)
+  
+  
+  
+  
+  
+  
+  
+  
+  
   
 
 
-  ###BMI valuebox - Setup
-  output$BMIBox <- renderValueBox({
-    valueBox(formatC(BMI, digits = 1, format = "f"), subtitle = "BMI",
-             icon = icon("area-chart"),
-             color = if (BMI > 25) "red" else "aqua"
-    )
-  })
-  #Update the text in the BMI text field
-  updateTextInput(session, 'BMI', value = formatC(BMI, digits = 2, format = "f"))
+  # ###BMI valuebox - Setup
+  # output$BMIBox <- renderValueBox({
+  #   valueBox(formatC(BMI, digits = 1, format = "f"), subtitle = "BMI",
+  #            icon = icon("area-chart"),
+  #            color = if (BMI > 25) "red" else "aqua"
+  #   )
+  # })
+  # #Update the text in the BMI text field
+  # updateTextInput(session, 'BMI', value = formatC(BMI, digits = 2, format = "f"))
   
-  ###MAJOR RISK COMPLICATION BOX
-  output$anyComplBox <- renderValueBox({
-    valueBox(
-      paste0(formatC(calcRiskFinal(anyComplRaw), digits = 1, format = "f"), "%"),
-      "Major Complication Risk",
-      icon = icon("plus-square"),
-      color = "purple"
-    )
-  })
+
   
-  ###SOME OTHER INFO
-  output$generic1 <- renderValueBox({
-    valueBox(
-      paste0(formatC(25.0, digits = 1, format = "f"), "%"),
-      "Some Other Info",
-      icon = icon("list"),
-      color = "yellow"
-    )
-  })
+  # ###SOME OTHER INFO
+  # output$generic1 <- renderValueBox({
+  #   valueBox(
+  #     paste0(formatC(25.0, digits = 1, format = "f"), "%"),
+  #     "Some Other Info",
+  #     icon = icon("list"),
+  #     color = "yellow"
+  #   )
+  # })
   
   ###SMOKER - Modified Risk
   if(input$Smoker == "Yes")
@@ -303,8 +347,6 @@ calcRiskFinal <- function(rawAnyCompl=0){
 }
 
 
-
-
 # output$distPlot <- renderPlot({
 # 
 #   # generate bins based on input$PtAge from ui.R
@@ -316,12 +358,6 @@ calcRiskFinal <- function(rawAnyCompl=0){
 #   
 #   calcBMI()
 # })
-
-
-
-
-
-
 
 
 
@@ -418,4 +454,9 @@ clip_images <- function(restore_grid = TRUE)
 # y = sin(x)
 # ggplot() + geom_emoji('heartbeat', x=x, y=y, size=10)
 # 
+
+# if(is.numeric(input$BMI))
+#   BMI <- as.numeric(input$BMI)
+# else
+#   BMI <- calcBMI(weight=as.numeric(input$weight), height=as.numeric(input$height))
 

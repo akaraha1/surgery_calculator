@@ -59,10 +59,10 @@ dashboardPage(
                        
                        fluidRow(width = 12,
                                 box(width = 12,
-                                  title = "Section Title", status = "warning", solidHeader = TRUE,
-                                  valueBoxOutput("BMIBox"),
-                                  valueBoxOutput("anyComplBox"),
-                                  valueBoxOutput("generic1")
+                                  title = "Regression Outputs", status = "warning", solidHeader = TRUE,
+                                 # valueBoxOutput("BMIBox"),
+                                  valueBoxOutput("majorComplicationBox")
+                                  #valueBoxOutput("generic1")
                                 )
                        ),
                        #Modifiable Risk Factors
@@ -71,15 +71,19 @@ dashboardPage(
                                     title = "Modifiable Risk Factors", status = "info", solidHeader = TRUE,
                                 #h3("", align = "center"),
                                 helpText("The following are mofifiable risk factors which could improve you surgery risk profile", align = "center"),
-                                         
-                                # A static infoBox
-                                valueBoxOutput("generic2"),
-                                valueBoxOutput("generic3"),
-                                valueBoxOutput("generic4")
+                                uiOutput("FunctStatus"),
+                                uiOutput("modRisk2"),
+                                uiOutput("modRisk3"),
+                                uiOutput("modRisk4"),
+                                uiOutput("modRisk5"),
+                                uiOutput("modRisk6"),
+                                uiOutput("modRisk7"),
+                                uiOutput("modRisk8")
                                 )
                        ),
                        fluidRow(width=12,
                                 htmlOutput("hp")
+                               
                        )
                 )
               )),
@@ -96,3 +100,15 @@ dashboardPage(
       )
   )
 )
+
+
+
+
+# conditionalPanel(
+#   condition = c("input.FunctionalStatus == 'Totally Depdendent'",
+#                 "input.FunctionalStatus == 'Partially Dependent'",
+#                 "input.FunctionalStatus == 'Fully Independent'"
+#                 ),
+#   selectInput("smoothMethod", "Method",
+#               list("lm", "glm", "gam", "loess", "rlm"))
+# ),
