@@ -59,6 +59,9 @@ shinyServer(function(input, output, session) {
                           "Totally Depdendent" = 0,
                           "Partially Dependent" = 1,
                           "Fully Independent" = 2, 2)
+    steroidStatus <- switch(input$steroids,
+                            "Yes" = 1,
+                            "No" = 0, 0)
     
   ###Calculate the Major Complication Risk
   anyComplRaw <- 0.00  #Make sure we're starting from 0
@@ -81,9 +84,7 @@ shinyServer(function(input, output, session) {
                                                "2: Mild diseases" = 2,
                                                "3: Severe diseases" = 3,
                                                "4: Near death" = 4, 1)
-  anyComplRaw <- anyComplRaw + steroidFactor*switch(input$steroids,
-                                              "Yes" = 1,
-                                              "No" = 0, 0)
+  anyComplRaw <- anyComplRaw + steroidFactor*steroidStatus
   anyComplRaw <- anyComplRaw + ascitesFactor*switch(input$ascites,
                                               "Yes" = 1,
                                               "No" = 0, 0)
@@ -136,6 +137,18 @@ shinyServer(function(input, output, session) {
   })
   
   
+  ##Show Sterioid Status Box if applicable
+  output$SteroidBox <- renderUI({
+    if(steroidStatus == 1) {#if steroids == yes
+      riskChange <- calcRiskFinal(anyComplRaw) - calcRiskFinal(anyComplRaw - steroidFactor)
+      valueBox(
+        paste0(formatC(riskChange, digits = 1, format = "f"), "%"),
+        "Steroid Risk Contribution",
+        icon = icon("list"),
+        color = "green"
+      )
+    }
+  })
   
   output$modRisk2 <- renderUI({
     if(BMI > 20)

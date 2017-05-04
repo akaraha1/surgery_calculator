@@ -72,7 +72,7 @@ dashboardPage(
                                 #h3("", align = "center"),
                                 helpText("The following are mofifiable risk factors which could improve you surgery risk profile", align = "center"),
                                 uiOutput("FunctStatus"),
-                                uiOutput("modRisk2"),
+                                uiOutput("SteroidBox"),
                                 uiOutput("modRisk3"),
                                 uiOutput("modRisk4"),
                                 uiOutput("modRisk5"),
