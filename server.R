@@ -51,16 +51,24 @@ shinyServer(function(input, output, session) {
   observeEvent(input$Submit, {
       updateTabsetPanel(session, "tab", 'dataViewer')
     
+    ###Calculate BMI
+    # if(is.numeric(input$BMI))
+    #   BMI <- as.numeric(input$BMI)
+    # else
+    #   BMI <- calcBMI(weight=as.numeric(input$weight), height=as.numeric(input$height))    
+      BMI <- input$BMI
+    
+    
     output$hp<-renderGvis({
       
       gvisGauge(data.frame(Item='BMI',Value=BMI),
                 options=list(min=0,
-                             max=100,
+                             max=55,
                              greenFrom=18.6,
                              greenTo=25,
                              yellowFrom=25.1,
                              yellowTo=30,
-                             redFrom=31.1, redTo=100)
+                             redFrom=31.1, redTo=55)
                 )
     })    
   
@@ -101,12 +109,6 @@ shinyServer(function(input, output, session) {
    
   })
   
-  ###Calculate BMI
-  if(is.numeric(input$BMI))
-    BMI <- as.numeric(input$BMI)
-  else
-    BMI <- calcBMI(weight=as.numeric(input$weight), height=as.numeric(input$height))
-  
   ###Calculate the Major Complication Risk
   anyCompl <- 0.00  #Make sure we're starting from 0
   anyCompl <- sexFactor*switch(input$GenderButton, "Male" = 1, "Female" = 0)
@@ -127,10 +129,10 @@ shinyServer(function(input, output, session) {
   anyCompl <- anyCompl + CancerGIFactor*switch(input$GICancer,
                                                "Cancer Surgery" = 1,
                                                "Benign disease" = 0, 0)
-  anyCompl <- anyCompl + asaclassFactor*switch(input$OtherMedical, "Totally Healthy" = 1,
-                                               "Mild diseases" = 2,
-                                               "Severe diseases" = 3,
-                                               "Near death" = 4, 1)
+  anyCompl <- anyCompl + asaclassFactor*switch(input$OtherMedical, "1: Totally Healthy" = 1,
+                                               "2: Mild diseases" = 2,
+                                               "3: Severe diseases" = 3,
+                                               "4: Near death" = 4, 1)
   anyCompl <- anyCompl + steroidFactor*switch(input$steroids,
                                               "Yes" = 1,
                                               "No" = 0, 0)
@@ -149,6 +151,9 @@ shinyServer(function(input, output, session) {
   anyCompl <- anyCompl + renafailFactor*switch(input$RenalFailure, "Yes" = 1, "No" = 0, 0)
   anyCompl <- anyCompl + BMIFactor*BMI
   anyCompl <- anyCompl + consFactor
+  
+  if(anyCompl < -.001) calcdAnyCompl <- 1 else calcdAnyCompl <- anyCompl
+  
 
   ###BMI valuebox - Setup
   output$BMIBox <- renderValueBox({
@@ -280,9 +285,13 @@ shinyServer(function(input, output, session) {
   
 })
 
-calcBMI <- function(weight=0, height=0){
-  return((weight/height/height) * 10000)
-}
+###Not in use at the moment
+# calcBMI <- function(weight=0, height=0){
+#   if ((weight/height/height) * 10000 > 55) {
+#     return(55)
+#   }
+#   return((weight/height/height) * 10000)
+# }
 
 
 

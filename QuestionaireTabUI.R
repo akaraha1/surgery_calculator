@@ -18,11 +18,14 @@ fluidRow(
              
              #BMI Section
              helpText("Enter the patient's Height/Weight or BMI."),
-             splitLayout(
-               textInput("weight", "Weight (kg):", value = ""),
-               textInput("height", "Height (cm):", value = "")
-             ),
-             textInput("BMI", "BMI (kg/m2):", value = "")
+             # splitLayout(
+             #   textInput("weight", "Weight (kg):", value = ""),
+             #   textInput("height", "Height (cm):", value = "")
+             # ),
+             numericInput("BMI", "BMI (kg/m2):", value = 20, min = 0, max = 55, step = 1,
+                          width = NULL)
+             
+             # textInput("BMI", "BMI (kg/m2):", value = "")
          ),
          box(width = NULL,
              h3("Surgery Profile", align = "center"),
@@ -45,8 +48,8 @@ fluidRow(
              
              #Other medical problems
              radioButtons("OtherMedical","Other Medical Problems:", inline = FALSE,
-                          choices = c("Totally Healthy", "Mild diseases", "Severe diseases", "Near death"),
-                          selected = "Totally Healthy"),
+                          choices = c("1: Totally Healthy", "2: Mild diseases", "3: Severe diseases", "4: Near death"),
+                          selected = "1: Totally Healthy"),
              
              #DM All
              radioButtons("DMall","DM All:", inline = TRUE,

@@ -25,6 +25,7 @@ dashboardPage(
                 tags$head(
                   includeCSS('www/style.css')
                 ),
+                
     tabItems(
       tabItem(tabName = "predictor",
               #Links to a separate file with the Questionaire UI setup
@@ -83,14 +84,15 @@ dashboardPage(
                 )
               )),
  
-                       
       tabItem(tabName = "about",
               fluidRow(
                 column(width = 12,
                        box(width = NULL,
-                           includeMarkdown("about.md")))
+                           includeMarkdown("about.md")
+                           )
+                       )
+                )
               )
       )
-    )
   )
 )
