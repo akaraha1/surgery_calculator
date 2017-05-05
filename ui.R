@@ -12,7 +12,39 @@ library(ggplot2)
 library(shinyjs)
 
 dashboardPage(
-  dashboardHeader(title = "Surgery Risk Predictor", titleWidth = 250),
+  dashboardHeader(title = "Surgery Risk Predictor", titleWidth = 250,
+  # Dropdown menu for notifications
+  dropdownMenu(type = "tasks", badgeStatus = "success",
+               taskItem(value = 90, color = "green",
+                        "Documentation"
+               ),
+               taskItem(value = 17, color = "aqua",
+                        "Project X"
+               ),
+               taskItem(value = 75, color = "yellow",
+                        "Server deployment"
+               ),
+               taskItem(value = 80, color = "red",
+                        "Overall project"
+               ),
+               messageItem(
+                 from = "Sales Dept",
+                 message = "Sales are steady this month."
+               ),
+               messageItem(
+                 from = "New User",
+                 message = "How do I register?",
+                 icon = icon("question"),
+                 time = "13:45"
+               ),
+               messageItem(
+                 from = "Support",
+                 message = "The new server is ready.",
+                 icon = icon("life-ring"),
+                 time = "2014-12-01"
+               )
+  )
+  ),
   dashboardSidebar(
     sidebarMenu(style = "position: fixed; overflow: visible;", id = "tab",
       menuItem("Patient Questionnaire", tabName = "predictor", icon = icon("medkit")),
@@ -82,8 +114,9 @@ dashboardPage(
                                 )
                        ),
                        fluidRow(width=12,
-                                htmlOutput("hp")
-                               
+                                htmlOutput("hp"),
+                                actionButton("submitToGoogle", "Submit to Google", class = "btn-primary")
+                                
                        )
                 )
               )),

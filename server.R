@@ -13,36 +13,22 @@ library(googleVis)
 
 library(grid)
 library(gridSVG)
+library("googlesheets")
+suppressPackageStartupMessages(library(dplyr))
+suppressPackageStartupMessages(library(googleVis))
+
+library(DT)
 
 
 BMI <- 0.00
 anyComplRaw <- 0.00
 
-### Regression coefficents
-sexFactor           <-  -0.0242882
-raceFactor          <-   0.0596692
-ageFactor           <-   0.0028318
-GastRxnFactor       <-  -0.5105275
-ColonRxnFactor      <-  -0.8071903
-CancerGIFactor      <-   0.0870107
-FunctionalFactor    <-  -0.5353748
-asaclassFactor      <-   0.4420653  
-steroidFactor       <-   0.4215457   
-ascitesFactor       <-   0.7761558  
-SepticFactor        <-   0.7766535  
-ventilarFactor      <-   0.904599   
-DMallFactor         <-   0.0697649  
-hypermedFactor      <-   0.0406726   
-hxchfFactor         <-   0.2994934
-SOBFactor           <-   0.2186209   
-smokerFactor        <-   0.1309884   
-hxcopdFactor        <-   0.2158972   
-dialysisFactor      <-   0.1193262     
-renafailFactor      <-   0.3735297 
-BMIFactor           <-   0.0094137
-consFactor          <-  -1.761664 
-
 df3 <- data.frame()
+#gap_ss <- gs_gap()
+
+
+
+
 
 shinyServer(function(input, output, session) {
 
@@ -53,6 +39,8 @@ shinyServer(function(input, output, session) {
     # when the submit button is pressed
     updateTabsetPanel(session, "tab", 'dataViewer')
     
+    
+        
     #Set the BMI variable
     BMI <- input$BMI
     functStatus <- switch(input$FunctionalStatus,
@@ -343,6 +331,16 @@ shinyServer(function(input, output, session) {
     }
     '}))
   
+  #Submit to google sheet
+  observeEvent(
+    input$submitToGoogle,
+   # gap <- gs_key("1Fhan4CT5wTdLDmNoD89JvHeeTfQmKtHbTfIyd7G3a1k"),
+    gs_add_row(gs_key("1Fhan4CT5wTdLDmNoD89JvHeeTfQmKtHbTfIyd7G3a1k"),
+               ws = "RiskOutputs",
+               input = data.frame("new conet[i, ]", "cell2"))
+
+   )
+
 })
 
 ###Not in use at the moment
@@ -358,6 +356,9 @@ calcRiskFinal <- function(rawAnyCompl=0){
     return(100)
   return(exp(rawAnyCompl)*100)
 }
+
+
+
 
 
 # output$distPlot <- renderPlot({
