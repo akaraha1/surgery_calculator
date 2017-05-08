@@ -107,7 +107,7 @@ shinyServer(function(input, output, session) {
   })
   
   ###Modifiable Risk Factors - in order by contribution
-  source(file.path("ModifiableRiskInfoBoxesServer.R"),  local = TRUE)$value
+  source(file.path("UIFiles", "ModifiableRiskInfoBoxesServer.R"),  local = TRUE)$value
   
   output$hp<-renderGvis({
     

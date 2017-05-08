@@ -61,7 +61,7 @@ dashboardPage(
     tabItems(
       tabItem(tabName = "predictor",
               #Links to a separate file with the Questionaire UI setup
-              source(file.path("QuestionaireTabUI.R"),  local = TRUE)$value
+              source(file.path("UIFiles", "QuestionaireTabUI.R"),  local = TRUE)$value
       ),
       tabItem(tabName = "dataViewer",
               fluidRow(
