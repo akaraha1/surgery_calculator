@@ -1,3 +1,8 @@
+###Questionaire User Interface
+## This file creates user interface for the questionaire page
+## Questions are sorted into boxes by topics.
+
+
 fluidRow(
   column(width = 4,
          box(width = NULL,
