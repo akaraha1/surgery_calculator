@@ -43,6 +43,8 @@ shinyServer(function(input, output, session) {
         
     #Set the BMI variable
     BMI <- input$BMI
+    
+    #Create variables for the modifiable risk factors
     functStatus <- switch(input$FunctionalStatus,
                           "Totally Depdendent" = 0,
                           "Partially Dependent" = 1,
@@ -50,6 +52,13 @@ shinyServer(function(input, output, session) {
     steroidStatus <- switch(input$steroids,
                             "Yes" = 1,
                             "No" = 0, 0)
+    CHFStatus <- switch(input$HxCHF, "Yes" = 1, "No" = 0, 0)
+    SOBStatus <- switch(input$SOB, "Yes" = 1, "No" = 0, 0)
+    COPDStatus <- switch(input$HxCOPD, "Yes" = 1, "No" = 0, 0)
+    SmokerStatus <- switch(input$Smoker, "Yes" = 1, "No" = 0, 0)
+    HTNStatus <- switch(input$HTNMeds, "Yes" = 1, "No" = 0, 0)
+    DMStatus <- switch(input$DMall, "Yes" = 1, "No" = 0, 0)
+    
     
   ###Calculate the Major Complication Risk
   anyComplRaw <- 0.00  #Make sure we're starting from 0
@@ -73,17 +82,15 @@ shinyServer(function(input, output, session) {
                                                "3: Severe diseases" = 3,
                                                "4: Near death" = 4, 1)
   anyComplRaw <- anyComplRaw + steroidFactor*steroidStatus
-  anyComplRaw <- anyComplRaw + ascitesFactor*switch(input$ascites,
-                                              "Yes" = 1,
-                                              "No" = 0, 0)
+  anyComplRaw <- anyComplRaw + ascitesFactor*switch(input$ascites, "Yes" = 1, "No" = 0, 0)
   anyComplRaw <- anyComplRaw + SepticFactor*switch(input$septic, "Yes" = 1, "No" = 0, 0)
   anyComplRaw <- anyComplRaw + ventilarFactor*switch(input$vent, "Yes" = 1, "No" = 0, 0)
-  anyComplRaw <- anyComplRaw + DMallFactor*switch(input$DMall, "Yes" = 1, "No" = 0, 0)
-  anyComplRaw <- anyComplRaw + hypermedFactor*switch(input$HTNMeds, "Yes" = 1, "No" = 0, 0)
-  anyComplRaw <- anyComplRaw + hxchfFactor*switch(input$HxCHF, "Yes" = 1, "No" = 0, 0)
-  anyComplRaw <- anyComplRaw + SOBFactor*switch(input$SOB, "Yes" = 1, "No" = 0, 0)
-  anyComplRaw <- anyComplRaw + smokerFactor*switch(input$Smoker, "Yes" = 1, "No" = 0, 0)
-  anyComplRaw <- anyComplRaw + hxcopdFactor*switch(input$HxCOPD, "Yes" = 1, "No" = 0, 0)
+  anyComplRaw <- anyComplRaw + DMallFactor*DMStatus
+  anyComplRaw <- anyComplRaw + hypermedFactor*HTNStatus
+  anyComplRaw <- anyComplRaw + hxchfFactor*CHFStatus
+  anyComplRaw <- anyComplRaw + SOBFactor*SOBStatus
+  anyComplRaw <- anyComplRaw + smokerFactor*SmokerStatus
+  anyComplRaw <- anyComplRaw + hxcopdFactor*COPDStatus
   anyComplRaw <- anyComplRaw + dialysisFactor*switch(input$Dialysis, "Yes" = 1, "No" = 0, 0)
   anyComplRaw <- anyComplRaw + renafailFactor*switch(input$RenalFailure, "Yes" = 1, "No" = 0, 0)
   anyComplRaw <- anyComplRaw + BMIFactor*BMI
@@ -100,53 +107,7 @@ shinyServer(function(input, output, session) {
   })
   
   ###Modifiable Risk Factors - in order by contribution
-  # Functional Status
-  # Steroids
-  # CHF
-  # SOB
-  # COPD
-  # smoker
-  # DM
-  # HTN
-  
-  ##Show functional Status Box if applicable
-  output$FunctStatus <- renderUI({
-    if(functStatus < 2) {#if the person is less than fully independent
-      tmpRisk <- anyComplRaw - FunctionalFactor*functStatus + FunctionalFactor*2
-      newRisk <- calcRiskFinal(tmpRisk) - calcRiskFinal(anyComplRaw) 
-      
-      valueBox(
-        paste0(formatC(newRisk, digits = 1, format = "f"), "%"),
-        "Functional Status Contribution",
-        icon = icon("list"),
-        color = "green"
-      )
-    }
-  })
-  
-  
-  ##Show Sterioid Status Box if applicable
-  output$SteroidBox <- renderUI({
-    if(steroidStatus == 1) {#if steroids == yes
-      riskChange <- calcRiskFinal(anyComplRaw) - calcRiskFinal(anyComplRaw - steroidFactor)
-      valueBox(
-        paste0(formatC(riskChange, digits = 1, format = "f"), "%"),
-        "Steroid Risk Contribution",
-        icon = icon("list"),
-        color = "green"
-      )
-    }
-  })
-  
-  output$modRisk2 <- renderUI({
-    if(BMI > 20)
-      valueBox(
-        paste0(formatC(25.0, digits = 1, format = "f"), "%"),
-        "Mod risk 1 Other Info",
-        icon = icon("list"),
-        color = "green"
-      )
-  })
+  source(file.path("ModifiableRiskInfoBoxesServer.R"),  local = TRUE)$value
   
   output$hp<-renderGvis({
     

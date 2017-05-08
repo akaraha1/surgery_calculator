@@ -103,14 +103,14 @@ dashboardPage(
                                     title = "Modifiable Risk Factors", status = "info", solidHeader = TRUE,
                                 #h3("", align = "center"),
                                 helpText("The following are mofifiable risk factors which could improve you surgery risk profile", align = "center"),
-                                uiOutput("FunctStatus"),
+                                uiOutput("FunctStatusBox"),
                                 uiOutput("SteroidBox"),
-                                uiOutput("modRisk3"),
-                                uiOutput("modRisk4"),
-                                uiOutput("modRisk5"),
-                                uiOutput("modRisk6"),
-                                uiOutput("modRisk7"),
-                                uiOutput("modRisk8")
+                                uiOutput("CHFBox"),
+                                uiOutput("SOBBox"),
+                                uiOutput("COPDBox"),
+                                uiOutput("smokerBox"),
+                                uiOutput("DMBox"),
+                                uiOutput("HTNBox")
                                 )
                        ),
                        fluidRow(width=12,
