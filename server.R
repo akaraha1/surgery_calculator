@@ -296,7 +296,7 @@ shinyServer(function(input, output, session) {
   observeEvent(
     input$submitToGoogle,
    # gap <- gs_key("1Fhan4CT5wTdLDmNoD89JvHeeTfQmKtHbTfIyd7G3a1k"),
-    gs_add_row(gs_key("1Fhan4CT5wTdLDmNoD89JvHeeTfQmKtHbTfIyd7G3a1k"),
+    gs_add_row(gs_key("1Fhan4CT5wTdLDmNoD89JvHeeTfQmKtHbTfIyd7G3a1k", visibility = "private"),
                ws = "RiskOutputs",
                input = data.frame("new conet[i, ]", "cell2"))
 
