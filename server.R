@@ -13,9 +13,10 @@ library(googleVis)
 
 library(grid)
 library(gridSVG)
-library("googlesheets")
+library(boxr)
+#library("googlesheets")
 suppressPackageStartupMessages(library(dplyr))
-suppressPackageStartupMessages(library(googleVis))
+#suppressPackageStartupMessages(library(googleVis))
 
 library(DT)
 
@@ -24,6 +25,7 @@ BMI <- 0.00
 anyComplRaw <- 0.00
 
 df3 <- data.frame()
+dfMaster <- data.frame()
 #gap_ss <- gs_gap()
 
 
@@ -59,6 +61,19 @@ shinyServer(function(input, output, session) {
     HTNStatus <- switch(input$HTNMeds, "Yes" = 1, "No" = 0, 0)
     DMStatus <- switch(input$DMall, "Yes" = 1, "No" = 0, 0)
     
+    #			Surgery	Cancer	Funcational	ASAClass	Steroid	Ascites	Septic	Vent	DMAll	HTNMed	HxCHF	SOB	Smoker	HxCOPD	Dialysis	RenalFailure	BMI	MajorComplications
+    dfMaster <<- data.frame(1,2,3,
+                                     1,
+                                     1,1,1,1,1,1,1,10,1,1,1,1,1,1,1,1,1
+                                     
+                       # what = c('Sex',
+                       #          'Race',
+                       #          'Age')
+                       )
+    
+
+    print(dfMaster)
+
     
   ###Calculate the Major Complication Risk
   anyComplRaw <- 0.00  #Make sure we're starting from 0
@@ -159,86 +174,9 @@ shinyServer(function(input, output, session) {
     
   })
   
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-
-
-  # ###BMI valuebox - Setup
-  # output$BMIBox <- renderValueBox({
-  #   valueBox(formatC(BMI, digits = 1, format = "f"), subtitle = "BMI",
-  #            icon = icon("area-chart"),
-  #            color = if (BMI > 25) "red" else "aqua"
-  #   )
-  # })
-  # #Update the text in the BMI text field
-  # updateTextInput(session, 'BMI', value = formatC(BMI, digits = 2, format = "f"))
-  
-
-  
-  # ###SOME OTHER INFO
-  # output$generic1 <- renderValueBox({
-  #   valueBox(
-  #     paste0(formatC(25.0, digits = 1, format = "f"), "%"),
-  #     "Some Other Info",
-  #     icon = icon("list"),
-  #     color = "yellow"
-  #   )
-  # })
-  
-  ###SMOKER - Modified Risk
-  if(input$Smoker == "Yes")
-    tmpRisk <- exp(anyCompl-smokerFactor)*100 else tmpRisk <- exp(anyCompl)*100
-  output$generic2 <- renderValueBox({
-    valueBox(
-      paste0(formatC(tmpRisk, digits = 1, format = "f"), "%"),
-      "If you stopped smoking",
-      icon = icon("list"),
-      color = "yellow"
-    )
-  })
-  
-  ###BMI - 10% weight reduction
-  output$generic3 <- renderValueBox({
-
-    anyComplRaw <- anyComplRaw - (BMIFactor*BMI)
-    weight <- as.numeric(input$weight)
-    height <- as.numeric(input$height)
-    BMI <- ((weight-0.1*weight)/height/height) * 10000
-    anyComplRaw <- anyComplRaw + (0.0094137*BMI)
-    tmpRisk <- exp(anyComplRaw)*100
-    lbsLose <- formatC(0.1*weight/2.20462, digits = 1, format = "f")
-
-    valueBox(
-      paste0(formatC(tmpRisk, digits = 1, format = "f"), "%"),
-      paste0("If you lost ", lbsLose, " lbs"),
-      icon = icon("scale", lib = "glyphicon"),
-      color = "blue"
-    )
-  })
-  
-
-  output$generic4 <- renderValueBox({
-    valueBox(
-      paste0(formatC(25.0, digits = 1, format = "f"), "%"),
-      "Some Other Info",
-      icon = icon("list"),
-      color = "green"
-    )
-  })
-  
   #Create the risk plot graph
   output$riskPlot2 <- renderPlot ({
 
-    
     df3 <- data.frame(units = c(4.7, 6.7, 20),
                       what = c('If you lost X lbs', 'If you stopped smoking',
                                'Your Current Risk')
@@ -247,8 +185,6 @@ shinyServer(function(input, output, session) {
     posx <- runif(1000, 0, 10)
     posy <- data.frame(1, 2, 3)#runif(1000, 0, 5)
     ggplot(data.frame(x = c(85, 70, 20), y =c(1, 2, 3)), aes(x, y)) + geom_emoji(emoji="1f63b")
-    
-    
     
   })
   
@@ -270,8 +206,6 @@ shinyServer(function(input, output, session) {
     title(main = list("Some Demo Data...", font = 4))
     
   })
-  
-  
   
   }) # end submit button method
 
@@ -295,57 +229,18 @@ shinyServer(function(input, output, session) {
   #Submit to google sheet
   observeEvent(
     input$submitToGoogle,
-   # gap <- gs_key("1Fhan4CT5wTdLDmNoD89JvHeeTfQmKtHbTfIyd7G3a1k"),
-    gs_add_row(gs_key("1Fhan4CT5wTdLDmNoD89JvHeeTfQmKtHbTfIyd7G3a1k", visibility = "private"),
-               ws = "RiskOutputs",
-               input = data.frame("new conet[i, ]", "cell2"))
+    BoxServerFx()
+
 
    )
 
 })
-
-###Not in use at the moment
-# calcBMI <- function(weight=0, height=0){
-#   if ((weight/height/height) * 10000 > 55) {
-#     return(55)
-#   }
-#   return((weight/height/height) * 10000)
-# }
 
 calcRiskFinal <- function(rawAnyCompl=0){
   if(exp(rawAnyCompl)*100 > 100)
     return(100)
   return(exp(rawAnyCompl)*100)
 }
-
-
-
-
-
-# output$distPlot <- renderPlot({
-# 
-#   # generate bins based on input$PtAge from ui.R
-#   x    <- faithful[, 2]
-#   bins <- seq(min(x), max(x), length.out = input$PtAge + 1)
-#   
-#   # draw the histogram with the specified number of bins
-#   hist(x, breaks = bins, col = 'darkgray', border = 'white')
-#   
-#   calcBMI()
-# })
-
-
-
-
-# # img <- readPNG(system.file("img", "cigarette.ong", package="png"))
-#  pictogram(icon = system.file("img", "cigarette.ong", package="png"), n = c( 12, 35, 7),
-#            grouplabels=c("12 R logos","35 R logos","7 R logos"))
-
-# man<-readPNG("cigarette.png")
-# pictogram(icon=man,
-#           n=c(100,35,25),
-#           grouplabels=c("dudes","chaps","lads"), hicons=100, vspace=1 )
-
 
 fill_images <- function()
 {
@@ -380,6 +275,125 @@ clip_images <- function(restore_grid = TRUE)
 }
 
 
+
+BoxServerFx <- function() {
+  box_auth()
+  # df<- box_search("RiskSurgeryDataReport.xlsx") %>%    # Find a remote file
+  #   box_read() %>%
+  #   # %>%                                   # Download it as a data.frame
+  #   #    group_by(origin, dest, month) %>%              #   Do some, er, cutting edge
+  #   #summarise(mu = mean(arr_delay), n = n()) %>%   #   analysis with dplyr!
+  #   
+  #   
+  #   df <- rbind(df, c(1,0,1)) %>%
+  #     
+  #     box_write(filename= "RiskSurgeryDataReport.xlsx", dir_id = "26488602950", x =df) %>%              # Convert to .xlsx, upload
+  #     box_add_description("Description Here") # Add a description to your file!
+  # 
+  # 
+  # 
+  
+  df<- box_search("RiskSurgeryDataReport.xlsx") %>%    # Find a remote file
+    box_read()
+  
+ #  df <- box_dl(file_id="169850282261", overwrite = TRUE) %>%
+ # box_read()
+  
+  print(nrow(df))
+  
+  
+
+  dfMaster <- unname(dfMaster)
+
+
+
+
+  #df <- rbind(df, dfMaster)
+  # insertRow(df, newrow, r)
+
+  # print(dfMaster)
+  df[nrow(df) + 1, ] <- dfMaster
+
+
+  print(df)
+  # 
+  box_write(df,
+           filename = "RiskSurgeryDataReport.xlsx",
+           dir_id = "26488602950",
+           description = NULL)
+  
+}
+
+
+
+
+
+
+# 
+# ###SMOKER - Modified Risk
+# if(input$Smoker == "Yes")
+#   tmpRisk <- exp(anyCompl-smokerFactor)*100 else tmpRisk <- exp(anyCompl)*100
+# output$generic2 <- renderValueBox({
+#   valueBox(
+#     paste0(formatC(tmpRisk, digits = 1, format = "f"), "%"),
+#     "If you stopped smoking",
+#     icon = icon("list"),
+#     color = "yellow"
+#   )
+# })
+# 
+# ###BMI - 10% weight reduction
+# output$generic3 <- renderValueBox({
+#   
+#   anyComplRaw <- anyComplRaw - (BMIFactor*BMI)
+#   weight <- as.numeric(input$weight)
+#   height <- as.numeric(input$height)
+#   BMI <- ((weight-0.1*weight)/height/height) * 10000
+#   anyComplRaw <- anyComplRaw + (0.0094137*BMI)
+#   tmpRisk <- exp(anyComplRaw)*100
+#   lbsLose <- formatC(0.1*weight/2.20462, digits = 1, format = "f")
+#   
+#   valueBox(
+#     paste0(formatC(tmpRisk, digits = 1, format = "f"), "%"),
+#     paste0("If you lost ", lbsLose, " lbs"),
+#     icon = icon("scale", lib = "glyphicon"),
+#     color = "blue"
+#   )
+# })
+# 
+# 
+# output$generic4 <- renderValueBox({
+#   valueBox(
+#     paste0(formatC(25.0, digits = 1, format = "f"), "%"),
+#     "Some Other Info",
+#     icon = icon("list"),
+#     color = "green"
+#   )
+# })
+
+# output$distPlot <- renderPlot({
+# 
+#   # generate bins based on input$PtAge from ui.R
+#   x    <- faithful[, 2]
+#   bins <- seq(min(x), max(x), length.out = input$PtAge + 1)
+#   
+#   # draw the histogram with the specified number of bins
+#   hist(x, breaks = bins, col = 'darkgray', border = 'white')
+#   
+#   calcBMI()
+# })
+
+
+
+
+# # img <- readPNG(system.file("img", "cigarette.ong", package="png"))
+#  pictogram(icon = system.file("img", "cigarette.ong", package="png"), n = c( 12, 35, 7),
+#            grouplabels=c("12 R logos","35 R logos","7 R logos"))
+
+# man<-readPNG("cigarette.png")
+# pictogram(icon=man,
+#           n=c(100,35,25),
+#           grouplabels=c("dudes","chaps","lads"), hicons=100, vspace=1 )
 
 
 # 
@@ -434,4 +448,33 @@ clip_images <- function(restore_grid = TRUE)
 #   BMI <- as.numeric(input$BMI)
 # else
 #   BMI <- calcBMI(weight=as.numeric(input$weight), height=as.numeric(input$height))
+
+# ###BMI valuebox - Setup
+# output$BMIBox <- renderValueBox({
+#   valueBox(formatC(BMI, digits = 1, format = "f"), subtitle = "BMI",
+#            icon = icon("area-chart"),
+#            color = if (BMI > 25) "red" else "aqua"
+#   )
+# })
+# #Update the text in the BMI text field
+# updateTextInput(session, 'BMI', value = formatC(BMI, digits = 2, format = "f"))
+
+# ###BMI valuebox - Setup
+# output$BMIBox <- renderValueBox({
+#   valueBox(formatC(BMI, digits = 1, format = "f"), subtitle = "BMI",
+#            icon = icon("area-chart"),
+#            color = if (BMI > 25) "red" else "aqua"
+#   )
+# })
+# #Update the text in the BMI text field
+# updateTextInput(session, 'BMI', value = formatC(BMI, digits = 2, format = "f"))
+
+###Not in use at the moment
+# calcBMI <- function(weight=0, height=0){
+#   if ((weight/height/height) * 10000 > 55) {
+#     return(55)
+#   }
+#   return((weight/height/height) * 10000)
+# }
+
 
