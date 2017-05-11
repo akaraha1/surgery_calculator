@@ -21,7 +21,6 @@ suppressPackageStartupMessages(library(dplyr))
 library(DT)
 
 
-BMI <- 0.00
 anyComplRaw <- 0.00
 
 df3 <- data.frame()
@@ -40,76 +39,91 @@ shinyServer(function(input, output, session) {
     #Switches from the quertionaire view to the data view
     # when the submit button is pressed
     updateTabsetPanel(session, "tab", 'dataViewer')
-    
-    
-        
-    #Set the BMI variable
-    BMI <- input$BMI
-    
-    #Create variables for the modifiable risk factors
-    functStatus <- switch(input$FunctionalStatus,
-                          "Totally Depdendent" = 0,
-                          "Partially Dependent" = 1,
-                          "Fully Independent" = 2, 2)
-    steroidStatus <- switch(input$steroids,
-                            "Yes" = 1,
-                            "No" = 0, 0)
-    CHFStatus <- switch(input$HxCHF, "Yes" = 1, "No" = 0, 0)
-    SOBStatus <- switch(input$SOB, "Yes" = 1, "No" = 0, 0)
-    COPDStatus <- switch(input$HxCOPD, "Yes" = 1, "No" = 0, 0)
-    SmokerStatus <- switch(input$Smoker, "Yes" = 1, "No" = 0, 0)
-    HTNStatus <- switch(input$HTNMeds, "Yes" = 1, "No" = 0, 0)
-    DMStatus <- switch(input$DMall, "Yes" = 1, "No" = 0, 0)
-    
-    #			Surgery	Cancer	Funcational	ASAClass	Steroid	Ascites	Septic	Vent	DMAll	HTNMed	HxCHF	SOB	Smoker	HxCOPD	Dialysis	RenalFailure	BMI	MajorComplications
-    dfMaster <<- data.frame(1,2,3,
-                                     1,
-                                     1,1,1,1,1,1,1,10,1,1,1,1,1,1,1,1,1
-                                     
-                       # what = c('Sex',
-                       #          'Race',
-                       #          'Age')
-                       )
-    
 
-    print(dfMaster)
-
+    dfMaster <<- data.frame(switch(input$GenderButton, "Male" = 1, "Female" = 0),
+                            switch(input$RaceButton, "White" = 1, "Non-White" = 0, 1),
+                            input$PtAge,
+                            switch(input$SurgeryTypeButton,
+                                   "Pancreas" = "Pancreas",
+                                   "Stomach" = "Stomach",
+                                   "Colon" = "Colon"),
+                            switch(input$GICancer,
+                                   "Cancer Surgery" = 1,
+                                   "Benign disease" = 0, 0),
+                            switch(input$FunctionalStatus,
+                                   "Totally Depdendent" = 0,
+                                   "Partially Dependent" = 1,
+                                   "Fully Independent" = 2, 2),
+                            switch(input$OtherMedical, "1: Totally Healthy" = 1,
+                                   "2: Mild diseases" = 2,
+                                   "3: Severe diseases" = 3,
+                                   "4: Near death" = 4, 1),
+                            switch(input$steroids, "Yes" = 1, "No" = 0, 0),
+                            switch(input$ascites, "Yes" = 1, "No" = 0, 0),
+                            switch(input$septic, "Yes" = 1, "No" = 0, 0),
+                            switch(input$vent, "Yes" = 1, "No" = 0, 0),
+                            switch(input$DMall, "Yes" = 1, "No" = 0, 0),
+                            switch(input$HTNMeds, "Yes" = 1, "No" = 0, 0),
+                            switch(input$HxCHF, "Yes" = 1, "No" = 0, 0),
+                            switch(input$SOB, "Yes" = 1, "No" = 0, 0),
+                            switch(input$Smoker, "Yes" = 1, "No" = 0, 0),
+                            switch(input$HxCOPD, "Yes" = 1, "No" = 0, 0),
+                            switch(input$Dialysis, "Yes" = 1, "No" = 0, 0),
+                            switch(input$RenalFailure, "Yes" = 1, "No" = 0, 0),
+                            input$BMI,
+                            -1  #placeholder for major complication
+                            )
+    
+    colnames(dfMaster) <<- c('Sex',
+                             'Race',
+                             'Age',
+                             'Surgery',
+                             'Cancer',
+                             'Funcational',
+                             'ASAClass',
+                             'Steroid',
+                             'Ascites',
+                             'Septic',
+                             'Vent',
+                             'DMAll',
+                             'HTNMed',
+                             'HxCHF',
+                             'SOB',
+                             'Smoker',
+                             'HxCOPD',
+                             'Dialysis',
+                             'RenalFailure',
+                             'BMI',
+                             'MajorComplications')
     
   ###Calculate the Major Complication Risk
   anyComplRaw <- 0.00  #Make sure we're starting from 0
-  anyComplRaw <- sexFactor*switch(input$GenderButton, "Male" = 1, "Female" = 0)
-  anyComplRaw <- anyComplRaw + raceFactor*switch(input$RaceButton, "White" = 1, "Non-White" = 0, 1)
-  anyComplRaw <- anyComplRaw + ageFactor*input$PtAge
-  anyComplRaw <- anyComplRaw + switch(input$SurgeryTypeButton,
-                                "Pancreas" = 0,
-                                "Stomach" = GastRxnFactor,
-                                "Colon" = ColonRxnFactor)
-  anyComplRaw <- anyComplRaw + switch(input$SurgeryTypeButton,
-                                "Pancreas" = 0,
-                                "Stomach" = -0.5105275,
-                                "Colon" = -0.8071903, 0)
-  anyComplRaw <- anyComplRaw + FunctionalFactor*functStatus
-  anyComplRaw <- anyComplRaw + CancerGIFactor*switch(input$GICancer,
-                                               "Cancer Surgery" = 1,
-                                               "Benign disease" = 0, 0)
-  anyComplRaw <- anyComplRaw + asaclassFactor*switch(input$OtherMedical, "1: Totally Healthy" = 1,
-                                               "2: Mild diseases" = 2,
-                                               "3: Severe diseases" = 3,
-                                               "4: Near death" = 4, 1)
-  anyComplRaw <- anyComplRaw + steroidFactor*steroidStatus
-  anyComplRaw <- anyComplRaw + ascitesFactor*switch(input$ascites, "Yes" = 1, "No" = 0, 0)
-  anyComplRaw <- anyComplRaw + SepticFactor*switch(input$septic, "Yes" = 1, "No" = 0, 0)
-  anyComplRaw <- anyComplRaw + ventilarFactor*switch(input$vent, "Yes" = 1, "No" = 0, 0)
-  anyComplRaw <- anyComplRaw + DMallFactor*DMStatus
-  anyComplRaw <- anyComplRaw + hypermedFactor*HTNStatus
-  anyComplRaw <- anyComplRaw + hxchfFactor*CHFStatus
-  anyComplRaw <- anyComplRaw + SOBFactor*SOBStatus
-  anyComplRaw <- anyComplRaw + smokerFactor*SmokerStatus
-  anyComplRaw <- anyComplRaw + hxcopdFactor*COPDStatus
-  anyComplRaw <- anyComplRaw + dialysisFactor*switch(input$Dialysis, "Yes" = 1, "No" = 0, 0)
-  anyComplRaw <- anyComplRaw + renafailFactor*switch(input$RenalFailure, "Yes" = 1, "No" = 0, 0)
-  anyComplRaw <- anyComplRaw + BMIFactor*BMI
+  anyComplRaw <- sexFactor*dfMaster[1,'Sex']
+  anyComplRaw <- anyComplRaw + raceFactor*dfMaster[1,'Race']
+  anyComplRaw <- anyComplRaw + ageFactor*dfMaster[1, 'Age']
+  #anyComplRaw <- anyComplRaw + dfMaster[1, 'Surgery']
+  anyComplRaw <- anyComplRaw + switch(as.character(dfMaster[1, 'Surgery']), "Pancreas" = 0, "Stomach" = GastRxnFactor, "Colon" = ColonRxnFactor, 0)
+  anyComplRaw <- anyComplRaw + FunctionalFactor*dfMaster[1, 'Funcational']
+  anyComplRaw <- anyComplRaw + CancerGIFactor*dfMaster[1, 'Cancer']
+  anyComplRaw <- anyComplRaw + asaclassFactor*dfMaster[1, 'ASAClass']
+  anyComplRaw <- anyComplRaw + steroidFactor*dfMaster[1, 'Steroid']
+  anyComplRaw <- anyComplRaw + ascitesFactor*dfMaster[1, 'Ascites']
+  anyComplRaw <- anyComplRaw + SepticFactor*dfMaster[1, 'Septic']
+  anyComplRaw <- anyComplRaw + ventilarFactor*dfMaster[1, 'Vent']
+  anyComplRaw <- anyComplRaw + DMallFactor*dfMaster[1, 'DMAll']
+  anyComplRaw <- anyComplRaw + hypermedFactor*dfMaster[1, 'HTNMed']
+  anyComplRaw <- anyComplRaw + hxchfFactor*dfMaster[1, 'HxCHF']
+  anyComplRaw <- anyComplRaw + SOBFactor*dfMaster[1, 'SOB']
+  anyComplRaw <- anyComplRaw + smokerFactor*dfMaster[1, 'Smoker']
+  anyComplRaw <- anyComplRaw + hxcopdFactor*dfMaster[1, 'HxCOPD']
+  anyComplRaw <- anyComplRaw + dialysisFactor*dfMaster[1, 'Dialysis']
+  anyComplRaw <- anyComplRaw + renafailFactor*dfMaster[1, 'RenalFailure']
+  anyComplRaw <- anyComplRaw + BMIFactor*dfMaster[1, 'BMI']
   anyComplRaw <- anyComplRaw + consFactor
+  
+  dfMaster[1,'MajorComplications'] <<- calcRiskFinal(anyComplRaw)
+  
+  
   
   ###MAJOR RISK COMPLICATION BOX
   output$majorComplicationBox <- renderValueBox({
@@ -126,7 +140,7 @@ shinyServer(function(input, output, session) {
   
   output$hp<-renderGvis({
     
-    gvisGauge(data.frame(Item='BMI',Value=BMI),
+    gvisGauge(data.frame(Item='BMI',Value=dfMaster[1, 'BMI']),
               options=list(min=0,
                            max=55,
                            greenFrom=15,
@@ -292,6 +306,9 @@ BoxServerFx <- function() {
   # 
   # 
   # 
+  print(dfMaster)
+  
+  print('------')
   
   df<- box_search("RiskSurgeryDataReport.xlsx") %>%    # Find a remote file
     box_read()
