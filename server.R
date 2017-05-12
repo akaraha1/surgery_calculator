@@ -319,46 +319,50 @@ clip_images <- function(restore_grid = TRUE)
 BoxServerFx <- function() {
   
   if(nrow(dfMaster) == 0) {
-  showNotification("You cannot save data until you submit the questionaire.",
-                   type = "error",
-                   duration = 5)
-  return()
-}
+    #If there's no data don't allow a null submission
+    showNotification("You cannot save data until you submit the questionaire.",
+                     type = "error", duration = 5)
+    return()
+  }
   
-  
+  ##Submit the data
+  # Authorize your account
   box_auth()
-  # df<- box_search("RiskSurgeryDataReport.xlsx") %>%    # Find a remote file
-  #   box_read() %>%
-  #   # %>%                                   # Download it as a data.frame
-  #   #    group_by(origin, dest, month) %>%              #   Do some, er, cutting edge
-  #   #summarise(mu = mean(arr_delay), n = n()) %>%   #   analysis with dplyr!
-  #   
-  #   
-  #   df <- rbind(df, c(1,0,1)) %>%
-  #     
-  #     box_write(filename= "RiskSurgeryDataReport.xlsx", dir_id = "26488602950", x =df) %>%              # Convert to .xlsx, upload
-  #     box_add_description("Description Here") # Add a description to your file!
-  # 
-  # 
-  # 
-
+  
+  #Load the file
   df<- box_search("RiskSurgeryDataReport.xlsx") %>%    # Find a remote file
     box_read()
   
- #  df <- box_dl(file_id="169850282261", overwrite = TRUE) %>%
- # box_read()
-  
+  #Add the current data to the end of the old data
   dfMaster <- unname(dfMaster)
   df[nrow(df) + 1, ] <- dfMaster
-
-  box_write(df,
-           filename = "RiskSurgeryDataReport.xlsx",
-           dir_id = "26488602950",
-           description = NULL)
   
+  #Write the data back to box
+  box_write(df, filename = "RiskSurgeryDataReport.xlsx",
+            dir_id = "26488602950",
+            description = NULL)
 }
 
 
+
+
+
+
+# df<- box_search("RiskSurgeryDataReport.xlsx") %>%    # Find a remote file
+#   box_read() %>%
+#   # %>%                                   # Download it as a data.frame
+#   #    group_by(origin, dest, month) %>%              #   Do some, er, cutting edge
+#   #summarise(mu = mean(arr_delay), n = n()) %>%   #   analysis with dplyr!
+#   
+#   
+#   df <- rbind(df, c(1,0,1)) %>%
+#     
+#     box_write(filename= "RiskSurgeryDataReport.xlsx", dir_id = "26488602950", x =df) %>%              # Convert to .xlsx, upload
+#     box_add_description("Description Here") # Add a description to your file!
+#  #  df <- box_dl(file_id="169850282261", overwrite = TRUE) %>%
+# box_read()
+# 
+# 
 
 
 
