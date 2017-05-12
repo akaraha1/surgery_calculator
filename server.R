@@ -11,14 +11,15 @@ library(emojifont)
 
 library(boxr)
 
-#library(png)
-#library(googleVis)
+library(googleVis)
+suppressPackageStartupMessages(library(googleVis))
 
-#library(grid)
-#library(gridSVG)
+library(grid)
+library(gridSVG)
 suppressPackageStartupMessages(library(dplyr))
 
 #library(DT)
+#library(png)
 
 
 anyComplRaw <- 0.00
