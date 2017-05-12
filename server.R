@@ -330,7 +330,7 @@ BoxServerFx <- function() {
   box_auth()
   
   #Load the file
-  df<- box_search("RiskSurgeryDataReport.xlsx") %>%    # Find a remote file
+  df<- box_search("RiskSurgeryData.xlsx") %>%    # Find a remote file
     box_read()
   
   #Add the current data to the end of the old data
@@ -338,7 +338,7 @@ BoxServerFx <- function() {
   df[nrow(df) + 1, ] <- dfMaster
   
   #Write the data back to box
-  box_write(df, filename = "RiskSurgeryDataReport.xlsx",
+  box_write(df, filename = "RiskSurgeryData.xlsx",
             dir_id = "26488602950",
             description = NULL)
 }
