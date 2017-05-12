@@ -48,9 +48,22 @@ dashboardPage(
   dashboardSidebar(
     sidebarMenu(style = "position: fixed; overflow: visible;", id = "tab",
       menuItem("Patient Questionnaire", tabName = "predictor", icon = icon("medkit")),
-      menuItem("Risk Prediction Viewer", tabName = "dataViewer", icon = icon("line-chart")),
+      menuItem("Risk Prediction Viewer", tabName = "dataViewer", icon = icon("dashboard")),
+      sidebarMenuOutput("SaveFeature"),
+      menuItem("Save Data", icon = icon("check-circle", lib = "font-awesome"), tabName = "tabOne",
+               # Input directly under menuItem
+               textInput("PtID", "Pt ID:", width = '98%'),
+               
+               
+               # Input inside of menuSubItem
+               menuSubItem(icon = NULL,
+                           actionButton("SavetoServer", "Submit To Server", width = '90%')
+               )
+      ),
+   
       menuItem("About", tabName = "about", icon = icon("question-circle")),
       menuItem("Source Code", href = "https://github.com/akaraha1/surgery_calculator", icon = icon("github-alt"))
+
     )
   ),
   dashboardBody(useShinyjs(),
@@ -59,6 +72,16 @@ dashboardPage(
                 ),
                 
     tabItems(
+      tabItem("tabOne",
+              box(title = "Box One", 
+                  width = 12,
+                  height = "500px",
+                  status = "success", 
+                  solidHeader = TRUE, 
+                  collapsible = TRUE,
+                  verbatimTextOutput("boxOneText")
+              )
+      ),
       tabItem(tabName = "predictor",
               #Links to a separate file with the Questionaire UI setup
               source(file.path("UIFiles", "QuestionaireTabUI.R"),  local = TRUE)$value

@@ -11,7 +11,6 @@
 # ss <- googlesheets::gs_key(sheet_key)
 
 
-
 ########## MAJOR COMPLICATION REGRESSION COEFFICENTS
 sexFactor           <-  -0.0242882
 raceFactor          <-   0.0596692

@@ -220,6 +220,31 @@ shinyServer(function(input, output, session) {
     title(main = list("Some Demo Data...", font = 4))
     
   })
+  output$SaveFeature <- renderMenu({
+   # # sidebarMenu(
+   #    # menuSubItem("Save Data",
+   #    #             tabName = "SaveFeature",
+   #    #             icon = icon("angle-double-right", lib = "font-awesome")),
+   #    #  textInput("PtId", "Pt ID", value = "", width = '85%'),
+   #    # actionButton("SaveServer", "Save To Server", width = '95%', icon("check-circle", lib = "font-awesome"))
+   #    # 
+   #    sidebarMenu(id = "sidebarmenu",
+   #                menuItem("Save Data", tabName = "b", icon = icon("angle-double-right", lib = "font-awesome"),
+   #                         menuSubItem(text = 'subitem', tabName='subitemName')),
+   #                textInput("PtId", "Pt ID", value = "", width = '85%'),
+   #                
+   #                conditionalPanel("input.sidebarmenu == 'subitemname'", #fixed
+   #                                 sliderInput("b", "Under sidebarMenu", 1, 100, 50),
+   #                                  textInput("PtId", "Pt ID", value = "", width = '85%')
+   #                                 
+   #                )
+   #                    
+   #  
+   #  )
+
+    
+    
+  })
   
   }) # end submit button method
 
@@ -240,13 +265,14 @@ shinyServer(function(input, output, session) {
     }
     '}))
   
-  #Submit to google sheet
+  #Submit to Box
   observeEvent(
-    input$submitToGoogle,
+    input$SavetoServer,
     BoxServerFx()
 
 
    )
+ 
 
 })
 
@@ -291,6 +317,15 @@ clip_images <- function(restore_grid = TRUE)
 
 
 BoxServerFx <- function() {
+  
+  if(nrow(dfMaster) == 0) {
+  showNotification("You cannot save data until you submit the questionaire.",
+                   type = "error",
+                   duration = 5)
+  return()
+}
+  
+  
   box_auth()
   # df<- box_search("RiskSurgeryDataReport.xlsx") %>%    # Find a remote file
   #   box_read() %>%
@@ -306,34 +341,16 @@ BoxServerFx <- function() {
   # 
   # 
   # 
-  print(dfMaster)
-  
-  print('------')
-  
+
   df<- box_search("RiskSurgeryDataReport.xlsx") %>%    # Find a remote file
     box_read()
   
  #  df <- box_dl(file_id="169850282261", overwrite = TRUE) %>%
  # box_read()
   
-  print(nrow(df))
-  
-  
-
   dfMaster <- unname(dfMaster)
-
-
-
-
-  #df <- rbind(df, dfMaster)
-  # insertRow(df, newrow, r)
-
-  # print(dfMaster)
   df[nrow(df) + 1, ] <- dfMaster
 
-
-  print(df)
-  # 
   box_write(df,
            filename = "RiskSurgeryDataReport.xlsx",
            dir_id = "26488602950",
