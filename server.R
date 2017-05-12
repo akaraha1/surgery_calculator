@@ -72,6 +72,7 @@ shinyServer(function(input, output, session) {
                             switch(input$Dialysis, "Yes" = 1, "No" = 0, 0),
                             switch(input$RenalFailure, "Yes" = 1, "No" = 0, 0),
                             input$BMI,
+                            -1, #placeholder for raw major complications
                             -1  #placeholder for major complication
                             )
     
@@ -95,41 +96,19 @@ shinyServer(function(input, output, session) {
                              'Dialysis',
                              'RenalFailure',
                              'BMI',
+                             'Raw_MajorComplications',
                              'MajorComplications')
     
-  ###Calculate the Major Complication Risk
-  anyComplRaw <- 0.00  #Make sure we're starting from 0
-  anyComplRaw <- sexFactor*dfMaster[1,'Sex']
-  anyComplRaw <- anyComplRaw + raceFactor*dfMaster[1,'Race']
-  anyComplRaw <- anyComplRaw + ageFactor*dfMaster[1, 'Age']
-  #anyComplRaw <- anyComplRaw + dfMaster[1, 'Surgery']
-  anyComplRaw <- anyComplRaw + switch(as.character(dfMaster[1, 'Surgery']), "Pancreas" = 0, "Stomach" = GastRxnFactor, "Colon" = ColonRxnFactor, 0)
-  anyComplRaw <- anyComplRaw + FunctionalFactor*dfMaster[1, 'Funcational']
-  anyComplRaw <- anyComplRaw + CancerGIFactor*dfMaster[1, 'Cancer']
-  anyComplRaw <- anyComplRaw + asaclassFactor*dfMaster[1, 'ASAClass']
-  anyComplRaw <- anyComplRaw + steroidFactor*dfMaster[1, 'Steroid']
-  anyComplRaw <- anyComplRaw + ascitesFactor*dfMaster[1, 'Ascites']
-  anyComplRaw <- anyComplRaw + SepticFactor*dfMaster[1, 'Septic']
-  anyComplRaw <- anyComplRaw + ventilarFactor*dfMaster[1, 'Vent']
-  anyComplRaw <- anyComplRaw + DMallFactor*dfMaster[1, 'DMAll']
-  anyComplRaw <- anyComplRaw + hypermedFactor*dfMaster[1, 'HTNMed']
-  anyComplRaw <- anyComplRaw + hxchfFactor*dfMaster[1, 'HxCHF']
-  anyComplRaw <- anyComplRaw + SOBFactor*dfMaster[1, 'SOB']
-  anyComplRaw <- anyComplRaw + smokerFactor*dfMaster[1, 'Smoker']
-  anyComplRaw <- anyComplRaw + hxcopdFactor*dfMaster[1, 'HxCOPD']
-  anyComplRaw <- anyComplRaw + dialysisFactor*dfMaster[1, 'Dialysis']
-  anyComplRaw <- anyComplRaw + renafailFactor*dfMaster[1, 'RenalFailure']
-  anyComplRaw <- anyComplRaw + BMIFactor*dfMaster[1, 'BMI']
-  anyComplRaw <- anyComplRaw + consFactor
-  
-  dfMaster[1,'MajorComplications'] <<- calcRiskFinal(anyComplRaw)
+
+  dfMaster[1,'Raw_MajorComplications'] <<- CalcMajorRisk()
+  dfMaster[1,'MajorComplications']     <<- expMajorRisk(dfMaster[1,'Raw_MajorComplications'])
   
   
   
   ###MAJOR RISK COMPLICATION BOX
   output$majorComplicationBox <- renderValueBox({
     valueBox(
-      paste0(formatC(calcRiskFinal(anyComplRaw), digits = 1, format = "f"), "%"),
+      paste0(formatC(dfMaster[1,'MajorComplications'], digits = 1, format = "f"), "%"),
       "Major Complication Risk",
       icon = icon("plus-square"),
       color = "purple"
@@ -277,7 +256,7 @@ shinyServer(function(input, output, session) {
 
 })
 
-calcRiskFinal <- function(rawAnyCompl=0){
+expMajorRisk <- function(rawAnyCompl=0){
   if(exp(rawAnyCompl)*100 > 100)
     return(100)
   return(exp(rawAnyCompl)*100)
@@ -315,6 +294,37 @@ clip_images <- function(restore_grid = TRUE)
   l
 }
 
+CalcMajorRisk <- function() {
+  
+  ###Calculate the Major Complication Risk
+  anyComplRaw <- 0.00  #Make sure we're starting from 0
+  anyComplRaw <- sexFactor*dfMaster[1,'Sex']
+  anyComplRaw <- anyComplRaw + raceFactor*dfMaster[1,'Race']
+  anyComplRaw <- anyComplRaw + ageFactor*dfMaster[1, 'Age']
+  #anyComplRaw <- anyComplRaw + dfMaster[1, 'Surgery']
+  anyComplRaw <- anyComplRaw + switch(as.character(dfMaster[1, 'Surgery']), "Pancreas" = 0, "Stomach" = GastRxnFactor, "Colon" = ColonRxnFactor, 0)
+  anyComplRaw <- anyComplRaw + FunctionalFactor*dfMaster[1, 'Funcational']
+  anyComplRaw <- anyComplRaw + CancerGIFactor*dfMaster[1, 'Cancer']
+  anyComplRaw <- anyComplRaw + asaclassFactor*dfMaster[1, 'ASAClass']
+  anyComplRaw <- anyComplRaw + steroidFactor*dfMaster[1, 'Steroid']
+  anyComplRaw <- anyComplRaw + ascitesFactor*dfMaster[1, 'Ascites']
+  anyComplRaw <- anyComplRaw + SepticFactor*dfMaster[1, 'Septic']
+  anyComplRaw <- anyComplRaw + ventilarFactor*dfMaster[1, 'Vent']
+  anyComplRaw <- anyComplRaw + DMallFactor*dfMaster[1, 'DMAll']
+  anyComplRaw <- anyComplRaw + hypermedFactor*dfMaster[1, 'HTNMed']
+  anyComplRaw <- anyComplRaw + hxchfFactor*dfMaster[1, 'HxCHF']
+  anyComplRaw <- anyComplRaw + SOBFactor*dfMaster[1, 'SOB']
+  anyComplRaw <- anyComplRaw + smokerFactor*dfMaster[1, 'Smoker']
+  anyComplRaw <- anyComplRaw + hxcopdFactor*dfMaster[1, 'HxCOPD']
+  anyComplRaw <- anyComplRaw + dialysisFactor*dfMaster[1, 'Dialysis']
+  anyComplRaw <- anyComplRaw + renafailFactor*dfMaster[1, 'RenalFailure']
+  anyComplRaw <- anyComplRaw + BMIFactor*dfMaster[1, 'BMI']
+  return(anyComplRaw + consFactor)
+
+  
+}
+
+
 
 
 BoxServerFx <- function() {
@@ -327,8 +337,7 @@ BoxServerFx <- function() {
   }
   
   ##Submit the data
-  # Authorize your account
-  box_auth()
+  box_auth()  # Authorize your account
   
   #Load the file
   df<- box_search("RiskSurgeryData.xlsx") %>%    # Find a remote file
