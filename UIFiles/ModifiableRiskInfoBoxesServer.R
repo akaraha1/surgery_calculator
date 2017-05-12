@@ -16,7 +16,7 @@
 ##Show functional Status Box if applicable
 output$FunctStatusBox <- renderUI({
   if(dfMaster[1, 'Funcational'] < 2) {#if the person is less than fully independent
-    tmpRisk <- dfMaster[1,'Raw_MajorComplications'] - FunctionalFactor*dfMaster[1, 'Funcational'] + FunctionalFactor*2
+    tmpRisk <- dfMaster[1,'Raw_MajorComplications'] - majorComp_FunctionalFactor*dfMaster[1, 'Funcational'] + majorComp_FunctionalFactor*2
     newRisk <- expMajorRisk(tmpRisk) - expMajorRisk(dfMaster[1,'Raw_MajorComplications']) 
     
     valueBox(
@@ -32,7 +32,7 @@ output$FunctStatusBox <- renderUI({
 ##Show Sterioid Status Box if applicable
 output$SteroidBox <- renderUI({
   if(dfMaster[1, 'Steroid'] == 1) {#if steroids == yes
-    riskChange <- dfMaster[1,'MajorComplications'] - expMajorRisk(dfMaster[1,'Raw_MajorComplications'] - steroidFactor)
+    riskChange <- dfMaster[1,'MajorComplications'] - expMajorRisk(dfMaster[1,'Raw_MajorComplications'] - majorComp_steroidFactor)
     valueBox(
       paste0(formatC(riskChange, digits = 1, format = "f"), "%"),
       "Steroid Risk Contribution",
@@ -45,7 +45,7 @@ output$SteroidBox <- renderUI({
 ##Show CHF Status Box if applicable
 output$CHFBox <- renderUI({
   if(dfMaster[1, 'HxCHF'] == 1) {#if CHF status == yes
-    riskChange <- dfMaster[1,'MajorComplications'] - expMajorRisk(dfMaster[1,'Raw_MajorComplications'] - hxchfFactor)
+    riskChange <- dfMaster[1,'MajorComplications'] - expMajorRisk(dfMaster[1,'Raw_MajorComplications'] - majorComp_hxchfFactor)
     valueBox(
       paste0(formatC(riskChange, digits = 1, format = "f"), "%"),
       "CHF Risk Contribution",
@@ -58,7 +58,7 @@ output$CHFBox <- renderUI({
 ##Show SOB Status Box if applicable
 output$SOBBox <- renderUI({
   if(dfMaster[1, 'SOB'] == 1) {#if SOB status == yes
-    riskChange <- dfMaster[1,'MajorComplications'] - expMajorRisk(dfMaster[1,'Raw_MajorComplications'] - SOBFactor)
+    riskChange <- dfMaster[1,'MajorComplications'] - expMajorRisk(dfMaster[1,'Raw_MajorComplications'] - majorComp_SOBFactor)
     valueBox(
       paste0(formatC(riskChange, digits = 1, format = "f"), "%"),
       "SOB Risk Contribution",
@@ -71,7 +71,7 @@ output$SOBBox <- renderUI({
 ##Show COPD Status Box if applicable
 output$COPDBox <- renderUI({
   if(dfMaster[1, 'HxCOPD'] == 1) {#if COPD status == yes
-    riskChange <- dfMaster[1,'MajorComplications'] - expMajorRisk(dfMaster[1,'Raw_MajorComplications'] - hxcopdFactor)
+    riskChange <- dfMaster[1,'MajorComplications'] - expMajorRisk(dfMaster[1,'Raw_MajorComplications'] - majorComp_hxcopdFactor)
     valueBox(
       paste0(formatC(riskChange, digits = 1, format = "f"), "%"),
       "COPD Risk Contribution",
@@ -84,7 +84,7 @@ output$COPDBox <- renderUI({
 ##Show Smoker Status Box if applicable
 output$smokerBox <- renderUI({
   if(dfMaster[1, 'Smoker'] == 1) {#if Smoking status == yes
-    riskChange <- dfMaster[1,'MajorComplications'] - expMajorRisk(dfMaster[1,'Raw_MajorComplications'] - smokerFactor)
+    riskChange <- dfMaster[1,'MajorComplications'] - expMajorRisk(dfMaster[1,'Raw_MajorComplications'] - majorComp_smokerFactor)
     valueBox(
       paste0(formatC(riskChange, digits = 1, format = "f"), "%"),
       "Smoking Risk Contribution",
@@ -98,7 +98,7 @@ output$smokerBox <- renderUI({
 ##Show Diabetic Status Box if applicable
 output$DMBox <- renderUI({
   if(dfMaster[1, 'DMAll'] == 1) {#if diabetic status == yes
-    riskChange <- dfMaster[1,'MajorComplications'] - expMajorRisk(dfMaster[1,'Raw_MajorComplications'] - DMallFactor)
+    riskChange <- dfMaster[1,'MajorComplications'] - expMajorRisk(dfMaster[1,'Raw_MajorComplications'] - majorComp_DMallFactor)
     valueBox(
       paste0(formatC(riskChange, digits = 1, format = "f"), "%"),
       "Diabetic Risk Contribution",
@@ -111,7 +111,7 @@ output$DMBox <- renderUI({
 ##Show HTN Status Box if applicable
 output$HTNBox <- renderUI({
   if(dfMaster[1, 'HTNMed'] == 1) {#if Smoking status == yes
-    riskChange <- dfMaster[1,'MajorComplications'] - expMajorRisk(dfMaster[1,'Raw_MajorComplications'] - hypermedFactor)
+    riskChange <- dfMaster[1,'MajorComplications'] - expMajorRisk(dfMaster[1,'Raw_MajorComplications'] - majorComp_hypermedFactor)
     valueBox(
       paste0(formatC(riskChange, digits = 1, format = "f"), "%"),
       "Hypertension Risk Contribution",

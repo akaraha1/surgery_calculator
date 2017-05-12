@@ -20,6 +20,7 @@ suppressPackageStartupMessages(library(dplyr))
 
 #library(DT)
 #library(png)
+source(file.path("MajorComplCalculation.R"),  local = TRUE)$value
 
 
 #anyComplRaw <- 0.00
@@ -100,6 +101,8 @@ shinyServer(function(input, output, session) {
                              'MajorComplications')
     
 
+  #Calculate the surgery risk for major complications via
+  # the method in 'MajorComplCalculation.R'
   dfMaster[1,'Raw_MajorComplications'] <<- CalcMajorRisk()
   dfMaster[1,'MajorComplications']     <<- expMajorRisk(dfMaster[1,'Raw_MajorComplications'])
   
@@ -200,31 +203,7 @@ shinyServer(function(input, output, session) {
     title(main = list("Some Demo Data...", font = 4))
     
   })
-  output$SaveFeature <- renderMenu({
-   # # sidebarMenu(
-   #    # menuSubItem("Save Data",
-   #    #             tabName = "SaveFeature",
-   #    #             icon = icon("angle-double-right", lib = "font-awesome")),
-   #    #  textInput("PtId", "Pt ID", value = "", width = '85%'),
-   #    # actionButton("SaveServer", "Save To Server", width = '95%', icon("check-circle", lib = "font-awesome"))
-   #    # 
-   #    sidebarMenu(id = "sidebarmenu",
-   #                menuItem("Save Data", tabName = "b", icon = icon("angle-double-right", lib = "font-awesome"),
-   #                         menuSubItem(text = 'subitem', tabName='subitemName')),
-   #                textInput("PtId", "Pt ID", value = "", width = '85%'),
-   #                
-   #                conditionalPanel("input.sidebarmenu == 'subitemname'", #fixed
-   #                                 sliderInput("b", "Under sidebarMenu", 1, 100, 50),
-   #                                  textInput("PtId", "Pt ID", value = "", width = '85%')
-   #                                 
-   #                )
-   #                    
-   #  
-   #  )
 
-    
-    
-  })
   
   }) # end submit button method
 
@@ -294,35 +273,6 @@ clip_images <- function(restore_grid = TRUE)
   l
 }
 
-CalcMajorRisk <- function() {
-  
-  ###Calculate the Major Complication Risk
-  anyComplRaw <- 0.00  #Make sure we're starting from 0
-  anyComplRaw <- sexFactor*dfMaster[1,'Sex']
-  anyComplRaw <- anyComplRaw + raceFactor*dfMaster[1,'Race']
-  anyComplRaw <- anyComplRaw + ageFactor*dfMaster[1, 'Age']
-  #anyComplRaw <- anyComplRaw + dfMaster[1, 'Surgery']
-  anyComplRaw <- anyComplRaw + switch(as.character(dfMaster[1, 'Surgery']), "Pancreas" = 0, "Stomach" = GastRxnFactor, "Colon" = ColonRxnFactor, 0)
-  anyComplRaw <- anyComplRaw + FunctionalFactor*dfMaster[1, 'Funcational']
-  anyComplRaw <- anyComplRaw + CancerGIFactor*dfMaster[1, 'Cancer']
-  anyComplRaw <- anyComplRaw + asaclassFactor*dfMaster[1, 'ASAClass']
-  anyComplRaw <- anyComplRaw + steroidFactor*dfMaster[1, 'Steroid']
-  anyComplRaw <- anyComplRaw + ascitesFactor*dfMaster[1, 'Ascites']
-  anyComplRaw <- anyComplRaw + SepticFactor*dfMaster[1, 'Septic']
-  anyComplRaw <- anyComplRaw + ventilarFactor*dfMaster[1, 'Vent']
-  anyComplRaw <- anyComplRaw + DMallFactor*dfMaster[1, 'DMAll']
-  anyComplRaw <- anyComplRaw + hypermedFactor*dfMaster[1, 'HTNMed']
-  anyComplRaw <- anyComplRaw + hxchfFactor*dfMaster[1, 'HxCHF']
-  anyComplRaw <- anyComplRaw + SOBFactor*dfMaster[1, 'SOB']
-  anyComplRaw <- anyComplRaw + smokerFactor*dfMaster[1, 'Smoker']
-  anyComplRaw <- anyComplRaw + hxcopdFactor*dfMaster[1, 'HxCOPD']
-  anyComplRaw <- anyComplRaw + dialysisFactor*dfMaster[1, 'Dialysis']
-  anyComplRaw <- anyComplRaw + renafailFactor*dfMaster[1, 'RenalFailure']
-  anyComplRaw <- anyComplRaw + BMIFactor*dfMaster[1, 'BMI']
-  return(anyComplRaw + consFactor)
-
-  
-}
 
 
 
@@ -525,4 +475,25 @@ BoxServerFx <- function() {
 #   return((weight/height/height) * 10000)
 # }
 
-
+# output$SaveFeature <- renderMenu({
+#   # # sidebarMenu(
+#   #    # menuSubItem("Save Data",
+#   #    #             tabName = "SaveFeature",
+#   #    #             icon = icon("angle-double-right", lib = "font-awesome")),
+#   #    #  textInput("PtId", "Pt ID", value = "", width = '85%'),
+#   #    # actionButton("SaveServer", "Save To Server", width = '95%', icon("check-circle", lib = "font-awesome"))
+#   #    # 
+#   #    sidebarMenu(id = "sidebarmenu",
+#   #                menuItem("Save Data", tabName = "b", icon = icon("angle-double-right", lib = "font-awesome"),
+#   #                         menuSubItem(text = 'subitem', tabName='subitemName')),
+#   #                textInput("PtId", "Pt ID", value = "", width = '85%'),
+#   #                
+#   #                conditionalPanel("input.sidebarmenu == 'subitemname'", #fixed
+#   #                                 sliderInput("b", "Under sidebarMenu", 1, 100, 50),
+#   #                                  textInput("PtId", "Pt ID", value = "", width = '85%')
+#   #                                 
+#   #                )
+#   #                    
+#   #  
+#   #  )
+# })
