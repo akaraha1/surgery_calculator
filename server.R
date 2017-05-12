@@ -22,7 +22,7 @@ suppressPackageStartupMessages(library(dplyr))
 #library(png)
 
 
-anyComplRaw <- 0.00
+#anyComplRaw <- 0.00
 
 df3 <- data.frame()
 dfMaster <- data.frame()

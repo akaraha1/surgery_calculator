@@ -17,7 +17,7 @@
 output$FunctStatusBox <- renderUI({
   if(dfMaster[1, 'Funcational'] < 2) {#if the person is less than fully independent
     tmpRisk <- dfMaster[1,'Raw_MajorComplications'] - FunctionalFactor*dfMaster[1, 'Funcational'] + FunctionalFactor*2
-    newRisk <- expMajorRisk(tmpRisk) - expMajorRisk(anyComplRaw) 
+    newRisk <- expMajorRisk(tmpRisk) - expMajorRisk(dfMaster[1,'Raw_MajorComplications']) 
     
     valueBox(
       paste0(formatC(newRisk*-1, digits = 1, format = "f"), "%"),
