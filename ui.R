@@ -7,8 +7,8 @@
 
 library(shiny)
 library(shinydashboard)
-library(leaflet)
-library(ggplot2)
+#library(leaflet)
+#library(ggplot2)
 library(shinyjs)
 
 dashboardPage(
@@ -16,20 +16,20 @@ dashboardPage(
   # Dropdown menu for notifications
   dropdownMenu(type = "tasks", badgeStatus = "success",
                taskItem(value = 90, color = "green",
-                        "Documentation"
+                        "Test 1"
                ),
                taskItem(value = 17, color = "aqua",
-                        "Project X"
+                        "Test 2"
                ),
                taskItem(value = 75, color = "yellow",
-                        "Server deployment"
+                        "Test 3 "
                ),
                taskItem(value = 80, color = "red",
-                        "Overall project"
+                        "Overall"
                ),
                messageItem(
                  from = "Sales Dept",
-                 message = "Sales are steady this month."
+                 message = "Message 1."
                ),
                messageItem(
                  from = "New User",
@@ -137,8 +137,8 @@ dashboardPage(
                                 )
                        ),
                        fluidRow(width=12,
-                                htmlOutput("hp"),
-                                actionButton("submitToGoogle", "Submit to Google", class = "btn-primary")
+                                htmlOutput("hp")
+                                #actionButton("submitToGoogle", "Submit to Google", class = "btn-primary")
                                 
                        )
                 )
