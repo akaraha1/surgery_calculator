@@ -52,12 +52,15 @@ fluidRow(
                           selected = "Fully Independent"),
              
              #Other medical problems
-             radioButtons("OtherMedical","Other Medical Problems:", inline = FALSE,
+             radioButtons("OtherMedical",
+                          HTML(paste("Other Medical Problems:",
+                                     "(ASA Class)", sep="<br/>")),
+                          inline = FALSE,
                           choices = c("1: Totally Healthy", "2: Mild diseases", "3: Severe diseases", "4: Near death"),
                           selected = "1: Totally Healthy"),
              
              #DM All
-             radioButtons("DMall","DM All:", inline = TRUE,
+             radioButtons("DMall","Diabetes mellitus:", inline = TRUE,
                           choices = c("Yes", "No"),
                           selected = "No"), 
              
@@ -76,7 +79,10 @@ fluidRow(
                           selected = "No"),
              
              #HTN
-             radioButtons("HTNMeds","HTN Meds:", inline = TRUE,
+             radioButtons("HTNMeds",
+                          HTML(paste("Hyptension:",
+                                     "(requiring medication)", sep="<br/>")),
+                          inline = TRUE,
                           choices = c("Yes", "No"),
                           selected = "No")
              
@@ -90,23 +96,25 @@ fluidRow(
                           choices = c("Yes", "No"),
                           selected = "No"),
              
-             radioButtons("vent","Ventilator:", inline = TRUE,
+             radioButtons("vent","Ventilator dependent:", inline = TRUE,
                           choices = c("Yes", "No"),
                           selected = "No"),
              
-             radioButtons("Dialysis","Dialysis:", inline = TRUE,
+             radioButtons("Dialysis","Currently on Dialysis:", inline = TRUE,
                           choices = c("Yes", "No"),
                           selected = "No"),
              
-             radioButtons(inputId ="RenalFailure","Renal Failure:", inline = TRUE,
+             radioButtons(inputId ="RenalFailure",
+                          HTML(paste("Renal Failure:", "(Cr > 3 for 2 occurrences)", sep="<br/>")),
+                          inline = TRUE,
                           choices = c("Yes", "No"),
                           selected = "No"),
              
-             radioButtons("ascites","Ascites:", inline = TRUE,
+             radioButtons("ascites","Ascites (clinical or imaging):", inline = TRUE,
                           choices = c("Yes", "No"),
                           selected = "No"),
              
-             radioButtons("steroids","Steroids:", inline = TRUE,
+             radioButtons("steroids","Chronic Steroids:", inline = TRUE,
                           choices = c("Yes", "No"),
                           selected = "No"),
              
