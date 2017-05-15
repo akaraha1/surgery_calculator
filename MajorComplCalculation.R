@@ -62,3 +62,4 @@ CalcDeathRisk <- function() {
   return(anyComplRaw + death_consFactor)
   
 }
+

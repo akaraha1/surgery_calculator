@@ -109,6 +109,8 @@ shinyServer(function(input, output, session) {
   # the method in 'MajorComplCalculation.R'
   dfMaster[1,'Raw_DeathRisk'] <<- CalcDeathRisk()
   dfMaster[1,'DeathRisk']     <<- expMajorRisk(dfMaster[1,'Raw_DeathRisk'])
+  print((dfMaster[1,'Raw_DeathRisk']))
+  print(expMajorRisk(dfMaster[1,'Raw_DeathRisk']))
   
   
   
@@ -248,6 +250,7 @@ expMajorRisk <- function(rawAnyCompl=0){
 
 BoxServerFx <- function() {
   
+
   if(nrow(dfMaster) == 0) {
     #If there's no data don't allow a null submission
     showNotification("You cannot save data until you submit the questionaire.",
@@ -256,10 +259,10 @@ BoxServerFx <- function() {
   }
   
   ##Submit the data
-  box_auth()  # Authorize your account
+  box_auth(client_id = "4vmnrbf2c9n6rcbkk4n3cx1zfv76q5ud", client_secret = "LEVe7CaB9DUhKYF3v6W3lP7cbzAZuY9z")  # Authorize your account
   
   #Load the file
-  df<- box_search("RiskSurgeryData.xlsx") %>%    # Find a remote file
+  df<- box_search("RiskSurgeryDataUpdated.xlsx") %>%    # Find a remote file
     box_read()
   
   #Add the current data to the end of the old data
