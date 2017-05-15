@@ -67,8 +67,10 @@ shinyServer(function(input, output, session) {
                             switch(input$Dialysis, "Yes" = 1, "No" = 0, 0),
                             switch(input$RenalFailure, "Yes" = 1, "No" = 0, 0),
                             input$BMI,
-                            -1, #placeholder for raw major complications
-                            -1  #placeholder for major complication
+                            -1, #placeholder for major complications - raw
+                            -1,  #placeholder for major complication
+                            -1, #placeholder for death risk - raw
+                            -1 #placeholder for death risk - calculated
                             )
     
     colnames(dfMaster) <<- c('Sex',
@@ -92,13 +94,21 @@ shinyServer(function(input, output, session) {
                              'RenalFailure',
                              'BMI',
                              'Raw_MajorComplications',
-                             'MajorComplications')
+                             'MajorComplications',
+                             'Raw_DeathRisk',
+                             'DeathRisk'
+                             )
     
 
   #Calculate the surgery risk for major complications via
   # the method in 'MajorComplCalculation.R'
   dfMaster[1,'Raw_MajorComplications'] <<- CalcMajorRisk()
   dfMaster[1,'MajorComplications']     <<- expMajorRisk(dfMaster[1,'Raw_MajorComplications'])
+  
+  #Calculate the death risk via
+  # the method in 'MajorComplCalculation.R'
+  dfMaster[1,'Raw_DeathRisk'] <<- CalcDeathRisk()
+  dfMaster[1,'DeathRisk']     <<- expMajorRisk(dfMaster[1,'Raw_DeathRisk'])
   
   
   
@@ -107,6 +117,16 @@ shinyServer(function(input, output, session) {
     valueBox(
       paste0(formatC(dfMaster[1,'MajorComplications'], digits = 1, format = "f"), "%"),
       "Major Complication Risk",
+      icon = icon("plus-square"),
+      color = "purple"
+    )
+  })
+  
+  ###DEATH RISK COMPLICATION BOX
+  output$deathRiskBox <- renderValueBox({
+    valueBox(
+      paste0(formatC(dfMaster[1,'DeathRisk'], digits = 1, format = "f"), "%"),
+      "Risk of Death",
       icon = icon("plus-square"),
       color = "purple"
     )

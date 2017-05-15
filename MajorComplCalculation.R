@@ -29,5 +29,36 @@ CalcMajorRisk <- function() {
   anyComplRaw <- anyComplRaw + majorComp_BMIFactor*dfMaster[1, 'BMI']
   return(anyComplRaw + majorComp_consFactor)
   
+}
+
+CalcDeathRisk <- function() {
+
+  ###Calculate risk of death
+  anyComplRaw <- 0.00  #Make sure we're starting from 0
+  anyComplRaw <- death_sexFactor*dfMaster[1,'Sex']
+  anyComplRaw <- anyComplRaw + death_raceFactor*dfMaster[1,'Race']
+  anyComplRaw <- anyComplRaw + death_ageFactor*dfMaster[1, 'Age']
+  #anyComplRaw <- anyComplRaw + dfMaster[1, 'Surgery']
+  anyComplRaw <- anyComplRaw + switch(as.character(dfMaster[1, 'Surgery']),
+                                      "Pancreas" = 0,
+                                      "Stomach" = death_GastRxnFactor,
+                                      "Colon" = death_ColonRxnFactor, 0)
+  anyComplRaw <- anyComplRaw + death_FunctionalFactor*dfMaster[1, 'Funcational']
+  anyComplRaw <- anyComplRaw + death_CancerGIFactor*dfMaster[1, 'Cancer']
+  anyComplRaw <- anyComplRaw + death_asaclassFactor*dfMaster[1, 'ASAClass']
+  anyComplRaw <- anyComplRaw + death_steroidFactor*dfMaster[1, 'Steroid']
+  anyComplRaw <- anyComplRaw + death_ascitesFactor*dfMaster[1, 'Ascites']
+  anyComplRaw <- anyComplRaw + death_SepticFactor*dfMaster[1, 'Septic']
+  anyComplRaw <- anyComplRaw + death_ventilarFactor*dfMaster[1, 'Vent']
+  anyComplRaw <- anyComplRaw + death_DMallFactor*dfMaster[1, 'DMAll']
+  anyComplRaw <- anyComplRaw + death_hypermedFactor*dfMaster[1, 'HTNMed']
+  anyComplRaw <- anyComplRaw + death_hxchfFactor*dfMaster[1, 'HxCHF']
+  anyComplRaw <- anyComplRaw + death_SOBFactor*dfMaster[1, 'SOB']
+  anyComplRaw <- anyComplRaw + death_smokerFactor*dfMaster[1, 'Smoker']
+  anyComplRaw <- anyComplRaw + death_hxcopdFactor*dfMaster[1, 'HxCOPD']
+  anyComplRaw <- anyComplRaw + death_dialysisFactor*dfMaster[1, 'Dialysis']
+  anyComplRaw <- anyComplRaw + death_renafailFactor*dfMaster[1, 'RenalFailure']
+  anyComplRaw <- anyComplRaw + death_BMIFactor*dfMaster[1, 'BMI']
+  return(anyComplRaw + death_consFactor)
   
 }

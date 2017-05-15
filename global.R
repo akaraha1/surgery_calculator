@@ -23,3 +23,28 @@ majorComp_renafailFactor      <-   0.3735297
 majorComp_BMIFactor           <-   0.0094137
 majorComp_consFactor          <-  -1.761664 
 
+
+########## DEATH REGRESSION COEFFICENTS
+death_sexFactor           <-  -0.3616176
+death_raceFactor          <-   
+death_ageFactor           <-   0.0492106
+death_GastRxnFactor       <-  -0.0261838
+death_ColonRxnFactor      <-  -0.6368901
+death_CancerGIFactor      <-   0.168376
+death_FunctionalFactor    <-  -0.9690956
+death_asaclassFactor      <-   0.7668946   
+death_steroidFactor       <-   0.3492915    
+death_ascitesFactor       <-   1.459707
+death_SepticFactor        <-   1.171067 
+death_ventilarFactor      <-   0.660723
+death_DMallFactor         <-   0.081782   
+death_hypermedFactor      <-   0.1749839 
+death_hxchfFactor         <-   0.4665808
+death_SOBFactor           <-   0.4251649
+death_smokerFactor        <-   0.1844304
+death_hxcopdFactor        <-   0.3127669
+death_dialysisFactor      <-   0.8193423  
+death_renafailFactor      <-   0.6328156 
+death_BMIFactor           <-  -0.0065959
+death_consFactor          <-  -8.211025 
+

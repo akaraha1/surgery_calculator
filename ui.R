@@ -103,14 +103,6 @@ dashboardPage(
                          tabPanel(id = "Tab3", 
                                   title = "Tab3",
                                   color = "olive",
-                                  HTML('<script type="text/javascript">
-        $(document).ready(function() {
-                                       $("#DownloadButton").click(function() {
-                                       $("#Download").text("Loading...");
-                                       });
-                                       });
-                                       </script>
-                                       '),
                                   plotOutput("riskPlot")),
                          selected = "Tab3"
                         
@@ -123,10 +115,9 @@ dashboardPage(
                        
                        fluidRow(width = 12,
                                 box(width = 12,
-                                  title = "Regression Outputs", status = "warning", solidHeader = TRUE,
-                                 # valueBoxOutput("BMIBox"),
-                                  valueBoxOutput("majorComplicationBox")
-                                  #valueBoxOutput("generic1")
+                                  title = "Predicted Clinical Outcomes", status = "warning", solidHeader = TRUE,
+                                  valueBoxOutput("majorComplicationBox"),
+                                  valueBoxOutput("deathRiskBox")
                                 )
                        ),
                        #Modifiable Risk Factors
