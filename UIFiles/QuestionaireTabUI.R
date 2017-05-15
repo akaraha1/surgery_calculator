@@ -2,13 +2,21 @@
 ## This file creates user interface for the questionaire page
 ## Questions are sorted into boxes by topics.
 
+# Source the switch button function
+#source("./UIFiles/SwitchButton.R")
+source(file.path("UIFiles","SwitchButton.R"),  local = TRUE)$value
 
 fluidRow(
   column(width = 4,
-         box(width = NULL,
+         box(width = NULL, align="center",
              h3("Basic Demograpghics", align = "center"),
              
+       
              # Gender Button
+             # switchButton(inputId = "",
+             #              label = "Grey-Blue switch - Default to TRUE - Text TRUE/FALSE",
+             #              value = TRUE, col = "RG", type = "TF"),
+             
              radioButtons("GenderButton","Gender:", inline = TRUE,
                           choices = c("Male", "Female"),
                           selected = "Male"),
@@ -42,8 +50,8 @@ fluidRow(
                           choices = c("Cancer Surgery", "Benign disease"))
          )
   ),
-  column(width = 4,
-         box(width = NULL,
+  column(width = 4, 
+         box(width = NULL, align="center",
              h3("Common Risk Factors", align = "center"),
              
              #Functional Status
@@ -60,31 +68,58 @@ fluidRow(
                           selected = "1: Totally Healthy"),
              
              #DM All
-             radioButtons("DMall","Diabetes mellitus:", inline = TRUE,
-                          choices = c("Yes", "No"),
-                          selected = "No"), 
+             # radioButtons("DMall1","Diabetes mellitus:", inline = TRUE,
+             #              choices = c("Yes", "No"),
+             #              selected = "No"),
+             
+             switchButton(inputId = "DMall",
+                          label = "Diabetes mellitus:",
+                          value = FALSE, col = "RG", type = "YN"),
+             # switchButton(inputId = "DMall",
+             #              label = "Diabetes mellitus:",
+             #              value = FALSE, col = "GB", type = "YN"),
              
              #Smoker
-             radioButtons("Smoker","Smoker:", inline = TRUE,
-                          choices = c("Yes", "No"),
-                          selected = "No"),
+             
+             switchButton(inputId = "Smoker",
+                          label = "Smoker:",
+                          value = FALSE, col = "RG", type = "YN"),
+             
+             # radioButtons("Smoker","Smoker:", inline = TRUE,
+             #              choices = c("Yes", "No"),
+             #              selected = "No"),
              
              #CHF
-             radioButtons("HxCHF","History of CHF:", inline = TRUE,
-                          choices = c("Yes", "No"),
-                          selected = "No"), 
+             switchButton(inputId = "HxCHF",
+                          label = "History of CHF:",
+                          value = FALSE, col = "RG", type = "YN"),
+             
+             # radioButtons("HxCHF","History of CHF:", inline = TRUE,
+             #              choices = c("Yes", "No"),
+             #              selected = "No"), 
+
              #COPD
-             radioButtons("HxCOPD","History of COPD:", inline = TRUE,
-                          choices = c("Yes", "No"),
-                          selected = "No"),
+             
+             switchButton(inputId = "HxCOPD",
+                          label = "History of COPD:",
+                          value = FALSE, col = "RG", type = "YN"),
+             # radioButtons("HxCOPD","History of COPD:", inline = TRUE,
+             #              choices = c("Yes", "No"),
+             #              selected = "No"),
              
              #HTN
-             radioButtons("HTNMeds",
-                          HTML(paste("Hyptension:",
-                                     "(requiring medication)", sep="<br/>")),
-                          inline = TRUE,
-                          choices = c("Yes", "No"),
-                          selected = "No")
+             
+             switchButton(inputId = "HTNMeds",
+                          label = HTML(paste("Hyptension:",
+                                             "(requiring medication)", sep="<br/>")),
+                          value = FALSE, col = "RG", type = "YN")
+             
+             # radioButtons("HTNMeds",
+             #              HTML(paste("Hyptension:",
+             #                         "(requiring medication)", sep="<br/>")),
+             #              inline = TRUE,
+             #              choices = c("Yes", "No"),
+             #              selected = "No")
              
              )
          ),

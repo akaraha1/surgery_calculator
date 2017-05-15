@@ -16,22 +16,11 @@ suppressPackageStartupMessages(library(googleVis))
 
 library(grid)
 library(gridSVG)
-suppressPackageStartupMessages(library(dplyr))
+#suppressPackageStartupMessages(library(dplyr))
 
-#library(DT)
-#library(png)
 source(file.path("MajorComplCalculation.R"),  local = TRUE)$value
 
-
-#anyComplRaw <- 0.00
-
-df3 <- data.frame()
 dfMaster <- data.frame()
-#gap_ss <- gs_gap()
-
-
-
-
 
 shinyServer(function(input, output, session) {
 
@@ -41,7 +30,8 @@ shinyServer(function(input, output, session) {
     #Switches from the quertionaire view to the data view
     # when the submit button is pressed
     updateTabsetPanel(session, "tab", 'dataViewer')
-
+print(input$DMall)
+    
     dfMaster <<- data.frame(switch(input$GenderButton, "Male" = 1, "Female" = 0),
                             switch(input$RaceButton, "White" = 1, "Non-White" = 0, 1),
                             input$PtAge,
@@ -64,12 +54,17 @@ shinyServer(function(input, output, session) {
                             switch(input$ascites, "Yes" = 1, "No" = 0, 0),
                             switch(input$septic, "Yes" = 1, "No" = 0, 0),
                             switch(input$vent, "Yes" = 1, "No" = 0, 0),
-                            switch(input$DMall, "Yes" = 1, "No" = 0, 0),
-                            switch(input$HTNMeds, "Yes" = 1, "No" = 0, 0),
-                            switch(input$HxCHF, "Yes" = 1, "No" = 0, 0),
+                           # switch(input$DMall, TRUE = 1, FALSE = 0, 0),
+                           if(input$DMall == TRUE) 1 else 0,
+                            #switch(input$HTNMeds, "Yes" = 1, "No" = 0, 0),
+                           if(input$HTNMeds == TRUE) 1 else 0,
+                            #switch(input$HxCHF, "Yes" = 1, "No" = 0, 0),
+                           if(input$HxCHF == TRUE) 1 else 0,
                             switch(input$SOB, "Yes" = 1, "No" = 0, 0),
-                            switch(input$Smoker, "Yes" = 1, "No" = 0, 0),
-                            switch(input$HxCOPD, "Yes" = 1, "No" = 0, 0),
+                            #switch(input$Smoker, "Yes" = 1, "No" = 0, 0),
+                           if(input$Smoker == TRUE) 1 else 0,
+                           # switch(input$HxCOPD, "Yes" = 1, "No" = 0, 0),
+                           if(input$HxCOPD == TRUE) 1 else 0,
                             switch(input$Dialysis, "Yes" = 1, "No" = 0, 0),
                             switch(input$RenalFailure, "Yes" = 1, "No" = 0, 0),
                             input$BMI,
@@ -136,38 +131,29 @@ shinyServer(function(input, output, session) {
   
   #Create the risk plot graph
   output$riskPlot <- renderPlot ({
+    df3 <- data.frame(units = c(14,
+                                8,
+                                8,
+                                14,
+                                19,
+                                13.7,
+                                20,
+                                18,
+                                4), 
+                      what = c('Your Current Risk',
+                               'Functional Status Contribution',
+                               'Diabetes Contribtion', 
+                               'Smoking Contribution',
+                               'CHF Contribution',
+                               'COPD Contribution', 
+                               'Hypertension Contribution',
+                               'Steroid Contribution',
+                               'SOB Contribution'))
     
-    df3 <- data.frame(units = c(8, 7, 2), 
-                      what = c('Risk Profile 1',
-                               'Risk Profile 2', 'Risk Profile 3'
-                      ))
+    # make gs an ordered factor
     df3$what <- factor(df3$what, levels = df3$what, ordered = TRUE)
     
-    library(png)
-    fill_images <- function()
-    {
-      l <- list()
-      for (i in 1:nrow(df3)) 
-      {
-        for (j in 1:floor(df3$units[i]))
-        {
-          #seems redundant, but does not work if moved outside of the loop (why?)
-          img <- readPNG("cigarette.png")
-          g <- rasterGrob(img, interpolate=TRUE)
-          l <- c(l, annotation_custom(g, xmin = i-1/2, xmax = i+1/2, ymin = j-1, ymax = j))
-        }
-      }
-      l
-    }
-    
-    ggplot(df3, aes(what, units)) + 
-      geom_bar(fill="white", colour="darkgreen", alpha=0.5, stat="identity") + 
-      coord_flip() + 
-      scale_y_continuous(breaks=seq(100,5)) + 
-      scale_x_discrete(breaks=seq(100,0)) + 
-      theme_bw() + 
-      theme(axis.title.x  = element_blank(), axis.title.y  = element_blank()) + 
-      fill_images()
+    source(file.path("UIFiles", "RiskGraphPictogram.R"), local = TRUE)$value
     
   })
   
@@ -176,8 +162,7 @@ shinyServer(function(input, output, session) {
 
     df3 <- data.frame(units = c(4.7, 6.7, 20),
                       what = c('If you lost X lbs', 'If you stopped smoking',
-                               'Your Current Risk')
-                      )
+                               'Your Current Risk'))
     
     posx <- runif(1000, 0, 10)
     posy <- data.frame(1, 2, 3)#runif(1000, 0, 5)
@@ -239,38 +224,6 @@ expMajorRisk <- function(rawAnyCompl=0){
   if(exp(rawAnyCompl)*100 > 100)
     return(100)
   return(exp(rawAnyCompl)*100)
-}
-
-fill_images <- function()
-{
-  l <- list()
-  for (i in 1:nrow(df3)) 
-  {
-    for (j in 1:ceiling(7))
-    {
-      img <- readPNG("cigarette.png")
-      #g <- rasterGrob(img, interpolate=TRUE)
-      l <- c(l, annotation_custom(img, xmin = i-1/2, xmax = i+1/2, ymin = j-1, ymax = j))
-    }
-  }
-  l
-}
-
-clip_images <- function(restore_grid = TRUE)
-{
-  l <- list()
-  for (i in 1:nrow(df3)) 
-  {
-    l <- c(l, geom_rect(xmin = i-1/2, xmax = i+1/2, 
-                        ymin = df3$units[i], ymax = ceiling(7),
-                        colour = "white", fill = "white"))
-    if (restore_grid && ceiling(7) %in% major_grid) 
-      l <- c(l, geom_segment(x = i-1, xend = i+1,
-                             y = ceiling(7), 
-                             yend = ceiling(7),
-                             colour = grid_col, size = grid_size))
-  }
-  l
 }
 
 

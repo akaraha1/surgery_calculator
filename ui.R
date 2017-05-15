@@ -68,7 +68,8 @@ dashboardPage(
   ),
   dashboardBody(useShinyjs(),
                 tags$head(
-                  includeCSS('www/style.css')
+                  includeCSS('www/style.css'),
+                  includeCSS('www/button.css')
                 ),
                 
     tabItems(
