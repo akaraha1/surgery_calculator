@@ -103,6 +103,14 @@ dashboardPage(
                          tabPanel(id = "Tab3", 
                                   title = "Tab3",
                                   color = "olive",
+                                  HTML('<script type="text/javascript">
+        $(document).ready(function() {
+                                       $("#DownloadButton").click(function() {
+                                       $("#Download").text("Loading...");
+                                       });
+                                       });
+                                       </script>
+                                       '),
                                   plotOutput("riskPlot")),
                          selected = "Tab3"
                         

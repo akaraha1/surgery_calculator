@@ -30,8 +30,7 @@ shinyServer(function(input, output, session) {
     #Switches from the quertionaire view to the data view
     # when the submit button is pressed
     updateTabsetPanel(session, "tab", 'dataViewer')
-print(input$DMall)
-    
+
     dfMaster <<- data.frame(switch(input$GenderButton, "Male" = 1, "Female" = 0),
                             switch(input$RaceButton, "White" = 1, "Non-White" = 0, 1),
                             input$PtAge,

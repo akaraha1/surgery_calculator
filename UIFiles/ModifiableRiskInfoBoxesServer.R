@@ -13,6 +13,8 @@
 # DM
 # HTN
 
+withProgress(message = 'Calculting Modifiable Risk', value = 0, {
+
 ##Show functional Status Box if applicable
 output$FunctStatusBox <- renderUI({
   if(dfMaster[1, 'Funcational'] < 2) {#if the person is less than fully independent
@@ -27,7 +29,7 @@ output$FunctStatusBox <- renderUI({
     )
   }
 })
-
+incProgress(1/8)
 
 ##Show Sterioid Status Box if applicable
 output$SteroidBox <- renderUI({
@@ -42,6 +44,9 @@ output$SteroidBox <- renderUI({
   }
 })
 
+incProgress(2/8)
+
+
 ##Show CHF Status Box if applicable
 output$CHFBox <- renderUI({
   if(dfMaster[1, 'HxCHF'] == 1) {#if CHF status == yes
@@ -54,6 +59,9 @@ output$CHFBox <- renderUI({
     )
   }
 })
+
+incProgress(3/8)
+
 
 ##Show SOB Status Box if applicable
 output$SOBBox <- renderUI({
@@ -68,6 +76,9 @@ output$SOBBox <- renderUI({
   }
 })
 
+incProgress(4/8)
+
+
 ##Show COPD Status Box if applicable
 output$COPDBox <- renderUI({
   if(dfMaster[1, 'HxCOPD'] == 1) {#if COPD status == yes
@@ -80,6 +91,8 @@ output$COPDBox <- renderUI({
     )
   }
 })
+
+incProgress(5/8)
 
 ##Show Smoker Status Box if applicable
 output$smokerBox <- renderUI({
@@ -94,6 +107,7 @@ output$smokerBox <- renderUI({
   }
 })
 
+incProgress(6/8)
 
 ##Show Diabetic Status Box if applicable
 output$DMBox <- renderUI({
@@ -108,6 +122,8 @@ output$DMBox <- renderUI({
   }
 })
 
+incProgress(7/8)
+
 ##Show HTN Status Box if applicable
 output$HTNBox <- renderUI({
   if(dfMaster[1, 'HTNMed'] == 1) {#if Smoking status == yes
@@ -119,5 +135,7 @@ output$HTNBox <- renderUI({
       color = "red"
     )
   }
+})
+
 })
 

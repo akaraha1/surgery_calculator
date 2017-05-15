@@ -3,16 +3,20 @@ library(ggplot2)
 library(grid)
 
 fill_images <- function() {
+  withProgress(message = 'Building The Graphs', value = 0, {
+    
   l <- list()
   for (i in 1:nrow(df3)) 
   {
     for (j in 1:ceiling(df3$units[i]))
     {
+      incProgress(i/nrow(df3))
       img <- readPNG("Heart_symbol_c00.png")
       g <- rasterGrob(img, interpolate=TRUE)
       l <- c(l, annotation_custom(g, xmin = i-1/2, xmax = i+1/2, ymin = j-1, ymax = j))
     }
   }
+  })
   l
 }
 
