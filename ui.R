@@ -10,6 +10,7 @@ library(shinydashboard)
 #library(leaflet)
 #library(ggplot2)
 library(shinyjs)
+library(plotly)
 
 dashboardPage(
   dashboardHeader(title = "Surgery Risk Predictor", titleWidth = 250,
@@ -52,7 +53,7 @@ dashboardPage(
       sidebarMenuOutput("SaveFeature"),
       menuItem("Save Data", icon = icon("check-circle", lib = "font-awesome"), tabName = "tabOne",
                # Input directly under menuItem
-               textInput("PtID", "Pt ID:", width = '98%'),
+               textInput("PtID", "Pt MRN:", width = '98%'),
                
                
                # Input inside of menuSubItem
@@ -88,38 +89,35 @@ dashboardPage(
               source(file.path("UIFiles", "QuestionaireTabUI.R"),  local = TRUE)$value
       ),
       tabItem(tabName = "dataViewer",
+              fluidRow(width = 12,
+                       box(width = 12,
+                           title = "Predicted Clinical Outcomes", status = "warning", solidHeader = TRUE,
+                           valueBoxOutput("majorComplicationBox"),
+                           valueBoxOutput("deathRiskBox")
+                       )
+              ),
               fluidRow(
                 column(width = 12,
-                       tabBox(width = 12,
-                              title = tagList(shiny::icon("gear"), "Risk Graphs"),
-                              side = "right", height = "500px",
-                         tabPanel("Tab1", "Tab content 1",
-                                  plotOutput("riskPlot3")
-                                  ),
-                         tabPanel("Tab2",
-                                  "Tab content 2",
-                                  plotOutput("riskPlot2")  
-                                  ),
-                         tabPanel(id = "Tab3", 
-                                  title = "Tab3",
-                                  color = "olive",
-                                  plotOutput("riskPlot")),
-                         selected = "Tab3"
-                        
-                       ),
-                       # box(width = NULL,
-                       #     title = "Any Complications", background = "maroon", solidHeader = TRUE,
-                       #     #  plotOutput("distPlot"),
-                       #     
-                       # ),
+                       box(width = NULL,
+                           title = "Graph Title Here",
+                           color = "gold",
+                           actionButton("LoadGraph1", "Load Graph 1", width = '100%'),
+                           plotOutput("riskPlot")
+                       )
+                )
+              ),
+              
+              fluidRow(
+                column(width = 12,
+                       box(width = NULL,
+                           title = "Graph Title Here",
+                           color = "gold",
+                           plotlyOutput("riskPlot3")
+                       )
+                )
+              ),
+
                        
-                       fluidRow(width = 12,
-                                box(width = 12,
-                                  title = "Predicted Clinical Outcomes", status = "warning", solidHeader = TRUE,
-                                  valueBoxOutput("majorComplicationBox"),
-                                  valueBoxOutput("deathRiskBox")
-                                )
-                       ),
                        #Modifiable Risk Factors
                        fluidRow(width = 12,
                                 box(width = 12,
@@ -133,22 +131,19 @@ dashboardPage(
                                 uiOutput("COPDBox"),
                                 uiOutput("smokerBox"),
                                 uiOutput("DMBox"),
-                                uiOutput("HTNBox")
-                                )
-                       ),
-                       fluidRow(width=12,
-                                htmlOutput("hp")
-                                #actionButton("submitToGoogle", "Submit to Google", class = "btn-primary")
+                                uiOutput("HTNBox"),
+                                uiOutput("BMIBOX")
                                 
+                                )
                        )
                 )
-              )),
+              ,
  
       tabItem(tabName = "about",
               fluidRow(
                 column(width = 12,
                        box(width = NULL,
-                           includeMarkdown("about.md")
+                           includeMarkdown("README.md")
                            )
                        )
                 )
@@ -157,14 +152,3 @@ dashboardPage(
   )
 )
 
-
-
-
-# conditionalPanel(
-#   condition = c("input.FunctionalStatus == 'Totally Depdendent'",
-#                 "input.FunctionalStatus == 'Partially Dependent'",
-#                 "input.FunctionalStatus == 'Fully Independent'"
-#                 ),
-#   selectInput("smoothMethod", "Method",
-#               list("lm", "glm", "gam", "loess", "rlm"))
-# ),
