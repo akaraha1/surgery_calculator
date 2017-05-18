@@ -31,14 +31,8 @@ fluidRow(
              
              #BMI Section
              helpText("Enter the patient's Height/Weight or BMI."),
-             # splitLayout(
-             #   textInput("weight", "Weight (kg):", value = ""),
-             #   textInput("height", "Height (cm):", value = "")
-             # ),
-             numericInput("BMI", "BMI (kg/m2):", value = 20, min = 0, max = 55, step = 1,
+             numericInput("BMI", "BMI (kg/m2):", value = 20.0, min = 0, max = 55, step = 0.1,
                           width = NULL)
-             
-             # textInput("BMI", "BMI (kg/m2):", value = "")
          ),
          box(width = NULL,
              h3("Surgery Profile", align = "center"),
@@ -66,96 +60,68 @@ fluidRow(
                           inline = FALSE,
                           choices = c("1: Totally Healthy", "2: Mild diseases", "3: Severe diseases", "4: Near death"),
                           selected = "1: Totally Healthy"),
-             
-             #DM All
-             # radioButtons("DMall1","Diabetes mellitus:", inline = TRUE,
-             #              choices = c("Yes", "No"),
-             #              selected = "No"),
-             
+
+             #Diabetes
              switchButton(inputId = "DMall",
                           label = "Diabetes mellitus:",
                           value = FALSE, col = "RG", type = "YN"),
-             # switchButton(inputId = "DMall",
-             #              label = "Diabetes mellitus:",
-             #              value = FALSE, col = "GB", type = "YN"),
-             
+
              #Smoker
-             
              switchButton(inputId = "Smoker",
                           label = "Smoker:",
                           value = FALSE, col = "RG", type = "YN"),
-             
-             # radioButtons("Smoker","Smoker:", inline = TRUE,
-             #              choices = c("Yes", "No"),
-             #              selected = "No"),
              
              #CHF
              switchButton(inputId = "HxCHF",
                           label = "History of CHF:",
                           value = FALSE, col = "RG", type = "YN"),
-             
-             # radioButtons("HxCHF","History of CHF:", inline = TRUE,
-             #              choices = c("Yes", "No"),
-             #              selected = "No"), 
 
              #COPD
-             
              switchButton(inputId = "HxCOPD",
                           label = "History of COPD:",
                           value = FALSE, col = "RG", type = "YN"),
-             # radioButtons("HxCOPD","History of COPD:", inline = TRUE,
-             #              choices = c("Yes", "No"),
-             #              selected = "No"),
              
              #HTN
-             
              switchButton(inputId = "HTNMeds",
                           label = HTML(paste("Hyptension:",
                                              "(requiring medication)", sep="<br/>")),
                           value = FALSE, col = "RG", type = "YN")
-             
-             # radioButtons("HTNMeds",
-             #              HTML(paste("Hyptension:",
-             #                         "(requiring medication)", sep="<br/>")),
-             #              inline = TRUE,
-             #              choices = c("Yes", "No"),
-             #              selected = "No")
-             
              )
          ),
   column(width = 4,
-         box(width = NULL,
+         box(width = NULL, align="center",
              h3("Additional Risk Factors", align = "center"),
              
-             radioButtons("septic","Septic:", inline = TRUE,
-                          choices = c("Yes", "No"),
-                          selected = "No"),
+             #Septic
+             switchButton(inputId = "septic",
+                          label = "Septic:",
+                          value = FALSE, col = "RG", type = "YN"),
              
-             radioButtons("vent","Ventilator dependent:", inline = TRUE,
-                          choices = c("Yes", "No"),
-                          selected = "No"),
+             switchButton(inputId = "vent",
+                          label = "Ventilator dependent:",
+                          value = FALSE, col = "RG", type = "YN"),
+
              
-             radioButtons("Dialysis","Currently on Dialysis:", inline = TRUE,
-                          choices = c("Yes", "No"),
-                          selected = "No"),
+             switchButton(inputId = "Dialysis",
+                          label = "Currently on Dialysis:",
+                          value = FALSE, col = "RG", type = "YN"),
              
-             radioButtons(inputId ="RenalFailure",
-                          HTML(paste("Renal Failure:", "(Cr > 3 for 2 occurrences)", sep="<br/>")),
-                          inline = TRUE,
-                          choices = c("Yes", "No"),
-                          selected = "No"),
+             switchButton(inputId = "RenalFailure",
+                          label = HTML(paste("Renal Failure:", "(Cr > 3 for 2 occurrences)", sep="<br/>")),
+                          value = FALSE, col = "RG", type = "YN"),
              
-             radioButtons("ascites","Ascites (clinical or imaging):", inline = TRUE,
-                          choices = c("Yes", "No"),
-                          selected = "No"),
+             switchButton(inputId = "ascites",
+                          label = "Ascites (clinical or imaging):",
+                          value = FALSE, col = "RG", type = "YN"),
              
-             radioButtons("steroids","Chronic Steroids:", inline = TRUE,
-                          choices = c("Yes", "No"),
-                          selected = "No"),
+             switchButton(inputId = "steroids",
+                          label = "Chronic Steroids:",
+                          value = FALSE, col = "RG", type = "YN"),
              
-             radioButtons("SOB","Shortness of Breath:", inline = TRUE,
-                          choices = c("Yes", "No"),
-                          selected = "No")
+             switchButton(inputId = "SOB",
+                          label = "Shortness of Breath:",
+                          value = FALSE, col = "RG", type = "YN")
+  
          ),
          actionButton("Submit", "Submit", width = '210px', icon("refresh"))
   )
