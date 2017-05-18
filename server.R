@@ -12,15 +12,19 @@ library(emojifont)
 library(boxr)
 
 library(googleVis)
-suppressPackageStartupMessages(library(googleVis))
 
 library(grid)
 library(gridSVG)
+library(plotly)
+
+suppressPackageStartupMessages(library(googleVis))
 #suppressPackageStartupMessages(library(dplyr))
 
 source(file.path("MajorComplCalculation.R"),  local = TRUE)$value
 
-dfMaster <- data.frame()
+dfMaster <- data.frame()      #the master df holding input variables and final outputs
+dfRiskChanges <<- data.frame() #the risk changes
+
 
 shinyServer(function(input, output, session) {
 
@@ -49,23 +53,19 @@ shinyServer(function(input, output, session) {
                                    "2: Mild diseases" = 2,
                                    "3: Severe diseases" = 3,
                                    "4: Near death" = 4, 1),
-                            switch(input$steroids, "Yes" = 1, "No" = 0, 0),
-                            switch(input$ascites, "Yes" = 1, "No" = 0, 0),
-                            switch(input$septic, "Yes" = 1, "No" = 0, 0),
-                            switch(input$vent, "Yes" = 1, "No" = 0, 0),
-                           # switch(input$DMall, TRUE = 1, FALSE = 0, 0),
+                            if(input$steroids == TRUE) 1 else 0,
+                            if(input$ascites == TRUE) 1 else 0,
+                            if(input$septic == TRUE) 1 else 0,
+                            if(input$vent == TRUE) 1 else 0,
                            if(input$DMall == TRUE) 1 else 0,
-                            #switch(input$HTNMeds, "Yes" = 1, "No" = 0, 0),
                            if(input$HTNMeds == TRUE) 1 else 0,
-                            #switch(input$HxCHF, "Yes" = 1, "No" = 0, 0),
                            if(input$HxCHF == TRUE) 1 else 0,
-                            switch(input$SOB, "Yes" = 1, "No" = 0, 0),
-                            #switch(input$Smoker, "Yes" = 1, "No" = 0, 0),
+                           if(input$SOB == TRUE) 1 else 0,
                            if(input$Smoker == TRUE) 1 else 0,
-                           # switch(input$HxCOPD, "Yes" = 1, "No" = 0, 0),
                            if(input$HxCOPD == TRUE) 1 else 0,
-                            switch(input$Dialysis, "Yes" = 1, "No" = 0, 0),
-                            switch(input$RenalFailure, "Yes" = 1, "No" = 0, 0),
+                           if(input$Dialysis == TRUE) 1 else 0,
+                           if(input$RenalFailure == TRUE) 1 else 0,
+                           
                             input$BMI,
                             -1, #placeholder for major complications - raw
                             -1,  #placeholder for major complication
@@ -99,7 +99,7 @@ shinyServer(function(input, output, session) {
                              'DeathRisk'
                              )
     
-
+print(dfMaster)
   #Calculate the surgery risk for major complications via
   # the method in 'MajorComplCalculation.R'
   dfMaster[1,'Raw_MajorComplications'] <<- CalcMajorRisk()
@@ -109,8 +109,6 @@ shinyServer(function(input, output, session) {
   # the method in 'MajorComplCalculation.R'
   dfMaster[1,'Raw_DeathRisk'] <<- CalcDeathRisk()
   dfMaster[1,'DeathRisk']     <<- expMajorRisk(dfMaster[1,'Raw_DeathRisk'])
-  print((dfMaster[1,'Raw_DeathRisk']))
-  print(expMajorRisk(dfMaster[1,'Raw_DeathRisk']))
   
   
   
@@ -134,49 +132,52 @@ shinyServer(function(input, output, session) {
     )
   })
   
+  dfRiskChanges <<- data.frame(-1, -1, -1, -1, -1, -1, -1)
+  colnames(dfRiskChanges) <<- c('A', 'B', 'C', 'D', 'E', 'F', 'G')
+
   ###Modifiable Risk Factors - in order by contribution
   source(file.path("UIFiles", "ModifiableRiskInfoBoxesServer.R"),  local = TRUE)$value
-  
-  output$hp<-renderGvis({
+
+    observeEvent(input$LoadGraph1, {
+      
+      output$riskPlot <- renderPlot ({
+        
+      df3 <- data.frame(units = c(1,
+                                  3,
+                                  5,
+                                  6,
+                                  12,
+                                  14,
+                                  15.1,
+                                  15.9,
+                                  19),
+                        what = c('SOB Contribution',
+                                 'Steroid Contribution',
+                                 'Hypertension Contribution',
+                                 'COPD Contribution',
+                                 'CHF Contribution',
+                                 'Smoking Contribution',
+                                 'Diabetes Contribtion',
+                                 'Functional Status Contribution',
+                                 'Your Current Risk'
+                        ))
+      # make gs an ordered factor
+      df3$what <- factor(df3$what, levels = df3$what, ordered = TRUE)
+      source(file.path("UIFiles", "RiskGraphPictogram.R"), local = TRUE)$value
+      
+      
+    })
+   
+                 
+
     
-    gvisGauge(data.frame(Item='BMI',Value=dfMaster[1, 'BMI']),
-              options=list(min=0,
-                           max=55,
-                           greenFrom=15,
-                           greenTo=25,
-                           yellowFrom=25,
-                           yellowTo=35,
-                           redFrom=35, redTo=55)
-    )
-  })    
   
+})
+
   #Create the risk plot graph
-  output$riskPlot <- renderPlot ({
-    df3 <- data.frame(units = c(14,
-                                8,
-                                8,
-                                14,
-                                19,
-                                13.7,
-                                20,
-                                18,
-                                4), 
-                      what = c('Your Current Risk',
-                               'Functional Status Contribution',
-                               'Diabetes Contribtion', 
-                               'Smoking Contribution',
-                               'CHF Contribution',
-                               'COPD Contribution', 
-                               'Hypertension Contribution',
-                               'Steroid Contribution',
-                               'SOB Contribution'))
-    
-    # make gs an ordered factor
-    df3$what <- factor(df3$what, levels = df3$what, ordered = TRUE)
-    
-    source(file.path("UIFiles", "RiskGraphPictogram.R"), local = TRUE)$value
-    
-  })
+  # output$riskPlot <- renderPlot ({
+  #   
+  # })
   
   #Create the risk plot graph
   output$riskPlot2 <- renderPlot ({
@@ -191,22 +192,50 @@ shinyServer(function(input, output, session) {
     
   })
   
-  output$riskPlot3 <- renderPlot ({
+  output$riskPlot3 <- renderPlotly ({
     
-    ## Dummy data graph
-    barplot(VADeaths,
-            angle = 15+10*1:5,
-            density = 20,
-            col = "black",
-            border = "red",
-            legend = rownames(VADeaths),
-            xlab = "Risk Profile",
-            ylab = "Expected Deaths",
-            names.arg = c("Risk Profile 1",
-                          "Risk Profile 2",
-                          "Risk Profile 3",
-                          "Risk Profile 4"))
-    title(main = list("Some Demo Data...", font = 4))
+    # p <- plot_ly (x = c( 0, 0 ),
+    #          y = c( 0, 0),
+    #          type = 'scatter',
+    #          mode = 'markers',
+    #          size = c( 500, 400 ),
+    #          marker = list(color = c('red', 'blue', 'green')))
+    # p
+
+    
+    
+    
+#     p <- plot_ly(data = iris, x = ~Sepal.Length, y = ~Petal.Length,
+#                  marker = list(size = 10,
+#                                color = 'rgba(255, 182, 193, .9)',
+#                                line = list(color = 'rgba(152, 0, 0, .8)',
+#                                            width = 2))) %>%
+#       layout(title = 'Styled Scatter',
+#              yaxis = list(zeroline = FALSE),
+#              xaxis = list(zeroline = FALSE))
+# 
+#   
+# 
+# 
+# p
+  
+    data <- read.csv("https://raw.githubusercontent.com/plotly/datasets/master/school_earnings.csv")
+    # 
+     data$State <- as.factor(c('Massachusetts', 'California', 'Massachusetts', 'Pennsylvania', 'New Jersey', 'Illinois', 'Washington DC',
+                               'Massachusetts', 'Connecticut', 'New York', 'North Carolina', 'New Hampshire', 'New York', 'Indiana',
+                               'New York', 'Michigan', 'Rhode Island', 'California', 'Georgia', 'California', 'California'))
+     
+    p <- plot_ly(data, x = ~Women, y = ~Men, text = ~School, type = 'scatter', mode = 'markers', size = ~gap, color = ~State, colors = 'Paired',
+                 marker = list(opacity = 0.5, sizemode = 'diameter')) %>%
+      layout(title = 'Gender Gap in Earnings per University',
+             xaxis = list(showgrid = FALSE),
+             yaxis = list(showgrid = FALSE),
+             showlegend = FALSE)
+
+
+    p
+    
+    
     
   })
 
@@ -240,6 +269,8 @@ shinyServer(function(input, output, session) {
  
 
 })
+
+
 
 expMajorRisk <- function(rawAnyCompl=0){
   if(exp(rawAnyCompl)*100 > 100)
@@ -275,3 +306,19 @@ BoxServerFx <- function() {
             description = NULL)
 }
 
+
+# ## Dummy data graph
+# barplot(VADeaths,
+#         angle = 15+10*1:5,
+#         density = 20,
+#         col = "black",
+#         border = "red",
+#         legend = rownames(VADeaths),
+#         xlab = "Risk Profile",
+#         ylab = "Expected Deaths",
+#         names.arg = c("Risk Profile 1",
+#                       "Risk Profile 2",
+#                       "Risk Profile 3",
+#                       "Risk Profile 4"))
+# title(main = list("Some Demo Data...", font = 4))
+# print("in here")
