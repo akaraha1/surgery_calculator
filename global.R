@@ -8,11 +8,11 @@ majorComp_ColonRxnFactor      <-  -0.8071903
 majorComp_CancerGIFactor      <-   0.0870107
 majorComp_FunctionalFactor    <-  -0.5353748
 majorComp_asaclassFactor      <-   0.4420653  
-majorComp_steroidFactor       <-   0.4215457   
-majorComp_ascitesFactor       <-   0.7761558  
-majorComp_SepticFactor        <-   0.7766535  
-majorComp_ventilarFactor      <-   0.904599   
-majorComp_DMallFactor         <-   0.0697649  
+majorComp_steroidFactor       <-   0.4215457
+majorComp_ascitesFactor       <-   0.7761558
+majorComp_SepticFactor        <-   0.7766535
+majorComp_ventilarFactor      <-   0.904599
+majorComp_DMallFactor         <-   0.0697649
 majorComp_hypermedFactor      <-   0.0406726   
 majorComp_hxchfFactor         <-   0.2994934
 majorComp_SOBFactor           <-   0.2186209   
