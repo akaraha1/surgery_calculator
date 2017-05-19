@@ -13,7 +13,7 @@ library(shinyjs)
 library(plotly)
 
 dashboardPage(
-  dashboardHeader(title = "Surgery Risk Predictor", titleWidth = 250,
+  dashboardHeader(title = "Surgery Risk Predictor", titleWidth = 325,
   # Dropdown menu for notifications
   dropdownMenu(type = "tasks", badgeStatus = "success",
                taskItem(value = 90, color = "green",
@@ -72,7 +72,6 @@ dashboardPage(
                   includeCSS('www/style.css'),
                   includeCSS('www/button.css')
                 ),
-                
     tabItems(
       tabItem("tabOne",
               box(title = "Box One", 
@@ -91,7 +90,7 @@ dashboardPage(
       tabItem(tabName = "dataViewer",
               fluidRow(width = 12,
                        box(width = 12,
-                           title = "Predicted Clinical Outcomes", status = "warning", solidHeader = TRUE,
+                           title = "Predicted Clinical Outcomes", solidHeader = TRUE,
                            valueBoxOutput("majorComplicationBox"),
                            valueBoxOutput("deathRiskBox")
                        )
@@ -121,7 +120,7 @@ dashboardPage(
                        #Modifiable Risk Factors
                        fluidRow(width = 12,
                                 box(width = 12,
-                                    title = "Modifiable Risk Factors", status = "info", solidHeader = TRUE,
+                                    title = "Modifiable Risk Factors", solidHeader = TRUE,
                                 #h3("", align = "center"),
                                 helpText("The following are mofifiable risk factors which could improve you surgery risk profile", align = "center"),
                                 uiOutput("FunctStatusBox"),

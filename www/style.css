@@ -1,3 +1,5 @@
+/*http://brand.jhu.edu/color/*/
+
 .sidebar {
   color: #FFF;
   position: fixed;
@@ -13,3 +15,47 @@
 .content {
   padding-top: 60px;
 }
+
+.main-header .logo {
+  font-family: "Georgia", Times, "Times New Roman", serif;
+  font-weight: bold;
+  font-size: 24px;
+}
+
+/* FOR THE MAIN PAGE HEADER*/
+
+/* logo */
+.skin-blue .main-header .logo {
+background-color: #4d96e0;
+}
+                                          
+/* logo when hovered */
+.skin-blue .main-header .logo:hover {
+background-color: #4d96e0;
+}
+                                          
+/* navbar (rest of the header) */
+.skin-blue .main-header .navbar {
+background-color: #4d96e0;
+}    
+
+
+/*FOR THE DASHBOARD BOXES*/
+.box-header {
+  color:#4d96e0;
+  background:#4d96e0
+}
+
+.box-title {
+  color:#FF9E1B;
+  background:#4d96e0;
+  font-weight: bold;
+}
+
+.box.box-solid.box-primary{
+  border-bottom-color:#4d96e0;
+  border-left-color:#4d96e0;
+  border-right-color:#4d96e0;
+  border-top-color:#4d96e0;
+}
+
