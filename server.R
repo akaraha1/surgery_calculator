@@ -12,13 +12,12 @@ library(emojifont)
 library(boxr)
 
 library(googleVis)
-
+library(dplyr)
 library(grid)
 library(gridSVG)
 library(plotly)
 
 suppressPackageStartupMessages(library(googleVis))
-#suppressPackageStartupMessages(library(dplyr))
 
 source(file.path("MajorComplCalculation.R"),  local = TRUE)$value
 
@@ -28,27 +27,29 @@ dfRiskChanges <<- data.frame() #the risk changes
 
 shinyServer(function(input, output, session) {
 
-
   observeEvent(input$Submit, {
     
     #Switches from the quertionaire view to the data view
     # when the submit button is pressed
     updateTabsetPanel(session, "tab", 'dataViewer')
 
-    dfMaster <<- data.frame(switch(input$GenderButton, "Male" = 1, "Female" = 0),
-                            switch(input$RaceButton, "White" = 1, "Non-White" = 0, 1),
-                            input$PtAge,
-                            switch(input$SurgeryTypeButton,
-                                   "Pancreas" = "Pancreas",
-                                   "Stomach" = "Stomach",
-                                   "Colon" = "Colon"),
-                            switch(input$GICancer,
-                                   "Cancer Surgery" = 1,
-                                   "Benign disease" = 0, 0),
-                            switch(input$FunctionalStatus,
-                                   "Totally Depdendent" = 0,
-                                   "Partially Dependent" = 1,
-                                   "Fully Independent" = 2, 2),
+    dfMaster <<- data.frame(
+      -1, #placeholder for timestamp
+      -1, #placeholder for MRN
+      switch(input$GenderButton, "Male" = 1, "Female" = 0),
+      switch(input$RaceButton, "White" = 1, "Non-White" = 0, 1),
+      input$PtAge,
+      switch(input$SurgeryTypeButton,
+             "Pancreas" = "Pancreas",
+             "Stomach" = "Stomach",
+             "Colon" = "Colon"),
+      switch(input$GICancer,
+             "Cancer Surgery" = 1,
+             "Benign disease" = 0, 0),
+      switch(input$FunctionalStatus,
+             "Totally Depdendent" = 0,
+             "Partially Dependent" = 1,
+             "Fully Independent" = 2, 2),
                             switch(input$OtherMedical, "1: Totally Healthy" = 1,
                                    "2: Mild diseases" = 2,
                                    "3: Severe diseases" = 3,
@@ -57,49 +58,50 @@ shinyServer(function(input, output, session) {
                             if(input$ascites == TRUE) 1 else 0,
                             if(input$septic == TRUE) 1 else 0,
                             if(input$vent == TRUE) 1 else 0,
-                           if(input$DMall == TRUE) 1 else 0,
-                           if(input$HTNMeds == TRUE) 1 else 0,
-                           if(input$HxCHF == TRUE) 1 else 0,
-                           if(input$SOB == TRUE) 1 else 0,
-                           if(input$Smoker == TRUE) 1 else 0,
-                           if(input$HxCOPD == TRUE) 1 else 0,
-                           if(input$Dialysis == TRUE) 1 else 0,
-                           if(input$RenalFailure == TRUE) 1 else 0,
-                           
-                            input$BMI,
-                            -1, #placeholder for major complications - raw
-                            -1,  #placeholder for major complication
-                            -1, #placeholder for death risk - raw
-                            -1 #placeholder for death risk - calculated
-                            )
+      if(input$DMall == TRUE) 1 else 0,
+      if(input$HTNMeds == TRUE) 1 else 0,
+      if(input$HxCHF == TRUE) 1 else 0,
+      if(input$SOB == TRUE) 1 else 0,
+      if(input$Smoker == TRUE) 1 else 0,
+      if(input$HxCOPD == TRUE) 1 else 0,
+      if(input$Dialysis == TRUE) 1 else 0,
+      if(input$RenalFailure == TRUE) 1 else 0,
+      input$BMI,
+      -1, #placeholder for major complications - raw
+      -1,  #placeholder for major complication
+      -1, #placeholder for death risk - raw
+      -1 #placeholder for death risk - calculated
+      )
     
-    colnames(dfMaster) <<- c('Sex',
-                             'Race',
-                             'Age',
-                             'Surgery',
-                             'Cancer',
-                             'Funcational',
-                             'ASAClass',
-                             'Steroid',
-                             'Ascites',
-                             'Septic',
-                             'Vent',
-                             'DMAll',
-                             'HTNMed',
-                             'HxCHF',
-                             'SOB',
-                             'Smoker',
-                             'HxCOPD',
-                             'Dialysis',
-                             'RenalFailure',
-                             'BMI',
-                             'Raw_MajorComplications',
-                             'MajorComplications',
-                             'Raw_DeathRisk',
-                             'DeathRisk'
-                             )
+    colnames(dfMaster) <<- c(
+      'Timestamp',
+      'MRN',
+      'Sex',
+      'Race',
+      'Age',
+      'Surgery',
+      'Cancer',
+      'Funcational',
+      'ASAClass',
+      'Steroid',
+      'Ascites',
+      'Septic',
+      'Vent',
+      'DMAll',
+      'HTNMed',
+      'HxCHF',
+      'SOB',
+      'Smoker',
+      'HxCOPD',
+      'Dialysis',
+      'RenalFailure',
+      'BMI',
+      'Raw_MajorComplications',
+      'MajorComplications',
+      'Raw_DeathRisk',
+      'DeathRisk'
+      )
     
-print(dfMaster)
   #Calculate the surgery risk for major complications via
   # the method in 'MajorComplCalculation.R'
   dfMaster[1,'Raw_MajorComplications'] <<- CalcMajorRisk()
@@ -111,14 +113,11 @@ print(dfMaster)
   dfMaster[1,'DeathRisk']     <<- expMajorRisk(dfMaster[1,'Raw_DeathRisk'])
   
   
-  
   ###MAJOR RISK COMPLICATION BOX
   output$majorComplicationBox <- renderValueBox({
     valueBox(
       paste0(formatC(dfMaster[1,'MajorComplications'], digits = 1, format = "f"), "%"),
-      "Major Complication Risk",
-      icon = icon("plus-square"),
-      color = "purple"
+      "Major Complication Risk", icon = icon("plus-square"), color = "purple"
     )
   })
   
@@ -126,52 +125,107 @@ print(dfMaster)
   output$deathRiskBox <- renderValueBox({
     valueBox(
       paste0(formatC(dfMaster[1,'DeathRisk'], digits = 1, format = "f"), "%"),
-      "Risk of Death",
-      icon = icon("plus-square"),
-      color = "purple"
+      "Risk of Death", icon = icon("plus-square"), color = "purple"
     )
   })
   
-  dfRiskChanges <<- data.frame(-1, -1, -1, -1, -1, -1, -1)
-  colnames(dfRiskChanges) <<- c('A', 'B', 'C', 'D', 'E', 'F', 'G')
+  dfRiskChanges <<- data.frame(-1, -1, -1, -1, -1, -1, -1, -1)
+  # dfRiskChanges <<- what('Funcational', 'Steroid', 'HxCHF', 'SOB',
+  #                              'HxCOPD', 'Smoker', 'DMAll', 'HTNMed')
 
+  colnames(dfRiskChanges) <<- c('Funcational', 'Steroid', 'HxCHF', 'SOB',
+                                'HxCOPD', 'Smoker', 'DMAll', 'HTNMed')
+  
+  #function change in risk
+  if(dfMaster[1, 'Funcational'] < 2) {
+    tmpRisk <- dfMaster[1,'Raw_MajorComplications'] - majorComp_FunctionalFactor*dfMaster[1, 'Funcational'] + majorComp_FunctionalFactor*2
+    newRisk <- expMajorRisk(tmpRisk) - expMajorRisk(dfMaster[1,'Raw_MajorComplications']) 
+    dfRiskChanges[,'Funcational'] <<- newRisk
+  }
+  
+  #steroid change in risk
+  if(dfMaster[1, 'Steroid']) {
+    riskChange <- dfMaster[1,'MajorComplications'] - expMajorRisk(dfMaster[1,'Raw_MajorComplications'] - majorComp_steroidFactor)
+    dfRiskChanges[,'Steroid'] <<- riskChange
+  }
+  
+  #CHF change in risk
+  if(dfMaster[1, 'HxCHF']) {
+    riskChange <- dfMaster[1,'MajorComplications'] - expMajorRisk(dfMaster[1,'Raw_MajorComplications'] - majorComp_hxchfFactor)
+    dfRiskChanges[,'HxCHF'] <<- riskChange
+  }
+
+  #SOB change in risk
+  if(dfMaster[1, 'SOB']) {
+    riskChange <- dfMaster[1,'MajorComplications'] - expMajorRisk(dfMaster[1,'Raw_MajorComplications'] - majorComp_SOBFactor)
+    dfRiskChanges[,'SOB'] <<- riskChange
+  }
+
+  #COPD change in risk
+  if(dfMaster[1, 'HxCOPD']) {
+    riskChange <- dfMaster[1,'MajorComplications'] - expMajorRisk(dfMaster[1,'Raw_MajorComplications'] - majorComp_hxcopdFactor)
+    dfRiskChanges[,'HxCOPD'] <<- riskChange
+  }
+
+  #Smoker change in risk
+  if(dfMaster[1, 'Smoker']) {
+    riskChange <- dfMaster[1,'MajorComplications'] - expMajorRisk(dfMaster[1,'Raw_MajorComplications'] - majorComp_smokerFactor)
+    dfRiskChanges[,'Smoker'] <<- riskChange
+  }
+
+  #DMAll change in risk
+  if(dfMaster[1, 'DMAll']) {
+    riskChange <- dfMaster[1,'MajorComplications'] - expMajorRisk(dfMaster[1,'Raw_MajorComplications'] - majorComp_DMallFactor)
+    dfRiskChanges[,'DMAll'] <<- riskChange
+  }
+
+  #HTN Med change in risk
+  if(dfMaster[1, 'HTNMed']) {
+    riskChange <- dfMaster[1,'MajorComplications'] - expMajorRisk(dfMaster[1,'Raw_MajorComplications'] - majorComp_hypermedFactor)
+    dfRiskChanges[,'HTNMed'] <<- riskChange
+  }
+  
+  
+  
   ###Modifiable Risk Factors - in order by contribution
   source(file.path("UIFiles", "ModifiableRiskInfoBoxesServer.R"),  local = TRUE)$value
+  
+  observeEvent(input$LoadGraph1, {
+    output$riskPlot <- renderPlot ({
 
-    observeEvent(input$LoadGraph1, {
+      #Remove all the null (-1) values from the dataframe
+      dfRiskChanges <- dfRiskChanges[!grepl(-1,dfRiskChanges)]
+
       
-      output$riskPlot <- renderPlot ({
-        
-      df3 <- data.frame(units = c(1,
-                                  3,
-                                  5,
-                                  6,
-                                  12,
-                                  14,
-                                  15.1,
-                                  15.9,
-                                  19),
-                        what = c('SOB Contribution',
-                                 'Steroid Contribution',
-                                 'Hypertension Contribution',
-                                 'COPD Contribution',
-                                 'CHF Contribution',
-                                 'Smoking Contribution',
-                                 'Diabetes Contribtion',
-                                 'Functional Status Contribution',
-                                 'Your Current Risk'
-                        ))
-      # make gs an ordered factor
-      df3$what <- factor(df3$what, levels = df3$what, ordered = TRUE)
+      
+      newDF <- data.frame(
+        units = c(),
+        what = c())
+      
+
+      for(i in 1:ncol(dfRiskChanges)) {
+        newDF <- rbind(newDF, data.frame(
+          units = c(dfRiskChanges[1,i]),
+          what = c(colnames(dfRiskChanges)[i])
+        ))
+                       
+      }
+      print(newDF)
+      
+      
       source(file.path("UIFiles", "RiskGraphPictogram.R"), local = TRUE)$value
+      
+      
+      
+
+      #Todo need to add a validity check for if there is no data in the df
+      #and thus the graph isn't meaningful
+      
+     
       
       
     })
    
-                 
-
-    
-  
 })
 
   #Create the risk plot graph
@@ -182,6 +236,8 @@ print(dfMaster)
   #Create the risk plot graph
   output$riskPlot2 <- renderPlot ({
 
+    
+    
     df3 <- data.frame(units = c(4.7, 6.7, 20),
                       what = c('If you lost X lbs', 'If you stopped smoking',
                                'Your Current Risk'))
@@ -198,11 +254,44 @@ print(dfMaster)
     #          y = c( 0, 0),
     #          type = 'scatter',
     #          mode = 'markers',
-    #          size = c( 500, 400 ),
-    #          marker = list(color = c('red', 'blue', 'green')))
+    #          size = c( 5, 100 ),
+    #          marker = list(color = c('red', 'blue'))) %>%
+    #          layout(title = 'Styled Scatter',
+    #                 yaxis = list(zeroline = FALSE),
+    #                 xaxis = list(zeroline = FALSE))
     # p
 
+    USPersonalExpenditure <- data.frame("Categorie" = rownames(USPersonalExpenditure), USPersonalExpenditure)
+    data <- USPersonalExpenditure[, c('Categorie', 'X1960')]
     
+    colors <- c('rgb(211,94,96)', 'rgb(128,133,133)', 'rgb(144,103,167)', 'rgb(171,104,87)', 'rgb(114,147,203)')
+    
+    p <- plot_ly(data, labels = ~Categorie, values = ~X1960, type = 'pie',
+                 textposition = 'inside',
+                 textinfo = 'label+percent',
+                 insidetextfont = list(color = '#FFFFFF'),
+                 hoverinfo = 'text',
+                 text = ~paste('$', X1960, ' billions'),
+                 marker = list(colors = colors,
+                               line = list(color = '#FFFFFF', width = 1)),
+                 #The 'pull' attribute can also be used to create space between the sectors
+                 showlegend = FALSE) %>%
+      layout(title = 'United States Personal Expenditures by Categories in 1960',
+             xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+             yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+    
+    # p <- plot_ly() %>%
+    #   add_pie(data = count(diamonds, cut), labels = ~cut, values = ~n,
+    #           name = "Cut", domain = list(x = c(0, 0.4), y = c(0.4, 1))) %>%
+    #   add_pie(data = count(diamonds, color), labels = ~cut, values = ~n,
+    #           name = "Color", domain = list(x = c(0.6, 1), y = c(0.4, 1))) %>%
+    #   add_pie(data = count(diamonds, clarity), labels = ~cut, values = ~n,
+    #           name = "Clarity", domain = list(x = c(0.25, 0.75), y = c(0, 0.6))) %>%
+    #   layout(title = "Pie Charts with Subplots", showlegend = F,
+    #          xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+    #          yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+    # 
+    p
     
     
 #     p <- plot_ly(data = iris, x = ~Sepal.Length, y = ~Petal.Length,
@@ -219,22 +308,22 @@ print(dfMaster)
 # 
 # p
   
-    data <- read.csv("https://raw.githubusercontent.com/plotly/datasets/master/school_earnings.csv")
+    # data <- read.csv("https://raw.githubusercontent.com/plotly/datasets/master/school_earnings.csv")
+    # # 
+    #  data$State <- as.factor(c('Massachusetts', 'California', 'Massachusetts', 'Pennsylvania', 'New Jersey', 'Illinois', 'Washington DC',
+    #                            'Massachusetts', 'Connecticut', 'New York', 'North Carolina', 'New Hampshire', 'New York', 'Indiana',
+    #                            'New York', 'Michigan', 'Rhode Island', 'California', 'Georgia', 'California', 'California'))
+    #  
+    # p <- plot_ly(data, x = ~Women, y = ~Men, text = ~School, type = 'scatter', mode = 'markers', size = ~gap, color = ~State, colors = 'Paired',
+    #              marker = list(opacity = 0.5, sizemode = 'diameter')) %>%
+    #   layout(title = 'Gender Gap in Earnings per University',
+    #          xaxis = list(showgrid = FALSE),
+    #          yaxis = list(showgrid = FALSE),
+    #          showlegend = FALSE)
     # 
-     data$State <- as.factor(c('Massachusetts', 'California', 'Massachusetts', 'Pennsylvania', 'New Jersey', 'Illinois', 'Washington DC',
-                               'Massachusetts', 'Connecticut', 'New York', 'North Carolina', 'New Hampshire', 'New York', 'Indiana',
-                               'New York', 'Michigan', 'Rhode Island', 'California', 'Georgia', 'California', 'California'))
-     
-    p <- plot_ly(data, x = ~Women, y = ~Men, text = ~School, type = 'scatter', mode = 'markers', size = ~gap, color = ~State, colors = 'Paired',
-                 marker = list(opacity = 0.5, sizemode = 'diameter')) %>%
-      layout(title = 'Gender Gap in Earnings per University',
-             xaxis = list(showgrid = FALSE),
-             yaxis = list(showgrid = FALSE),
-             showlegend = FALSE)
-
-
-    p
-    
+    # 
+    # p
+    # 
     
     
   })
@@ -242,6 +331,21 @@ print(dfMaster)
   
   }) # end submit button method
 
+  dataModal <- function(failed = FALSE) {
+    modalDialog(
+      textInput("PtMRNInput", "Patient's MRN:",
+                placeholder = '2 Letters Followed By 8 Digits (eg. AA12345678)'
+      ),
+      if (failed)
+        div(tags$b("Invalid MRN format.", style = "color: red;")),
+      
+      footer = tagList(
+        modalButton("Cancel"),
+        actionButton("modalSubmit", "Submit to Server")
+      )
+    )
+  }
+  
   ###To collapse the Menuside bar but keep the icons visible
   runjs({'
         var el2 = document.querySelector(".skin-blue");
@@ -260,14 +364,28 @@ print(dfMaster)
     '}))
   
   #Submit to Box
-  observeEvent(
-    input$SavetoServer,
-    BoxServerFx()
-
-
-   )
- 
-
+  observeEvent(input$SavetoServer, {
+    if(nrow(dfMaster) == 0) {
+      #If there's no data don't allow a null submission
+      showModal(modalDialog(
+        title = "You must submit the questionaire before saving to the server",
+        easyClose = TRUE,
+        footer = NULL
+      ))
+    }
+    else
+      showModal(dataModal())
+    }
+  )               
+               
+  observeEvent(input$modalSubmit, {
+      if(nchar(input$PtMRNInput) < 10 || nchar(input$PtMRNInput) > 10)
+        showModal(dataModal(failed = TRUE))
+      else {
+        removeModal()
+        BoxServerFx(input$PtMRNInput)
+      }
+    })
 })
 
 
@@ -279,32 +397,41 @@ expMajorRisk <- function(rawAnyCompl=0){
 }
 
 
-BoxServerFx <- function() {
+BoxServerFx <- function(MRNInput = '') {
   
+  dfMaster[1,'MRN'] <<- MRNInput
+  dfMaster[1,'Timestamp'] <<- format(Sys.time())
+  
+  withProgress(message = 'Saving to Box...', value = 0, {
+    
+    incProgress(0/4, detail = paste("Logging into Box"))
+    ##Submit the data
+    box_auth(client_id = "4vmnrbf2c9n6rcbkk4n3cx1zfv76q5ud", client_secret = "LEVe7CaB9DUhKYF3v6W3lP7cbzAZuY9z")  # Authorize your account
 
-  if(nrow(dfMaster) == 0) {
-    #If there's no data don't allow a null submission
-    showNotification("You cannot save data until you submit the questionaire.",
-                     type = "error", duration = 5)
-    return()
-  }
+    incProgress(1/4, detail = paste("Loading the files"))
+    
+    #Load the file
+    df<- box_search("RiskSurgeryDataUpdated.xlsx") %>%    # Find a remote file
+          box_read()
+
+    incProgress(2/4, detail = paste("Adding new data to the file"))
   
-  ##Submit the data
-  box_auth(client_id = "4vmnrbf2c9n6rcbkk4n3cx1zfv76q5ud", client_secret = "LEVe7CaB9DUhKYF3v6W3lP7cbzAZuY9z")  # Authorize your account
+    #Add the current data to the end of the old data
+    dfMaster <- unname(dfMaster)
+    df[nrow(df) + 1, ] <- dfMaster
+
+    incProgress(3/4, detail = paste("Writing the file to Box"))
+    
   
-  #Load the file
-  df<- box_search("RiskSurgeryDataUpdated.xlsx") %>%    # Find a remote file
-    box_read()
-  
-  #Add the current data to the end of the old data
-  dfMaster <- unname(dfMaster)
-  df[nrow(df) + 1, ] <- dfMaster
-  
-  #Write the data back to box
-  box_write(df, filename = "RiskSurgeryDataUpdated.xlsx",
-            dir_id = "26488602950", #the folder ID
-            description = NULL)
+    #Write the data back to box
+     box_write(df, filename = "RiskSurgeryDataUpdated.xlsx",
+               dir_id = "26488602950", #the folder ID
+               description = NULL)
+  })
+  showNotification(paste("Box upload finished"), duration = 5)
+    
 }
+
 
 
 # ## Dummy data graph
