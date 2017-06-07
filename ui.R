@@ -53,7 +53,7 @@ dashboardPage(
       sidebarMenuOutput("SaveFeature"),
       menuItem("Save Data", icon = icon("check-circle", lib = "font-awesome"), tabName = "tabOne",
                # Input directly under menuItem
-               textInput("PtID", "Pt MRN:", width = '98%'),
+              # textInput("PtID", "Pt MRN:", width = '98%'),
                
                
                # Input inside of menuSubItem
@@ -111,7 +111,7 @@ dashboardPage(
                        box(width = NULL,
                            title = "Graph Title Here",
                            color = "gold",
-                           plotlyOutput("riskPlot3")
+                           uiOutput("riskPlot3")
                        )
                 )
               ),
@@ -127,7 +127,7 @@ dashboardPage(
                                 uiOutput("SteroidBox"),
                                 uiOutput("CHFBox"),
                                 uiOutput("SOBBox"),
-                                uiOutput("COPDBox"),
+                                uiOutput("COPDBox1"),
                                 uiOutput("smokerBox"),
                                 uiOutput("DMBox"),
                                 uiOutput("HTNBox"),
