@@ -8,10 +8,15 @@ fill_images <- function() {
     l <- list()
     for (i in 1:nrow(newDF))
     {
-      for (j in 1:ceiling(newDF$units[i]))
+      for (j in 1:20)#ceiling(newDF$units[i]))
       {
         incProgress(i/nrow(newDF))
-        img <- readPNG("www/Heart_symbol_c00.png")
+       # img <- readPNG("www/Heart_symbol_c00.png")
+        
+        if(j <= ceiling(newDF$units[i]))
+          img <- readPNG("www/Heart_symbol_c00.png")
+        else
+          img <- readPNG("www/green-heart-md.png")
         g <- rasterGrob(img, interpolate=TRUE)
         l <- c(l, annotation_custom(g, xmin = i-1/2, xmax = i+1/2, ymin = j-1, ymax = j))
       }
@@ -23,16 +28,20 @@ fill_images <- function() {
 clip_images <- function(restore_grid = TRUE)
 {
   l <- list()
-  for (i in 1:nrow(newDF))
-  {
-    l <- c(l, geom_rect(xmin = i-1/2, xmax = i+1/2,
-                        ymin = newDF$units[i], ymax = ceiling(newDF$units[i]),
-                        colour = "white", fill = "white"))
+  for (i in 1:nrow(newDF)) {
+    l <- c(l, geom_rect(xmin = i-1/2,
+                        xmax = i+1/2,
+                        ymin = newDF$units[i],
+                        ymax = ceiling(newDF$units[i]),
+                        colour = "white",
+                        fill = "white"))
     if (restore_grid && ceiling(newDF$units[i]) %in% major_grid)
-      l <- c(l, geom_segment(x = i-1, xend = i+1,
+      l <- c(l, geom_segment(x = i-1,
+                             xend = i+1,
                              y = ceiling(newDF$units[i]),
                              yend = ceiling(newDF$units[i]),
-                             colour = grid_col, size = grid_size))
+                             colour = grid_col,
+                             size = grid_size))
   }
   l
 }
