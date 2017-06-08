@@ -55,7 +55,6 @@ dashboardPage(
                # Input directly under menuItem
               # textInput("PtID", "Pt MRN:", width = '98%'),
                
-               
                # Input inside of menuSubItem
                menuSubItem(icon = NULL,
                            actionButton("SavetoServer", "Submit To Server", width = '90%')
@@ -97,13 +96,16 @@ dashboardPage(
               ),
               fluidRow(
                 column(width = 12,
-                       box(width = NULL,
-                           title = "Graph Title Here",
-                           color = "gold",
-                           actionButton("LoadGraph1", "Load Graph 1", width = '100%'),
-                           plotOutput("riskPlot")
+                       div(id = "graph1Box-outer",
+                           box(id = "graph1Box",
+                               width = NULL,
+                               title = "Graph Title Here",
+                               color = "gold",
+                               actionButton("LoadGraph1", "Load Graph 1", width = '100%'),
+                               plotOutput("riskPlot")
+                               )
+                           )
                        )
-                )
               ),
               
               fluidRow(
