@@ -50,14 +50,14 @@ shinyServer(function(input, output, session) {
              "Totally Depdendent" = 0,
              "Partially Dependent" = 1,
              "Fully Independent" = 2, 2),
-                            switch(input$OtherMedical, "1: Totally Healthy" = 1,
-                                   "2: Mild diseases" = 2,
-                                   "3: Severe diseases" = 3,
-                                   "4: Near death" = 4, 1),
-                            if(input$steroids == TRUE) 1 else 0,
-                            if(input$ascites == TRUE) 1 else 0,
-                            if(input$septic == TRUE) 1 else 0,
-                            if(input$vent == TRUE) 1 else 0,
+      switch(input$OtherMedical, "1: Totally Healthy" = 1,
+             "2: Mild diseases" = 2,
+             "3: Severe diseases" = 3,
+             "4: Near death" = 4, 1),
+      if(input$steroids == TRUE) 1 else 0,
+      if(input$ascites == TRUE) 1 else 0,
+      if(input$septic == TRUE) 1 else 0,
+      if(input$vent == TRUE) 1 else 0,
       if(input$DMall == TRUE) 1 else 0,
       if(input$HTNMeds == TRUE) 1 else 0,
       if(input$HxCHF == TRUE) 1 else 0,
@@ -73,34 +73,14 @@ shinyServer(function(input, output, session) {
       -1 #placeholder for death risk - calculated
       )
     
-    colnames(dfMaster) <<- c(
-      'Timestamp',
-      'MRN',
-      'Sex',
-      'Race',
-      'Age',
-      'Surgery',
-      'Cancer',
-      'Funcational',
-      'ASAClass',
-      'Steroid',
-      'Ascites',
-      'Septic',
-      'Vent',
-      'DMAll',
-      'HTNMed',
-      'HxCHF',
-      'SOB',
-      'Smoker',
-      'HxCOPD',
-      'Dialysis',
-      'RenalFailure',
-      'BMI',
-      'Raw_MajorComplications',
-      'MajorComplications',
-      'Raw_DeathRisk',
-      'DeathRisk'
-      )
+    colnames(dfMaster) <<- c('Timestamp', 'MRN', 'Sex', 'Race', 'Age',
+                             'Surgery', 'Cancer', 'Funcational',
+                             'ASAClass', 'Steroid', 'Ascites', 'Septic',
+                             'Vent', 'DMAll', 'HTNMed', 'HxCHF', 'SOB',
+                             'Smoker', 'HxCOPD', 'Dialysis', 'RenalFailure',
+                             'BMI', 'Raw_MajorComplications',
+                             'MajorComplications', 'Raw_DeathRisk', 'DeathRisk'
+                             )
     
   #Calculate the surgery risk for major complications via
   # the method in 'MajorComplCalculation.R'
@@ -111,7 +91,6 @@ shinyServer(function(input, output, session) {
   # the method in 'MajorComplCalculation.R'
   dfMaster[1,'Raw_DeathRisk'] <<- CalcDeathRisk()
   dfMaster[1,'DeathRisk']     <<- expMajorRisk(dfMaster[1,'Raw_DeathRisk'])
-  
   
   ###MAJOR RISK COMPLICATION BOX
   output$majorComplicationBox <- renderValueBox({
@@ -129,101 +108,108 @@ shinyServer(function(input, output, session) {
     )
   })
   
+  #Setup a risk change dataFrame with null values (-1) and
+  #assign names to the columns
   dfRiskChanges <<- data.frame(-1, -1, -1, -1, -1, -1, -1, -1)
-  # dfRiskChanges <<- what('Funcational', 'Steroid', 'HxCHF', 'SOB',
-  #                              'HxCOPD', 'Smoker', 'DMAll', 'HTNMed')
-
   colnames(dfRiskChanges) <<- c('Funcational', 'Steroid', 'HxCHF', 'SOB',
                                 'HxCOPD', 'Smoker', 'DMAll', 'HTNMed')
   
-  #function change in risk
+  #Function change in risk
+  #Calculate the new risk and place it in dfRiskChanges dataFrame
   if(dfMaster[1, 'Funcational'] < 2) {
     tmpRisk <- dfMaster[1,'Raw_MajorComplications'] - majorComp_FunctionalFactor*dfMaster[1, 'Funcational'] + majorComp_FunctionalFactor*2
     newRisk <- expMajorRisk(tmpRisk) - expMajorRisk(dfMaster[1,'Raw_MajorComplications']) 
     dfRiskChanges[,'Funcational'] <<- newRisk
   }
   
-  #steroid change in risk
+  #Steroid change in risk
+  #Calculate the new risk and place it in dfRiskChanges dataFrame
   if(dfMaster[1, 'Steroid']) {
     riskChange <- dfMaster[1,'MajorComplications'] - expMajorRisk(dfMaster[1,'Raw_MajorComplications'] - majorComp_steroidFactor)
     dfRiskChanges[,'Steroid'] <<- riskChange
   }
   
   #CHF change in risk
+  #Calculate the new risk and place it in dfRiskChanges dataFrame
   if(dfMaster[1, 'HxCHF']) {
     riskChange <- dfMaster[1,'MajorComplications'] - expMajorRisk(dfMaster[1,'Raw_MajorComplications'] - majorComp_hxchfFactor)
     dfRiskChanges[,'HxCHF'] <<- riskChange
   }
 
   #SOB change in risk
+  #Calculate the new risk and place it in dfRiskChanges dataFrame
   if(dfMaster[1, 'SOB']) {
     riskChange <- dfMaster[1,'MajorComplications'] - expMajorRisk(dfMaster[1,'Raw_MajorComplications'] - majorComp_SOBFactor)
     dfRiskChanges[,'SOB'] <<- riskChange
   }
 
   #COPD change in risk
+  #Calculate the new risk and place it in dfRiskChanges dataFrame
   if(dfMaster[1, 'HxCOPD']) {
     riskChange <- dfMaster[1,'MajorComplications'] - expMajorRisk(dfMaster[1,'Raw_MajorComplications'] - majorComp_hxcopdFactor)
     dfRiskChanges[,'HxCOPD'] <<- riskChange
   }
 
   #Smoker change in risk
+  #Calculate the new risk and place it in dfRiskChanges dataFrame
   if(dfMaster[1, 'Smoker']) {
     riskChange <- dfMaster[1,'MajorComplications'] - expMajorRisk(dfMaster[1,'Raw_MajorComplications'] - majorComp_smokerFactor)
     dfRiskChanges[,'Smoker'] <<- riskChange
   }
 
   #DMAll change in risk
+  #Calculate the new risk and place it in dfRiskChanges dataFrame
   if(dfMaster[1, 'DMAll']) {
     riskChange <- dfMaster[1,'MajorComplications'] - expMajorRisk(dfMaster[1,'Raw_MajorComplications'] - majorComp_DMallFactor)
     dfRiskChanges[,'DMAll'] <<- riskChange
   }
 
   #HTN Med change in risk
+  #Calculate the new risk and place it in dfRiskChanges dataFrame
   if(dfMaster[1, 'HTNMed']) {
     riskChange <- dfMaster[1,'MajorComplications'] - expMajorRisk(dfMaster[1,'Raw_MajorComplications'] - majorComp_hypermedFactor)
     dfRiskChanges[,'HTNMed'] <<- riskChange
   }
   
-  
-  
-  ###Modifiable Risk Factors - in order by contribution
+  #Add the infoBoxes to the Modifiable Risk Factors section
+  #in order of their contribution
   source(file.path("UIFiles", "ModifiableRiskInfoBoxesServer.R"),  local = TRUE)$value
   
+  #Setup Graph 1 when the load graph button is pressed
   observeEvent(input$LoadGraph1, {
     output$riskPlot <- renderPlot ({
-
       #Remove all the null (-1) values from the dataframe
       dfRiskChanges <- dfRiskChanges[!grepl(-1,dfRiskChanges)]
-
       
-      
+      if(ncol(dfRiskChanges) == 0) {
+        #If this graph is not meaninful (ie. there are no modifiable risk
+        #factors selected) - animate hiding the box and show a notification
+        hide(id = "graph1Box-outer", anim = TRUE)
+        showNotification("Graph 1 is not meaningful for this patient.",
+                         duration = 8,
+                         type = "message")
+        return()
+      }
+      #Setup a new dataFrame aligned to work with the RiskGraphPictogram file
       newDF <- data.frame(
         units = c(),
         what = c())
       
-
+      #Loop through the risk changes and add them to the new (tmp)
+      #dataFrame to then be plotted
       for(i in 1:ncol(dfRiskChanges)) {
         newDF <- rbind(newDF, data.frame(
           units = c(dfRiskChanges[1,i]),
           what = c(colnames(dfRiskChanges)[i])
         ))
-                       
       }
-      print(newDF)
-      
-      
+
+      #Finally plot the 
       source(file.path("UIFiles", "RiskGraphPictogram.R"), local = TRUE)$value
-      
-      
-      
 
       #Todo need to add a validity check for if there is no data in the df
       #and thus the graph isn't meaningful
-      
-     
-      
-      
+
     })
    
 })
