@@ -12,13 +12,13 @@ library(emojifont)
 library(boxr)
 
 library(googleVis)
-library(dplyr)
+#library(dplyr)
 library(grid)
 library(gridSVG)
 library(plotly)
 
-suppressPackageStartupMessages(library(googleVis))
 
+suppressPackageStartupMessages(library(googleVis))
 source(file.path("MajorComplCalculation.R"),  local = TRUE)$value
 
 dfMaster <- data.frame()      #the master df holding input variables and final outputs
