@@ -8,7 +8,7 @@ fill_images <- function() {
     l <- list()
     for (i in 1:nrow(newDF))
     {
-      for (j in 1:20)#ceiling(newDF$units[i]))
+      for (j in 1:dfMaster[1,'MajorComplications'])#ceiling(newDF$units[i]))
       {
         incProgress(i/nrow(newDF))
        # img <- readPNG("www/Heart_symbol_c00.png")
