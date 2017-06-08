@@ -12,7 +12,9 @@ library(emojifont)
 library(boxr)
 
 library(googleVis)
-#library(dplyr)
+
+library(dplyr)
+
 library(grid)
 library(gridSVG)
 library(plotly)
@@ -195,15 +197,39 @@ shinyServer(function(input, output, session) {
         units = c(),
         what = c())
       
+      #Add the person's baseline risk
+      newDF <- rbind(newDF, data.frame(
+          units = c(dfMaster[1,'MajorComplications']),
+          what = c('Current Risk')
+        ))
+      
+      
       #Loop through the risk changes and add them to the new (tmp)
       #dataFrame to then be plotted
       for(i in 1:ncol(dfRiskChanges)) {
+        if(nrow(newDF) >= 2) {
+          print("subtracting...")
+          print(newDF$units[nrow(newDF-1)])
+          print("from")
+          print(dfRiskChanges[1,i])
+          newRiskAdd <- newDF$units[nrow(newDF-1)]-dfRiskChanges[1,i]
+        }
+        else
+          newRiskAdd <- dfMaster[1,'MajorComplications']-dfRiskChanges[1,i]
+        
         newDF <- rbind(newDF, data.frame(
-          units = c(dfRiskChanges[1,i]),
+          units = c(newRiskAdd),
           what = c(colnames(dfRiskChanges)[i])
         ))
       }
 
+      print(newDF)
+      #newDF <- reorder(newDF$units, as.factor(newDF$units))
+      newDF <- reorder(newDF$units, X= newDF$units, FUN = length)      
+      
+      #$newDF <- arrange(newDF,units)
+      print(newDF)
+      
       #Finally plot the 
       source(file.path("UIFiles", "RiskGraphPictogram.R"), local = TRUE)$value
 
