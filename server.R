@@ -224,8 +224,9 @@ shinyServer(function(input, output, session) {
       }
 
       print(newDF)
-      #newDF <- reorder(newDF$units, as.factor(newDF$units))
      # newDF <- reorder(newDF$units, X= newDF$units, FUN = length)      
+#      newDF <- reorder(newDF$units, X= newDF$units, FUN = length)      
+
       
       #$newDF <- arrange(newDF,units)
       print(newDF)
