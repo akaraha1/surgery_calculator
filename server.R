@@ -17,11 +17,14 @@ library(dplyr)
 
 library(grid)
 library(gridSVG)
+
+#Not in citations
 library(plotly)
+library(reshape2)
 
 
 suppressPackageStartupMessages(library(googleVis))
-source(file.path("MajorComplCalculation.R"),  local = TRUE)$value
+source(file.path("RegressionCalculations.R"),  local = TRUE)$value
 
 dfMaster <- data.frame()      #the master df holding input variables and final outputs
 dfRiskChanges <<- data.frame() #the risk changes
@@ -85,12 +88,12 @@ shinyServer(function(input, output, session) {
                              )
     
   #Calculate the surgery risk for major complications via
-  # the method in 'MajorComplCalculation.R'
+  # the method in 'RegressionCalculations.R'
   dfMaster[1,'Raw_MajorComplications'] <<- CalcMajorRisk()
   dfMaster[1,'MajorComplications']     <<- expMajorRisk(dfMaster[1,'Raw_MajorComplications'])
   
   #Calculate the death risk via
-  # the method in 'MajorComplCalculation.R'
+  # the method in 'RegressionCalculations.R'
   dfMaster[1,'Raw_DeathRisk'] <<- CalcDeathRisk()
   dfMaster[1,'DeathRisk']     <<- expMajorRisk(dfMaster[1,'Raw_DeathRisk'])
   
@@ -197,12 +200,12 @@ shinyServer(function(input, output, session) {
         units = c(),
         what = c())
       
-      #Add the person's baseline risk
+      #Add the person's origional risk
       newDF <- rbind(newDF, data.frame(
           units = c(dfMaster[1,'MajorComplications']),
           what = c('Current Risk')
         ))
-      
+
       
       #Loop through the risk changes and add them to the new (tmp)
       #dataFrame to then be plotted
@@ -218,10 +221,21 @@ shinyServer(function(input, output, session) {
           newRiskAdd <- dfMaster[1,'MajorComplications']-dfRiskChanges[1,i]
         
         newDF <- rbind(newDF, data.frame(
-          units = c(newRiskAdd),
+          units = c(13.6),
           what = c(colnames(dfRiskChanges)[i])
         ))
+        newDF <- rbind(newDF, data.frame(
+          units = c(dfRiskChanges[,colnames(dfRiskChanges)[i]]+13.6),
+          what = c(colnames(dfRiskChanges)[i])
+        ))
+        
       }
+      
+      #Add the default/baseline risk
+      newDF <- rbind(newDF, data.frame(
+        units = c(13.6),
+        what = c('Baseline Risk')
+      ))
 
       print(newDF)
      # newDF <- reorder(newDF$units, X= newDF$units, FUN = length)      

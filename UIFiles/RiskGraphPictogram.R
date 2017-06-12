@@ -1,6 +1,7 @@
 library(png)
 library(ggplot2)
 library(grid)
+library(reshape2)
 
 fill_images <- function() {
   withProgress(message = 'Building The Graphs', value = 0, {
@@ -10,13 +11,16 @@ fill_images <- function() {
     {
       for (j in 1:dfMaster[1,'MajorComplications'])#ceiling(newDF$units[i]))
       {
+        
+        
+        
         incProgress(i/nrow(newDF))
        # img <- readPNG("www/Heart_symbol_c00.png")
         
-        if(j <= ceiling(newDF$units[i]))
-          img <- readPNG("www/Heart_symbol_c00.png")
-        else
+        if(j <= ceiling(13.6))#newDF$units[i]))
           img <- readPNG("www/green-heart-md.png")
+        else
+          img <- readPNG("www/Heart_symbol_c00.png")
         g <- rasterGrob(img, interpolate=TRUE)
         l <- c(l, annotation_custom(g, xmin = i-1/2, xmax = i+1/2, ymin = j-1, ymax = j))
       }
@@ -49,15 +53,57 @@ clip_images <- function(restore_grid = TRUE)
 grid_col <- "grey50"
 grid_size <- 0.6
 major_grid <- 0:10 * 2
-p <- ggplot(newDF, aes(what, units)) +
+# 
+# newRiskDF <- data.frame(
+#   units = c(),
+#   what = c())
+# 
+# print("------")
+# 
+# for(i in 1:ncol(newDF)) {
+#   if(newDF$what != "Current Risk" || newDF$what != "Baseline Risk") {
+#     newRiskDF <- rbind(newRiskDF, data.frame(
+#       units = c(dfMaster[1,'MajorComplications']-13.6),
+#       what = c(colnames(newDF)[i])
+#     ))
+#   }
+# }
+# 
+# print(newRiskDF)
+# 
+# 
+# df.mrg <- merge(newDF,newRiskDF)
+# gg.df  <- melt(df.mrg, id="what", variable.name="what", value.name="units")
+# 
+# print(gg.df)
+
+ggplot(newDF,aes(what, units)) +
+  geom_bar(stat="identity",position = "identity", alpha=.3) +
+  #geom_bar(fill=NA, colour="transparent", size=1.2, alpha=0.5, stat="identity") +
   fill_images() +
-  clip_images() +
-  geom_bar(fill=NA, colour="transparent", size=1.2, alpha=0.5, stat="identity") +
-  coord_flip() +
-  scale_y_continuous(breaks=seq(0, 20, 2)) +
-  scale_x_discrete() +
-  theme_bw() +
-  theme(axis.title.x  = element_blank(), axis.title.y  = element_blank(),
-        panel.grid.major.x = element_line(colour = grid_col, size = grid_size),
-        panel.grid.major.y = element_line(colour = NA))
-p
+    theme_bw() +
+    theme(axis.title.x  = element_blank(), axis.title.y  = element_blank(),
+          panel.grid.major.x = element_line(colour = grid_col, size = grid_size),
+          panel.grid.major.y = element_line(colour = NA)) +
+  scale_x_discrete() +  scale_y_discrete()
+
+
+
+
+
+
+
+
+# 
+# p <- ggplot(newDF, aes(what, units)) +
+#   fill_images() +
+#   clip_images() +
+#   geom_bar(fill=NA, colour="transparent", size=1.2, alpha=0.5, stat="identity") +
+#   coord_flip() +
+#   scale_y_continuous(breaks=seq(0, 20, 2)) +
+#   scale_x_discrete() +
+#   theme_bw() +
+#   theme(axis.title.x  = element_blank(), axis.title.y  = element_blank(),
+#         panel.grid.major.x = element_line(colour = grid_col, size = grid_size),
+#         panel.grid.major.y = element_line(colour = NA))
+# p
