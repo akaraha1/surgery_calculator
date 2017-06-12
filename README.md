@@ -2,7 +2,7 @@
 
 This project is a collaboration between members of the Johns Hopkins University & Medicine community to create a visually appealing way to present surgery risk information to patients.
 
-The goal of this software is to allow physicians and patients to have an informed conversation about the risks of a particuar surgery prior to the procedure. Specifically, this software focuses on modifiable risk factors which the patient may be able to improve prior to surgery.
+The goal of this software is to allow physicians and patients to have an informed conversation about the risks of a particular surgery prior to the procedure. Specifically, this software focuses on modifiable risk factors which the patient may be able to improve prior to surgery.
 
 For questions or to learn more please contact arosenblum (AT) jhu.edu
 
