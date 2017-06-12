@@ -21,7 +21,7 @@ library(plotly)
 
 
 suppressPackageStartupMessages(library(googleVis))
-source(file.path("MajorComplCalculation.R"),  local = TRUE)$value
+source(file.path("RegressionCalculations.R"),  local = TRUE)$value
 
 dfMaster <- data.frame()      #the master df holding input variables and final outputs
 dfRiskChanges <<- data.frame() #the risk changes
@@ -85,12 +85,12 @@ shinyServer(function(input, output, session) {
                              )
     
   #Calculate the surgery risk for major complications via
-  # the method in 'MajorComplCalculation.R'
+  # the method in 'RegressionCalculations.R'
   dfMaster[1,'Raw_MajorComplications'] <<- CalcMajorRisk()
   dfMaster[1,'MajorComplications']     <<- expMajorRisk(dfMaster[1,'Raw_MajorComplications'])
   
   #Calculate the death risk via
-  # the method in 'MajorComplCalculation.R'
+  # the method in 'RegressionCalculations.R'
   dfMaster[1,'Raw_DeathRisk'] <<- CalcDeathRisk()
   dfMaster[1,'DeathRisk']     <<- expMajorRisk(dfMaster[1,'Raw_DeathRisk'])
   
