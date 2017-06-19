@@ -7,10 +7,12 @@
 
 library(shiny)
 library(shinydashboard)
-#library(leaflet)
-#library(ggplot2)
 library(shinyjs)
 library(plotly)
+library(ggplot2)
+library(markdown)
+
+suppressPackageStartupMessages(library(googleVis))
 
 dashboardPage(
   dashboardHeader(title = "Surgery Risk Predictor", titleWidth = 325,
@@ -52,16 +54,18 @@ dashboardPage(
       menuItem("Risk Prediction Viewer", tabName = "dataViewer", icon = icon("dashboard")),
       sidebarMenuOutput("SaveFeature"),
       menuItem("Save Data", icon = icon("check-circle", lib = "font-awesome"), tabName = "tabOne",
-               # Input directly under menuItem
+                        
+                        # Input directly under menuItem
               # textInput("PtID", "Pt MRN:", width = '98%'),
                
                # Input inside of menuSubItem
                menuSubItem(icon = NULL,
                            actionButton("SavetoServer", "Submit To Server", width = '90%')
+                           
                )
       ),
    
-      menuItem("About", tabName = "about", icon = icon("question-circle")),
+      #menuItem("About", tabName = "about", icon = icon("question-circle")),
       menuItem("Source Code", href = "https://github.com/akaraha1/surgery_calculator", icon = icon("github-alt"))
 
     )
@@ -90,6 +94,7 @@ dashboardPage(
               fluidRow(width = 12,
                        box(width = 12,
                            title = "Predicted Clinical Outcomes", solidHeader = TRUE,
+                           valueBoxOutput("baselineRiskBox"),
                            valueBoxOutput("majorComplicationBox"),
                            valueBoxOutput("deathRiskBox")
                        )
@@ -99,7 +104,7 @@ dashboardPage(
                        div(id = "graph1Box-outer",
                            box(id = "graph1Box",
                                width = NULL,
-                               title = "Graph Title Here",
+                               title = "Graph 1: Procedure Risk + Your Risk Contribution",
                                color = "gold",
                                actionButton("LoadGraph1", "Load Graph 1", width = '100%'),
                                plotOutput("riskPlot")
@@ -133,22 +138,27 @@ dashboardPage(
                                 uiOutput("smokerBox"),
                                 uiOutput("DMBox"),
                                 uiOutput("HTNBox"),
-                                uiOutput("BMIBOX")
+                                uiOutput("BMIBOX"),
+                                radioButtons('format', 'Document format', c('PDF', 'HTML', 'Word'),
+                                             inline = TRUE),
+                                downloadButton('downloadReport')
                                 
                                 )
                        )
+    
+              
                 )
-              ,
- 
-      tabItem(tabName = "about",
-              fluidRow(
-                column(width = 12,
-                       box(width = NULL,
-                           includeMarkdown("README.md")
-                           )
-                       )
-                )
-              )
+      #         ,
+      # 
+      # tabItem(tabName = "about",
+      #         fluidRow(
+      #           column(width = 12,
+      #                  box(width = NULL,
+      #                      includeMarkdown("README.md")
+      #                      )
+      #                  )
+      #           )
+      #         )
       )
   )
 )
