@@ -22,8 +22,6 @@ library(gridSVG)
 library(plotly)
 library(reshape2)
 
-
-suppressPackageStartupMessages(library(googleVis))
 source(file.path("RegressionCalculations.R"),  local = TRUE)$value
 
 dfMaster <- data.frame()      #the master df holding input variables and final outputs
@@ -45,9 +43,9 @@ shinyServer(function(input, output, session) {
       switch(input$RaceButton, "White" = 1, "Non-White" = 0, 1),
       input$PtAge,
       switch(input$SurgeryTypeButton,
+             "Colon" = "Colon",
              "Pancreas" = "Pancreas",
-             "Stomach" = "Stomach",
-             "Colon" = "Colon"),
+             "Stomach" = "Stomach"),
       switch(input$GICancer,
              "Cancer Surgery" = 1,
              "Benign disease" = 0, 0),
@@ -96,6 +94,14 @@ shinyServer(function(input, output, session) {
   # the method in 'RegressionCalculations.R'
   dfMaster[1,'Raw_DeathRisk'] <<- CalcDeathRisk()
   dfMaster[1,'DeathRisk']     <<- expMajorRisk(dfMaster[1,'Raw_DeathRisk'])
+  
+  ###MAJOR RISK COMPLICATION BOX
+  output$baselineRiskBox <- renderValueBox({
+    valueBox(
+      paste0(formatC(expMajorRisk(CalcBaselineRisk()), digits = 1, format = "f"), "%"),
+      "Base Complication Risk", icon = icon("plus-square"), color = "purple"
+    )
+  })
   
   ###MAJOR RISK COMPLICATION BOX
   output$majorComplicationBox <- renderValueBox({
@@ -221,11 +227,11 @@ shinyServer(function(input, output, session) {
           newRiskAdd <- dfMaster[1,'MajorComplications']-dfRiskChanges[1,i]
         
         newDF <- rbind(newDF, data.frame(
-          units = c(13.6),
+          units = c(expMajorRisk(CalcBaselineRisk())),
           what = c(colnames(dfRiskChanges)[i])
         ))
         newDF <- rbind(newDF, data.frame(
-          units = c(dfRiskChanges[,colnames(dfRiskChanges)[i]]+13.6),
+          units = c(dfRiskChanges[,colnames(dfRiskChanges)[i]]+expMajorRisk(CalcBaselineRisk())),
           what = c(colnames(dfRiskChanges)[i])
         ))
         
@@ -233,7 +239,7 @@ shinyServer(function(input, output, session) {
       
       #Add the default/baseline risk
       newDF <- rbind(newDF, data.frame(
-        units = c(13.6),
+        units = c(expMajorRisk(CalcBaselineRisk())),
         what = c('Baseline Risk')
       ))
 
@@ -247,9 +253,8 @@ shinyServer(function(input, output, session) {
       
       #Finally plot the 
       source(file.path("UIFiles", "RiskGraphPictogram.R"), local = TRUE)$value
-
-      #Todo need to add a validity check for if there is no data in the df
-      #and thus the graph isn't meaningful
+    
+      
 
     })
    
@@ -413,6 +418,66 @@ shinyServer(function(input, output, session) {
         BoxServerFx(input$PtMRNInput)
       }
     })
+  
+
+
+# output$downloadReport <- downloadHandler(
+#   
+#   # For PDF output, change this to "report.pdf"
+#   filename = "report.pdf",
+#   content = function(file) {
+#     # Copy the report file to a temporary directory before processing it, in
+#     # case we don't have write permissions to the current working dir (which
+#     # can happen when deployed).
+#     tempReport <- file.path(tempdir(), "report.Rmd")
+#     file.copy("report.Rmd", tempReport, overwrite = TRUE)
+#     
+#     # Set up parameters to pass to Rmd document
+#     params <- list(n = 6)
+#     
+#     # Knit the document, passing in the `params` list, and eval it in a
+#     # child of the global environment (this isolates the code in the document
+#     # from the code in this app).
+#     rmarkdown::render(tempReport, output_file = file,
+#                       params = params,
+#                       envir = new.env(parent = globalenv())
+#     )
+#     }
+#   
+# )
+  
+  
+  output$downloadReport <- downloadHandler(
+
+    
+    # For PDF output, change this to "report.pdf"
+    filename = "report.html",
+    content = function(file) {
+      # Copy the report file to a temporary directory before processing it, in
+      # case we don't have write permissions to the current working dir (which
+      # can happen when deployed).
+      tempReport <- file.path(tempdir(), "report.Rmd")
+      file.copy("report.Rmd", tempReport, overwrite = TRUE)
+      
+      # Set up parameters to pass to Rmd document
+      params <- list(n = 6)
+      
+      # Knit the document, passing in the `params` list, and eval it in a
+      # child of the global environment (this isolates the code in the document
+      # from the code in this app).
+      rmarkdown::render(tempReport, output_file = file,
+                        params = params,
+                        envir = new.env(parent = globalenv())
+      )
+    }
+    
+  )
+  
+  
+  
+  
+  
+
 })
 
 
