@@ -95,19 +95,13 @@ shinyServer(function(input, output, session) {
   dfMaster[1,'Raw_DeathRisk'] <<- CalcDeathRisk()
   dfMaster[1,'DeathRisk']     <<- expMajorRisk(dfMaster[1,'Raw_DeathRisk'])
   
-  ###MAJOR RISK COMPLICATION BOX
-  output$baselineRiskBox <- renderValueBox({
-    valueBox(
-      paste0(formatC(expMajorRisk(CalcBaselineRisk()), digits = 1, format = "f"), "%"),
-      "Base Complication Risk", icon = icon("plus-square"), color = "purple"
-    )
-  })
   
   ###MAJOR RISK COMPLICATION BOX
   output$majorComplicationBox <- renderValueBox({
     valueBox(
       paste0(formatC(dfMaster[1,'MajorComplications'], digits = 1, format = "f"), "%"),
-      "Major Complication Risk", icon = icon("plus-square"), color = "purple"
+      paste0("Major Complication Risk.", sep="\n","Baseline Risk: ", 
+             formatC(expMajorRisk(CalcBaselineRisk()), digits = 1, format = "f"), "%"), icon = icon("plus-square"), color = "purple"
     )
   })
   
@@ -498,8 +492,9 @@ BoxServerFx <- function(MRNInput = '') {
     
     incProgress(0/4, detail = paste("Logging into Box"))
     ##Submit the data
-    box_auth(client_id = "4vmnrbf2c9n6rcbkk4n3cx1zfv76q5ud", client_secret = "LEVe7CaB9DUhKYF3v6W3lP7cbzAZuY9z")  # Authorize your account
-
+    # box_auth(client_id = "4vmnrbf2c9n6rcbkk4n3cx1zfv76q5ud", client_secret = "LEVe7CaB9DUhKYF3v6W3lP7cbzAZuY9z")  # Authorize your account
+    box_auth()  # Authorize your account
+    
     incProgress(1/4, detail = paste("Loading the files"))
     
     #Load the file

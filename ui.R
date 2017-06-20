@@ -94,7 +94,6 @@ dashboardPage(
               fluidRow(width = 12,
                        box(width = 12,
                            title = "Predicted Clinical Outcomes", solidHeader = TRUE,
-                           valueBoxOutput("baselineRiskBox"),
                            valueBoxOutput("majorComplicationBox"),
                            valueBoxOutput("deathRiskBox")
                        )
