@@ -1,0 +1,78 @@
+---
+title: "Surgery Risk Prediction Report"
+output: html_document
+params:
+  n: 5
+  patientName: Patient Name
+  MRN: AA12345678
+  physician: Ira Leeds, MD
+  baselineComplications: 13.6
+  majorComplications: 18.6
+  deathRisk: 1.0
+  newDF : NA
+---
+
+Patient Name: `r params$patientName` <br />
+MRN: `r params$MRN` <br />
+Physician: `r params$physician` <br />
+Report Generated: `r format(Sys.time(), '%B %d, %Y')`
+
+-----
+This is your individualized surgery risk report based on the information you and your physician entered. <br />
+
+**Baseline Major Complication Risk:** `r params$baselineComplications`% <br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*This is your risk of a major complication based on factors that you cannot change, such as you chronic conditions.*
+
+**Your Current Major Complication Risk:** `r params$majorComplications`% <br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*This is your risk of a major complication based on all factors, including modifiable risk factors*
+  
+**Your Current Risk of Death:** `r params$deathRisk`% <br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*This is your risk of death during your surgery*
+
+
+<br /><br /><br />
+**Modifiable Risk Factors:**<br />
+The following risk factors are increasing your risk of a major complication:
+
+```{r, dfRiskChanges, echo=FALSE, results='show', message=TRUE}
+txt <-
+if(dfRiskChanges[,'Funcational'] != -1)
+  txt <- paste0("Your functional status is impacting your risk by +",
+                formatC(dfRiskChanges[,'Funcational']*-1,
+                        digits = 1,
+                        format = "f"),
+                "%")
+txt
+
+  
+  
+  
+  
+  #   if(dfRiskChanges[,'Steroid'] != -1) {#if steroids == yes
+  # if(dfMaster[1, 'HxCHF'] == 1) {#if CHF status == yes
+  # if(dfMaster[1, 'SOB'] == 1) {#if SOB status == yes
+  # if(dfMaster[1, 'HxCOPD'] == 1) {#if COPD status == yes
+  # if(dfMaster[1, 'Smoker'] == 1) {#if Smoking status == yes
+  # if(dfMaster[1, 'DMAll'] == 1) {#if diabetic status == yes
+  # if(dfMaster[1, 'HTNMed'] == 1) {#if Smoking status == yes
+  # if(dfMaster[1, 'BMI'] > 25) {
+
+  
+  
+  
+  
+  
+```
+
+
+<br /><br /><br /><br /><br /><br /><br />
+
+```{r pp1, echo=FALSE, results='show', message=TRUE}
+pp1
+```
+
+A plot of `params$n` random points.
+
+```{r}
+plot(rnorm(params$n), rnorm(params$n))
+```
