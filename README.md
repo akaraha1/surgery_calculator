@@ -4,7 +4,7 @@ This project is a collaboration between members of the Johns Hopkins University 
 
 The goal of this software is to allow physicians and patients to have an informed conversation about the risks of a particular surgery prior to the procedure. Specifically, this software focuses on modifiable risk factors which the patient may be able to improve prior to surgery.
 
-For questions or to learn more please contact arosenblum (AT) jhu.edu
+For questions or to learn more please contact Andrew Rosenblum (arosenblum @ jhu.edu) or Ira Leeds (ileeds @ jhmi.edu).
 
 ---
 
@@ -55,4 +55,14 @@ https://CRAN.R-project.org/package=plotly
 Dean Attali (2016). shinyjs: Easily Improve the User Experience of Your
 Shiny Apps in Seconds. R package version 0.9.
 https://CRAN.R-project.org/package=shinyjs
+
+**Reshape2:**
+Hadley Wickham (2007). Reshaping Data with the reshape Package. Journal
+  of Statistical Software, 21(12), 1-20. URL
+  http://www.jstatsoft.org/v21/i12/.
+  
+  **Markdown:**
+JJ Allaire, Jeffrey Horner, Vicent Marti and Natacha Porte (2017).
+  markdown: 'Markdown' Rendering for R. R package version 0.8.
+  https://CRAN.R-project.org/package=markdown
 

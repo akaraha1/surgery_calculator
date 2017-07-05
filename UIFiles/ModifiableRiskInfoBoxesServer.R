@@ -60,7 +60,6 @@ incProgress(3/8)
 output$SOBBox <- renderUI({
   if(dfMaster[1, 'SOB'] == 1) {#if SOB status == yes
     valueBox(
-      print("setting up SOB box"),
       paste0("+", formatC(dfRiskChanges[,'SOB'], digits = 1, format = "f"), "%"),
       "SOB Risk Contribution",
       icon = icon("list"),

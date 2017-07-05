@@ -8,17 +8,11 @@ library(shiny)
 library(ggplot2)
 library(emoGG)
 library(emojifont)
-
 library(boxr)
-
 library(googleVis)
-
 library(dplyr)
-
 library(grid)
 library(gridSVG)
-
-#Not in citations
 library(plotly)
 library(reshape2)
 
@@ -26,7 +20,6 @@ source(file.path("RegressionCalculations.R"),  local = TRUE)$value
 
 dfMaster <- data.frame()      #the master df holding input variables and final outputs
 dfRiskChanges <<- data.frame() #the risk changes
-
 
 shinyServer(function(input, output, session) {
 
@@ -100,8 +93,8 @@ shinyServer(function(input, output, session) {
   output$majorComplicationBox <- renderValueBox({
     valueBox(
       paste0(formatC(dfMaster[1,'MajorComplications'], digits = 1, format = "f"), "%"),
-      paste0("Major Complication Risk.", sep="\n","Baseline Risk: ", 
-             formatC(expMajorRisk(CalcBaselineRisk()), digits = 1, format = "f"), "%"), icon = icon("plus-square"), color = "purple"
+      HTML(paste0("<b>Major Complication Risk</b>", sep="\n", "&nbsp;&nbsp;&nbsp;&nbsp;Baseline Risk: ", 
+             formatC(expMajorRisk(CalcBaselineRisk()), digits = 1, format = "f"), "%")), icon = icon("plus-square"), color = "blue"
     )
   })
   
@@ -109,7 +102,7 @@ shinyServer(function(input, output, session) {
   output$deathRiskBox <- renderValueBox({
     valueBox(
       paste0(formatC(dfMaster[1,'DeathRisk'], digits = 1, format = "f"), "%"),
-      "Risk of Death", icon = icon("plus-square"), color = "purple"
+      HTML("<b>Risk of Death</b>"), icon = icon("plus-square"), color = "blue"
     )
   })
   
@@ -205,153 +198,95 @@ shinyServer(function(input, output, session) {
           units = c(dfMaster[1,'MajorComplications']),
           what = c('Current Risk')
         ))
-
-      
-      #Loop through the risk changes and add them to the new (tmp)
-      #dataFrame to then be plotted
-      for(i in 1:ncol(dfRiskChanges)) {
-        if(nrow(newDF) >= 2) {
-          print("subtracting...")
-          print(newDF$units[nrow(newDF-1)])
-          print("from")
-          print(dfRiskChanges[1,i])
-          newRiskAdd <- newDF$units[nrow(newDF-1)]-dfRiskChanges[1,i]
-        }
-        else
-          newRiskAdd <- dfMaster[1,'MajorComplications']-dfRiskChanges[1,i]
-        
-        newDF <- rbind(newDF, data.frame(
-          units = c(expMajorRisk(CalcBaselineRisk())),
-          what = c(colnames(dfRiskChanges)[i])
-        ))
-        newDF <- rbind(newDF, data.frame(
-          units = c(dfRiskChanges[,colnames(dfRiskChanges)[i]]+expMajorRisk(CalcBaselineRisk())),
-          what = c(colnames(dfRiskChanges)[i])
-        ))
-        
-      }
       
       #Add the default/baseline risk
       newDF <- rbind(newDF, data.frame(
         units = c(expMajorRisk(CalcBaselineRisk())),
         what = c('Baseline Risk')
       ))
+      
+      newDF <- rbind(newDF, data.frame(
+        units = c(expMajorRisk(CalcBaselineRisk())),
+        what = c('Current Risk')
+      ))
 
       print(newDF)
      # newDF <- reorder(newDF$units, X= newDF$units, FUN = length)      
 #      newDF <- reorder(newDF$units, X= newDF$units, FUN = length)      
-
       
       #$newDF <- arrange(newDF,units)
       print(newDF)
       
       #Finally plot the 
       source(file.path("UIFiles", "RiskGraphPictogram.R"), local = TRUE)$value
-    
-      
 
     })
    
 })
-
-  #Create the risk plot graph
-  # output$riskPlot <- renderPlot ({
-  #   
-  # })
   
-  #Create the risk plot graph
   output$riskPlot2 <- renderPlot ({
 
+    # cat<-c("A", "A", "B", "B", "C", "C")
+    # chara<-c("1", "0", "1", "0", "1", "0")
+    # percent<-c(80, 20, 60, 40, 90,10)
+    # xcoord<-c(10,10,11,11,12,12)
+    # ycoord<-c(10,10,10,10,10,10)
+    
+    df <- data.frame(bank=paste("Your Current Risk vs. Your Baseline Risk"),
+                     start=dfMaster[1,'MajorComplications']*(1:1),
+                     end=expMajorRisk(CalcBaselineRisk()*(1:1))
+                     )    
     
     
-    df3 <- data.frame(units = c(4.7, 6.7, 20),
-                      what = c('If you lost X lbs', 'If you stopped smoking',
-                               'Your Current Risk'))
+    circle <- function(center,radius) {
+      th <- seq(0,2*pi,len=200)
+      data.frame(x=center[1]+radius*cos(th),y=center[2]+radius*sin(th))
+    }
     
-    posx <- runif(1000, 0, 10)
-    posy <- data.frame(1, 2, 3)#runif(1000, 0, 5)
-    ggplot(data.frame(x = c(85, 70, 20), y =c(1, 2, 3)), aes(x, y)) + geom_emoji(emoji="1f63b")
+    max <- max(df$start)
+    n.bubbles <- nrow(df)
+    scale <- 0.4/sum(sqrt(df$start))
     
-  })
-  
-  output$riskPlot3 <- renderPlotly ({
+    # calculate scaled centers and radii of bubbles
+    radii <- scale*sqrt(df$start)
+    ctr.x <- cumsum(c(radii[1],head(radii,-1)+tail(radii,-1)+.01))
     
-    # p <- plot_ly (x = c( 0, 0 ),
-    #          y = c( 0, 0),
-    #          type = 'scatter',
-    #          mode = 'markers',
-    #          size = c( 5, 100 ),
-    #          marker = list(color = c('red', 'blue'))) %>%
-    #          layout(title = 'Styled Scatter',
-    #                 yaxis = list(zeroline = FALSE),
-    #                 xaxis = list(zeroline = FALSE))
-    # p
+    # starting (larger) bubbles
+    gg.1  <- do.call(rbind,lapply(1:n.bubbles,function(i)cbind(group=i,circle(c(ctr.x[i],radii[i]),radii[i]))))
+    text.1 <- data.frame(x=ctr.x,y=-0.05,label=paste(df$bank,df$start,sep="\n"))
+    
+    # ending (smaller) bubbles
+    radii <- scale*sqrt(df$end)
+    gg.2  <- do.call(rbind,lapply(1:n.bubbles,function(i)cbind(group=i,circle(c(ctr.x[i],radii[i]),radii[i]))))
+    text.2 <- data.frame(x=ctr.x,y=2*radii+0.02,label=df$end)
+    
+    risk1 <- paste0(formatC(dfMaster[1,'MajorComplications'], digits = 1, format = "f"), "% vs. ",
+                    formatC(expMajorRisk(CalcBaselineRisk()), digits = 1, format = "f"), "%")
+    
+    # make the plot
+    p2 <- ggplot() +
+      geom_polygon(data = gg.1,
+                   aes(x,y,group = group),
+                   fill = "dodgerblue") +
+      geom_path(data = gg.1,aes(x, y, group = group), color = "grey50") +
+      geom_text(data = text.1,aes(x, y, label = risk1)) +
+      geom_polygon(data = gg.2,aes(x, y, group=group),fill = "green2") +
+      geom_path(data = gg.2,aes(x, y, group=group),color="grey50") +
+      geom_text(data = text.2,aes(x, y, label = "Your Current Risk"), color="white") +
+      labs(x = "", y = "") +
+      scale_y_continuous(limits = c(-0.1,2.5*scale*sqrt(max(df$start)))) +
+      coord_fixed() +
+      theme(axis.text = element_blank(),
+            axis.ticks = element_blank(),
+            panel.grid = element_blank()
+            ) 
+    
+    
+    
+    library(egg)
+    ggarrange(p2, ncol = 1,  widths = c(22))
+    
 
-    USPersonalExpenditure <- data.frame("Categorie" = rownames(USPersonalExpenditure), USPersonalExpenditure)
-    data <- USPersonalExpenditure[, c('Categorie', 'X1960')]
-    
-    colors <- c('rgb(211,94,96)', 'rgb(128,133,133)', 'rgb(144,103,167)', 'rgb(171,104,87)', 'rgb(114,147,203)')
-    
-    p <- plot_ly(data, labels = ~Categorie, values = ~X1960, type = 'pie',
-                 textposition = 'inside',
-                 textinfo = 'label+percent',
-                 insidetextfont = list(color = '#FFFFFF'),
-                 hoverinfo = 'text',
-                 text = ~paste('$', X1960, ' billions'),
-                 marker = list(colors = colors,
-                               line = list(color = '#FFFFFF', width = 1)),
-                 #The 'pull' attribute can also be used to create space between the sectors
-                 showlegend = FALSE) %>%
-      layout(title = 'United States Personal Expenditures by Categories in 1960',
-             xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-             yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
-    
-    # p <- plot_ly() %>%
-    #   add_pie(data = count(diamonds, cut), labels = ~cut, values = ~n,
-    #           name = "Cut", domain = list(x = c(0, 0.4), y = c(0.4, 1))) %>%
-    #   add_pie(data = count(diamonds, color), labels = ~cut, values = ~n,
-    #           name = "Color", domain = list(x = c(0.6, 1), y = c(0.4, 1))) %>%
-    #   add_pie(data = count(diamonds, clarity), labels = ~cut, values = ~n,
-    #           name = "Clarity", domain = list(x = c(0.25, 0.75), y = c(0, 0.6))) %>%
-    #   layout(title = "Pie Charts with Subplots", showlegend = F,
-    #          xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-    #          yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
-    # 
-    p
-    
-    
-#     p <- plot_ly(data = iris, x = ~Sepal.Length, y = ~Petal.Length,
-#                  marker = list(size = 10,
-#                                color = 'rgba(255, 182, 193, .9)',
-#                                line = list(color = 'rgba(152, 0, 0, .8)',
-#                                            width = 2))) %>%
-#       layout(title = 'Styled Scatter',
-#              yaxis = list(zeroline = FALSE),
-#              xaxis = list(zeroline = FALSE))
-# 
-#   
-# 
-# 
-# p
-  
-    # data <- read.csv("https://raw.githubusercontent.com/plotly/datasets/master/school_earnings.csv")
-    # # 
-    #  data$State <- as.factor(c('Massachusetts', 'California', 'Massachusetts', 'Pennsylvania', 'New Jersey', 'Illinois', 'Washington DC',
-    #                            'Massachusetts', 'Connecticut', 'New York', 'North Carolina', 'New Hampshire', 'New York', 'Indiana',
-    #                            'New York', 'Michigan', 'Rhode Island', 'California', 'Georgia', 'California', 'California'))
-    #  
-    # p <- plot_ly(data, x = ~Women, y = ~Men, text = ~School, type = 'scatter', mode = 'markers', size = ~gap, color = ~State, colors = 'Paired',
-    #              marker = list(opacity = 0.5, sizemode = 'diameter')) %>%
-    #   layout(title = 'Gender Gap in Earnings per University',
-    #          xaxis = list(showgrid = FALSE),
-    #          yaxis = list(showgrid = FALSE),
-    #          showlegend = FALSE)
-    # 
-    # 
-    # p
-    # 
-    
-    
   })
 
   
@@ -413,7 +348,7 @@ shinyServer(function(input, output, session) {
       }
     })
   
-
+  
 
 # output$downloadReport <- downloadHandler(
 #   
@@ -443,6 +378,9 @@ shinyServer(function(input, output, session) {
   
   output$downloadReport <- downloadHandler(
 
+    #Setup a new dataFrame aligned to work with the RiskGraphPictogram file
+
+    
     
     # For PDF output, change this to "report.pdf"
     filename = "report.html",
@@ -454,7 +392,15 @@ shinyServer(function(input, output, session) {
       file.copy("report.Rmd", tempReport, overwrite = TRUE)
       
       # Set up parameters to pass to Rmd document
-      params <- list(n = 6)
+      params <- list(n = 150,
+                     newDF = data.frame(
+        units = c(dfMaster[1,'MajorComplications'],
+                  expMajorRisk(CalcBaselineRisk()),
+                  expMajorRisk(CalcBaselineRisk())),
+        what = c('Current Risk',
+                 'Baseline Risk',
+                 'Current Risk'))
+        )
       
       # Knit the document, passing in the `params` list, and eval it in a
       # child of the global environment (this isolates the code in the document
@@ -467,13 +413,7 @@ shinyServer(function(input, output, session) {
     
   )
   
-  
-  
-  
-  
-
 })
-
 
 
 expMajorRisk <- function(rawAnyCompl=0){
@@ -492,9 +432,13 @@ BoxServerFx <- function(MRNInput = '') {
     
     incProgress(0/4, detail = paste("Logging into Box"))
     ##Submit the data
-    # box_auth(client_id = "4vmnrbf2c9n6rcbkk4n3cx1zfv76q5ud", client_secret = "LEVe7CaB9DUhKYF3v6W3lP7cbzAZuY9z")  # Authorize your account
+    # box_auth(client_id = "4vmnrbf2c9n6rcbkk4n3cx1zfv76q5ud",
+    #          client_secret = "LEVe7CaB9DUhKYF3v6W3lP7cbzAZuY9z",
+    #          interactive = TRUE,
+    #          cache = "~/AAA.boxr-oauth",
+    #          write.Renv = TRUE)  # Authorize your account
     box_auth()  # Authorize your account
-    
+
     incProgress(1/4, detail = paste("Loading the files"))
     
     #Load the file
@@ -519,7 +463,129 @@ BoxServerFx <- function(MRNInput = '') {
     
 }
 
+# #Loop through the risk changes and add them to the new (tmp)
+# #dataFrame to then be plotted
+# for(i in 1:ncol(dfRiskChanges)) {
+#   if(nrow(newDF) >= 2) {
+#     print("subtracting...")
+#     print(newDF$units[nrow(newDF-1)])
+#     print("from")
+#     print(dfRiskChanges[1,i])
+#     newRiskAdd <- newDF$units[nrow(newDF-1)]-dfRiskChanges[1,i]
+#   }
+#   else
+#     newRiskAdd <- dfMaster[1,'MajorComplications']-dfRiskChanges[1,i]
+#   
+#   newDF <- rbind(newDF, data.frame(
+#     units = c(expMajorRisk(CalcBaselineRisk())),
+#     what = c(colnames(dfRiskChanges)[i])
+#   ))
+#   newDF <- rbind(newDF, data.frame(
+#     units = c(dfRiskChanges[,colnames(dfRiskChanges)[i]]+expMajorRisk(CalcBaselineRisk())),
+#     what = c(colnames(dfRiskChanges)[i])
+#   ))
+#   
+# }
 
+# #Create the risk plot graph
+# output$riskPlot2 <- renderPlot ({
+# 
+#   
+#   
+#   df3 <- data.frame(units = c(4.7, 6.7, 20),
+#                     what = c('If you lost X lbs', 'If you stopped smoking',
+#                              'Your Current Risk'))
+#   
+#   posx <- runif(1000, 0, 10)
+#   posy <- data.frame(1, 2, 3)#runif(1000, 0, 5)
+#   ggplot(data.frame(x = c(85, 70, 20), y =c(1, 2, 3)), aes(x, y)) + geom_emoji(emoji="1f63b")
+#   
+# })
+
+#------
+
+# 
+#     USPersonalExpenditure <- data.frame("Categorie" = rownames(USPersonalExpenditure), USPersonalExpenditure)
+#     data <- USPersonalExpenditure[, c('Categorie', 'X1960')]
+#     
+#     colors <- c('rgb(211,94,96)', 'rgb(128,133,133)', 'rgb(144,103,167)', 'rgb(171,104,87)', 'rgb(114,147,203)')
+#     
+#     p <- plot_ly(data, labels = ~Categorie, values = ~X1960, type = 'pie',
+#                  textposition = 'inside',
+#                  textinfo = 'label+percent',
+#                  insidetextfont = list(color = '#FFFFFF'),
+#                  hoverinfo = 'text',
+#                  text = ~paste('$', X1960, ' billions'),
+#                  marker = list(colors = colors,
+#                                line = list(color = '#FFFFFF', width = 1)),
+#                  #The 'pull' attribute can also be used to create space between the sectors
+#                  showlegend = FALSE) %>%
+#       layout(title = 'United States Personal Expenditures by Categories in 1960',
+#              xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+#              yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+#   
+
+
+#-----------
+
+
+# p <- plot_ly (x = c( 0, 0 ),
+#          y = c( 0, 0),
+#          type = 'scatter',
+#          mode = 'markers',
+#          size = c( 5, 100 ),
+#          marker = list(color = c('red', 'blue'))) %>%
+#          layout(title = 'Styled Scatter',
+#                 yaxis = list(zeroline = FALSE),
+#                 xaxis = list(zeroline = FALSE))
+# p
+
+
+
+# p <- plot_ly() %>%
+#   add_pie(data = count(diamonds, cut), labels = ~cut, values = ~n,
+#           name = "Cut", domain = list(x = c(0, 0.4), y = c(0.4, 1))) %>%
+#   add_pie(data = count(diamonds, color), labels = ~cut, values = ~n,
+#           name = "Color", domain = list(x = c(0.6, 1), y = c(0.4, 1))) %>%
+#   add_pie(data = count(diamonds, clarity), labels = ~cut, values = ~n,
+#           name = "Clarity", domain = list(x = c(0.25, 0.75), y = c(0, 0.6))) %>%
+#   layout(title = "Pie Charts with Subplots", showlegend = F,
+#          xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+#          yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+# 
+# p
+
+
+#     p <- plot_ly(data = iris, x = ~Sepal.Length, y = ~Petal.Length,
+#                  marker = list(size = 10,
+#                                color = 'rgba(255, 182, 193, .9)',
+#                                line = list(color = 'rgba(152, 0, 0, .8)',
+#                                            width = 2))) %>%
+#       layout(title = 'Styled Scatter',
+#              yaxis = list(zeroline = FALSE),
+#              xaxis = list(zeroline = FALSE))
+# 
+#   
+# 
+# 
+# p
+
+# data <- read.csv("https://raw.githubusercontent.com/plotly/datasets/master/school_earnings.csv")
+# # 
+#  data$State <- as.factor(c('Massachusetts', 'California', 'Massachusetts', 'Pennsylvania', 'New Jersey', 'Illinois', 'Washington DC',
+#                            'Massachusetts', 'Connecticut', 'New York', 'North Carolina', 'New Hampshire', 'New York', 'Indiana',
+#                            'New York', 'Michigan', 'Rhode Island', 'California', 'Georgia', 'California', 'California'))
+#  
+# p <- plot_ly(data, x = ~Women, y = ~Men, text = ~School, type = 'scatter', mode = 'markers', size = ~gap, color = ~State, colors = 'Paired',
+#              marker = list(opacity = 0.5, sizemode = 'diameter')) %>%
+#   layout(title = 'Gender Gap in Earnings per University',
+#          xaxis = list(showgrid = FALSE),
+#          yaxis = list(showgrid = FALSE),
+#          showlegend = FALSE)
+# 
+# 
+# p
+# 
 
 # ## Dummy data graph
 # barplot(VADeaths,

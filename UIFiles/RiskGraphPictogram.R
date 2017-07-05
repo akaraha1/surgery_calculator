@@ -12,25 +12,28 @@ fill_images <- function() {
       for (j in 1:dfMaster[1,'MajorComplications'])#ceiling(newDF$units[i]))
       {
         
-       print(paste0(nrow(newDF), "-", newDF$what[i], "-", j))
+       print(paste0(i, "-", newDF$what[i], "-", j))
         
         incProgress(i/nrow(newDF))
        # img <- readPNG("www/Heart_symbol_c00.png")
         
-        if(j <= ceiling(expMajorRisk(CalcBaselineRisk())))  #newDF$units[i]))
+        if(newDF$what[i]=="Baseline Risk" && j <= floor(expMajorRisk(CalcBaselineRisk())) )  #newDF$units[i]))
           #Calculate the pt's baseline risk and then fill the graph
           #with green hearts up to that level of risk
           img <- readPNG("www/green-heart-md.png")
-        else if(i == nrow(newDF)) {
-          print("in here")
-          img <- readPNG("www/1x1.png")
-        }
-        else {
-          
-          #if(j > ceiling(expMajorRisk(CalcBaselineRisk()))) && < )
-         # print(max(newDF$units[i], newDF$units[i+1]))
+        # else if(i == nrow(newDF)) {
+        #   print("in here")
+        #   img <- readPNG("www/1x1.png")
+        # }
+        else if(j <= ceiling(expMajorRisk(CalcBaselineRisk())))  #newDF$units[i]))
+          img <- readPNG("www/green-heart-md.png")
+        else if(newDF$what[i]!="Baseline Risk" && j >= ceiling(expMajorRisk(CalcBaselineRisk()))) {
           img <- readPNG("www/Heart_symbol_c00.png")
-      }
+        print("in here")
+          }
+                  else
+          img <- readPNG("www/1x1.png")
+        
         g <- rasterGrob(img, interpolate=TRUE)
         l <- c(l, annotation_custom(g, xmin = i-1/2, xmax = i+1/2, ymin = j-1, ymax = j))
       }
@@ -47,7 +50,7 @@ clip_images <- function(restore_grid = TRUE)
                         xmax = i+1/2,
                         ymin = newDF$units[i],
                         ymax = ceiling(newDF$units[i]),
-                        colour = "white",
+                        colour = "transparent",
                         fill = "white"))
     if (restore_grid && ceiling(newDF$units[i]) %in% major_grid)
       l <- c(l, geom_segment(x = i-1,
@@ -87,15 +90,18 @@ major_grid <- 0:10 * 2
 # 
 # print(gg.df)
 
-ggplot(newDF,aes(what, units)) +
+pp1 <<- ggplot(newDF,aes(what, units)) +
   geom_bar(stat="identity",position = "identity", alpha=.3) +
   #geom_bar(fill=NA, colour="transparent", size=1.2, alpha=0.5, stat="identity") +
-  fill_images() +
+  fill_images() + clip_images() +
     theme_bw() +
-    theme(axis.title.x  = element_blank(), axis.title.y  = element_blank(),
-          panel.grid.major.x = element_line(colour = grid_col, size = grid_size),
-          panel.grid.major.y = element_line(colour = NA)) +
-  scale_x_discrete() +  scale_y_discrete()
+    theme(axis.title.x  = element_blank(),
+          axis.title.y  = element_blank(),
+          panel.grid.major.x = element_blank(),
+          panel.grid.major.y = element_blank()) +
+  scale_x_discrete() +
+  scale_y_discrete()
+pp1
 # +
 #   scale_fill_manual("legend", values = c("Steroid" = "black", "Baseline Risk" = "orange", "Current Risk" = "blue"))
 
