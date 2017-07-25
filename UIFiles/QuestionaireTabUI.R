@@ -9,30 +9,17 @@ source(file.path("UIFiles","SwitchButton.R"),  local = TRUE)$value
 fluidRow(
   column(width = 4,
          box(width = NULL, align="center",
-             h3("Basic Demograpghics", align = "center"),
-             
-       
-             # Gender Button
-             # switchButton(inputId = "",
-             #              label = "Grey-Blue switch - Default to TRUE - Text TRUE/FALSE",
-             #              value = TRUE, col = "RG", type = "TF"),
-             
+             h3("Basic Demographics", align = "center"),
              radioButtons("GenderButton","Gender:", inline = TRUE,
                           choices = c("Male", "Female"),
                           selected = "Male"),
-             
              #Patient's race
              radioButtons("RaceButton","Race:", inline = TRUE,
                           choices = c("White", "Non-White"),
                           selected = "White"),
-             
              # Age Button
              sliderInput("PtAge", "Patient's Age:", min = 18, max = 100, value = 30),
-             
-             #BMI Section
-             helpText("Enter the patient's BMI."),
-             # numericInput("BMI", "BMI (kg/m2):", value = 20.0, min = 0, max = 55, step = 0.1,
-             #              width = 8),
+             helpText("Enter the patient's BMI."),  #BMI Section
              splitLayout(
                h5("BMI (kg/m2):", align = "center"),
                numericInput("BMI", label = NULL, value = 20.0, min = 0, max = 55, step = 0.1,
@@ -52,12 +39,10 @@ fluidRow(
   column(width = 4, 
          box(width = NULL, align="center",
              h3("Common Risk Factors", align = "center"),
-             
              #Functional Status
              radioButtons("FunctionalStatus","Functional Status:", inline = FALSE,
-                          choices = c("Totally Depdendent", "Partially Dependent", "Fully Independent"),
+                          choices = c("Totally Dependent", "Partially Dependent", "Fully Independent"),
                           selected = "Fully Independent"),
-             
              #Other medical problems
              radioButtons("OtherMedical",
                           HTML(paste("Other Medical Problems:",
@@ -65,27 +50,22 @@ fluidRow(
                           inline = FALSE,
                           choices = c("1: Totally Healthy", "2: Mild diseases", "3: Severe diseases", "4: Near death"),
                           selected = "1: Totally Healthy"),
-
              #Diabetes
              switchButton(inputId = "DMall",
                           label = "Diabetes mellitus:",
                           value = FALSE, col = "RG", type = "YN"),
-
              #Smoker
              switchButton(inputId = "Smoker",
                           label = "Smoker:",
                           value = FALSE, col = "RG", type = "YN"),
-             
              #CHF
              switchButton(inputId = "HxCHF",
                           label = "History of CHF:",
                           value = FALSE, col = "RG", type = "YN"),
-
              #COPD
              switchButton(inputId = "HxCOPD",
                           label = "History of COPD:",
                           value = FALSE, col = "RG", type = "YN"),
-             
              #HTN
              switchButton(inputId = "HTNMeds",
                           label = HTML(paste("Hyptension:",

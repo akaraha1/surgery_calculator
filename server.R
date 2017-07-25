@@ -225,67 +225,9 @@ shinyServer(function(input, output, session) {
 })
   
   output$riskPlot2 <- renderPlot ({
-
-    # cat<-c("A", "A", "B", "B", "C", "C")
-    # chara<-c("1", "0", "1", "0", "1", "0")
-    # percent<-c(80, 20, 60, 40, 90,10)
-    # xcoord<-c(10,10,11,11,12,12)
-    # ycoord<-c(10,10,10,10,10,10)
+   source(file.path("UIFiles", "Graph2Bubble.R"), local = TRUE)$value
     
-    df <- data.frame(bank=paste("Your Current Risk vs. Your Baseline Risk"),
-                     start=dfMaster[1,'MajorComplications']*(1:1),
-                     end=expMajorRisk(CalcBaselineRisk()*(1:1))
-                     )    
-    
-    
-    circle <- function(center,radius) {
-      th <- seq(0,2*pi,len=200)
-      data.frame(x=center[1]+radius*cos(th),y=center[2]+radius*sin(th))
-    }
-    
-    max <- max(df$start)
-    n.bubbles <- nrow(df)
-    scale <- 0.4/sum(sqrt(df$start))
-    
-    # calculate scaled centers and radii of bubbles
-    radii <- scale*sqrt(df$start)
-    ctr.x <- cumsum(c(radii[1],head(radii,-1)+tail(radii,-1)+.01))
-    
-    # starting (larger) bubbles
-    gg.1  <- do.call(rbind,lapply(1:n.bubbles,function(i)cbind(group=i,circle(c(ctr.x[i],radii[i]),radii[i]))))
-    text.1 <- data.frame(x=ctr.x,y=-0.05,label=paste(df$bank,df$start,sep="\n"))
-    
-    # ending (smaller) bubbles
-    radii <- scale*sqrt(df$end)
-    gg.2  <- do.call(rbind,lapply(1:n.bubbles,function(i)cbind(group=i,circle(c(ctr.x[i],radii[i]),radii[i]))))
-    text.2 <- data.frame(x=ctr.x,y=2*radii+0.02,label=df$end)
-    
-    risk1 <- paste0(formatC(dfMaster[1,'MajorComplications'], digits = 1, format = "f"), "% vs. ",
-                    formatC(expMajorRisk(CalcBaselineRisk()), digits = 1, format = "f"), "%")
-    
-    # make the plot
-    p2 <- ggplot() +
-      geom_polygon(data = gg.1,
-                   aes(x,y,group = group),
-                   fill = "dodgerblue") +
-      geom_path(data = gg.1,aes(x, y, group = group), color = "grey50") +
-      geom_text(data = text.1,aes(x, y, label = risk1)) +
-      geom_polygon(data = gg.2,aes(x, y, group=group),fill = "green2") +
-      geom_path(data = gg.2,aes(x, y, group=group),color="grey50") +
-      geom_text(data = text.2,aes(x, y, label = "Your Current Risk"), color="white") +
-      labs(x = "", y = "") +
-      scale_y_continuous(limits = c(-0.1,2.5*scale*sqrt(max(df$start)))) +
-      coord_fixed() +
-      theme(axis.text = element_blank(),
-            axis.ticks = element_blank(),
-            panel.grid = element_blank()
-            ) 
-    
-    
-    
-    library(egg)
-    ggarrange(p2, ncol = 1,  widths = c(22))
-    
+   
 
   })
 
