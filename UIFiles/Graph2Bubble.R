@@ -1,6 +1,6 @@
 df <- data.frame(
   riskType=c(
-    "Total Risk",
+    "Total Risk           ",
     "Steroid Risk + Baseline",
     "CHF Risk + Baseline",
     "Shortness of Breath + Baseline",
@@ -9,7 +9,7 @@ df <- data.frame(
     "Diabetes + Baseline",
     "Hypertension + Baseline",
     #BMI
-    "Baseline Risk"),
+    "Baseline Risk           "),
   start=c(
     dfMaster[1,'MajorComplications'],
     dfRiskChanges[,'Steroid'] + expMajorRisk(CalcBaselineRisk()),
@@ -21,10 +21,15 @@ df <- data.frame(
     dfRiskChanges[,'HTNMed'] + expMajorRisk(CalcBaselineRisk()),
    # dfRiskChanges[,'BMI']*-1+expMajorRisk(CalcBaselineRisk()),
    expMajorRisk(CalcBaselineRisk())),
+  color = c("green", "black", "purple", "green", "red", "yellow", "purple", "red", "green"),
+  
   end = expMajorRisk(CalcBaselineRisk()))#c(0, expMajorRisk(CalcBaselineRisk()), 0, 0, 0, 0, 0, 0, 0))
+
+print(df)
 
 df <- df[!(df$start == -1+expMajorRisk(CalcBaselineRisk())),]
 
+print(df)
 
 circle <- function(center,radius) {
   th <- seq(0,2*pi,len=200)
@@ -41,18 +46,41 @@ ctr.x <- cumsum(c(radii[1],head(radii,-1)+tail(radii,-1)+.01))
 
 # starting (larger) bubbles
 gg.1  <- do.call(rbind,lapply(1:n.bubbles,function(i)cbind(group=i,circle(c(ctr.x[i],radii[i]),radii[i]))))
-text.1 <- data.frame(x = ctr.x,
-                     y = -0.05,
-                     label = paste(df$riskType,
-                                   formatC(df$start, digits = 1, format = "f"), "%"),
-                     sep="\n")
 
+text.1 <- data.frame()
+
+trim.trailing <- function (x) sub("\\s+$", "", x) #create the function
+
+
+if(nrow(df) >= 5) {
+  text.1 <- data.frame(x = ctr.x,
+                       y = -0.05,
+                       label = gsub('.{11}$', '', df$riskType))
+  
+  
+} else {
+  print(df[1,1])
+  # df[1,1] <- "Total Risk"
+  df$riskType <- trim.trailing(df$riskType)
+  print(df[1,1])
+  
+  text.1 <- data.frame(x = ctr.x,
+                       y = -0.05,
+                       label = paste(df$riskType,
+                                     formatC(df$start, digits = 1, format = "f"), "%"),
+                       sep="\n")
+  
+}
+
+# col_list<-c("#FF222C", "#1DFBFF", "#FDFF24", "#2CFF18", "#FF38F4", "#C3C4C9", "#000000")
+# col_list5<-c("#FF222C", "#1DFBFF", "#FDFF24", "#2CFF18", "#FF38F4")
 
 
 # ending (smaller) bubbles
 radii <- scale*sqrt(df$end)
 gg.2  <- do.call(rbind,lapply(1:n.bubbles,function(i)cbind(group=i,circle(c(ctr.x[i],radii[i]),radii[i]))))
-text.2 <- data.frame(x=ctr.x, y=2*radii+0.02, label= paste0("Baseline ",formatC(df$end, digits = 1, format = "f"), "%"))
+text.2 <- data.frame(x=ctr.x, y=2*radii+0.02, label= "")#paste0("Baseline ",formatC(df$end, digits = 1, format = "f"), "%"))
+color <- df$color
 
 # risk1 <- paste0(formatC(dfMaster[1,'MajorComplications'], digits = 1, format = "f"), "% vs. ",
 #                 formatC(expMajorRisk(CalcBaselineRisk()), digits = 1, format = "f"), "%")
@@ -60,7 +88,7 @@ text.2 <- data.frame(x=ctr.x, y=2*radii+0.02, label= paste0("Baseline ",formatC(
 # make the plot
 p2 <- ggplot() +
   geom_polygon(data = gg.1,
-               aes(x,y,group = group),
+               aes(x,y,group = group, fill = factor(color)),
                fill = "dodgerblue") +
   geom_path(data = gg.1,aes(x, y, group = group), color = "grey50") +
   
