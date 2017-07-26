@@ -8,9 +8,11 @@ CalcMajorRisk <- function() {
   anyComplRaw <- anyComplRaw + majorComp_ageFactor*dfMaster[1, 'Age']
   #anyComplRaw <- anyComplRaw + dfMaster[1, 'Surgery']
   anyComplRaw <- anyComplRaw + switch(as.character(dfMaster[1, 'Surgery']),
-                                      "Pancreas" = 0,
+                                      "Gallbladder" = majorComp_GallFactor,
+                                      "Pancreas" = majorComp_PancFactor,
                                       "Stomach" = majorComp_GastRxnFactor,
-                                      "Colon" = majorComp_ColonRxnFactor, majorComp_ColonRxnFactor)
+                                      "Colon" = majorComp_ColonRxnFactor,
+                                      majorComp_GallFactor) #default
   anyComplRaw <- anyComplRaw + majorComp_FunctionalFactor*dfMaster[1, 'Funcational']
   anyComplRaw <- anyComplRaw + majorComp_CancerGIFactor*dfMaster[1, 'Cancer']
   anyComplRaw <- anyComplRaw + majorComp_asaclassFactor*dfMaster[1, 'ASAClass']
@@ -39,9 +41,11 @@ CalcBaselineRisk <- function() {
   anyComplRaw <- anyComplRaw + majorComp_ageFactor*dfMaster[1, 'Age']
   #anyComplRaw <- anyComplRaw + dfMaster[1, 'Surgery']
   anyComplRaw <- anyComplRaw + switch(as.character(dfMaster[1, 'Surgery']),
-                                      "Pancreas" = 0,
+                                      "Gallbladder" = majorComp_GallFactor,
+                                      "Pancreas" = majorComp_PancFactor,
                                       "Stomach" = majorComp_GastRxnFactor,
-                                      "Colon" = majorComp_ColonRxnFactor, majorComp_ColonRxnFactor)
+                                      "Colon" = majorComp_ColonRxnFactor,
+                                      majorComp_GallFactor) #default
   anyComplRaw <- anyComplRaw + majorComp_FunctionalFactor*dfMaster[1, 'Funcational']
   anyComplRaw <- anyComplRaw + majorComp_CancerGIFactor*dfMaster[1, 'Cancer']
   anyComplRaw <- anyComplRaw + majorComp_asaclassFactor*dfMaster[1, 'ASAClass']
@@ -70,9 +74,11 @@ CalcDeathRisk <- function() {
   anyComplRaw <- anyComplRaw + death_ageFactor*dfMaster[1, 'Age']
   #anyComplRaw <- anyComplRaw + dfMaster[1, 'Surgery']
   anyComplRaw <- anyComplRaw + switch(as.character(dfMaster[1, 'Surgery']),
-                                      "Pancreas" = 0,
+                                      "Gallbladder" = death_GallFactor,
+                                      "Pancreas" = death_PancFactor,
                                       "Stomach" = death_GastRxnFactor,
-                                      "Colon" = death_ColonRxnFactor, death_ColonRxnFactor)
+                                      "Colon" = death_ColonRxnFactor,
+                                      majorComp_GallFactor) #default
   anyComplRaw <- anyComplRaw + death_FunctionalFactor*dfMaster[1, 'Funcational']
   anyComplRaw <- anyComplRaw + death_CancerGIFactor*dfMaster[1, 'Cancer']
   anyComplRaw <- anyComplRaw + death_asaclassFactor*dfMaster[1, 'ASAClass']
