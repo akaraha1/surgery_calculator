@@ -60,34 +60,12 @@ dashboardPage(
                            valueBoxOutput("deathRiskBox")
                        )
               ),
-              fluidRow(
-                column(width = 12,
-                       div(id = "graph1Box-outer",
-                           box(id = "graph1Box",
-                               width = NULL,
-                               title = "Graph 1: Procedure Risk + Your Risk Contribution",
-                               color = "gold",
-                               actionButton("LoadGraph1", "Load Graph 1", width = '100%'),
-                               plotOutput("riskPlot")
-                               )
-                           )
-                       )
-              ),
-              fluidRow(
-                column(width = 12,
-                       box(width = NULL,
-                           title = "Graph 2: Procedure Risk + Your Risk Contribution",
-                           color = "gold",
-                           plotOutput("riskPlot2")
-                       )
-                )
-              ),
               #Modifiable Risk Factors
               fluidRow(width = 12,
                        box(width = 12,
                            title = "Modifiable Risk Factors", solidHeader = TRUE,
                            #h3("", align = "center"),
-                           helpText("The following are mofifiable risk factors which could improve you surgery risk profile", align = "center"),
+                           helpText("The following are mofifiable risk factors which could improve your surgery risk profile", align = "center"),
                            uiOutput("FunctStatusBox"),
                            uiOutput("SteroidBox"),
                            uiOutput("CHFBox"),
@@ -97,8 +75,31 @@ dashboardPage(
                            uiOutput("DMBox"),
                            uiOutput("HTNBox"),
                            uiOutput("BMIBOX")
-                           )
-                       ),
+                       )
+              ),
+              # fluidRow(
+              #   column(width = 12,
+              #          div(id = "graph1Box-outer",
+              #              box(id = "graph1Box",
+              #                  width = NULL,
+              #                  title = "Graph 1: Procedure Risk + Your Risk Contribution",
+              #                  color = "gold",
+              #                  actionButton("LoadGraph1", "Load Graph 1", width = '100%'),
+              #                  plotOutput("riskPlot")
+              #                  )
+              #              )
+              #          )
+              # ),
+              fluidRow(
+                column(width = 12,
+                       box(width = NULL,
+                           title = "Graph: Procedure Risk + Your Risk Contribution",
+                           color = "gold",
+                           uiOutput("GraphSectionHeader"),
+                           plotOutput("riskPlot2")
+                       )
+                )
+              ),
               fluidRow(width = 12,
                        box(width = 12,
                            title = "Printable Report", solidHeader = TRUE,
