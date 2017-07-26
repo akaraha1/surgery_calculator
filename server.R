@@ -36,6 +36,7 @@ shinyServer(function(input, output, session) {
       switch(input$RaceButton, "White" = 1, "Non-White" = 0, 1),
       input$PtAge,
       switch(input$SurgeryTypeButton,
+             "Gallbladder" = "Gallbladder",
              "Colon" = "Colon",
              "Pancreas" = "Pancreas",
              "Stomach" = "Stomach"),
@@ -169,6 +170,14 @@ shinyServer(function(input, output, session) {
     dfRiskChanges[,'HTNMed'] <<- riskChange
   }
   
+  # j = 0
+  # for(i in ncol(dfRiskChanges)) {
+  #   if(dfRiskChanges[i,] != -1)
+  #     j++
+  # }
+  # if(j > 0)
+  #   print("found one")
+  
   #Add the infoBoxes to the Modifiable Risk Factors section
   #in order of their contribution
   source(file.path("UIFiles", "ModifiableRiskInfoBoxesServer.R"),  local = TRUE)$value
@@ -226,9 +235,14 @@ shinyServer(function(input, output, session) {
   
   output$riskPlot2 <- renderPlot ({
    source(file.path("UIFiles", "Graph2Bubble.R"), local = TRUE)$value
-    
-   
-
+  })
+  
+  output$GraphSectionHeader <- renderUI({
+    if(dfMaster[1,'MajorComplications'] - expMajorRisk(CalcBaselineRisk()) >= 1) {
+      h4(paste("Your modifiable risk factors are contributing ", 
+             formatC(dfMaster[1,'MajorComplications'] - expMajorRisk(CalcBaselineRisk()), digits = 1, format = "f"),
+             "%", "to your overall surgery risk profile"), align = "center")
+    }
   })
 
   
