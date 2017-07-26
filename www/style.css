@@ -26,36 +26,36 @@
 
 /* logo */
 .skin-blue .main-header .logo {
-background-color: #4d96e0;
+background-color: #4d6ce0;
 }
                                           
 /* logo when hovered */
 .skin-blue .main-header .logo:hover {
-background-color: #4d96e0;
+background-color: #4d6ce0;
 }
                                           
 /* navbar (rest of the header) */
 .skin-blue .main-header .navbar {
-background-color: #4d96e0;
+background-color: #4d6ce0;
 }    
 
 
 /*FOR THE DASHBOARD BOXES*/
 .box-header {
-  color:#4d96e0;
-  background:#4d96e0
+  color:#4d6ce0;
+  background:#4d6ce0
 }
 
 .box-title {
   color:#FF9E1B;
-  background:#4d96e0;
+  background:#4d6ce0;
   font-weight: bold;
 }
 
 .box.box-solid.box-primary{
-  border-bottom-color:#4d96e0;
-  border-left-color:#4d96e0;
-  border-right-color:#4d96e0;
-  border-top-color:#4d96e0;
+  border-bottom-color:#4d6ce0;
+  border-left-color:#4d6ce0;
+  border-right-color:#4d6ce0;
+  border-top-color:#4d6ce0;
 }
 

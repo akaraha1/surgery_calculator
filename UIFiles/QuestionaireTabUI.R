@@ -18,11 +18,11 @@ fluidRow(
                           choices = c("White", "Non-White"),
                           selected = "White"),
              # Age Button
-             sliderInput("PtAge", "Patient's Age:", min = 18, max = 100, value = 30),
+             sliderInput("PtAge", "Patient's Age:", min = 18, max = 100, value = 50),
              helpText("Enter the patient's BMI."),  #BMI Section
              splitLayout(
                h5("BMI (kg/m2):", align = "center"),
-               numericInput("BMI", label = NULL, value = 20.0, min = 0, max = 55, step = 0.1,
+               numericInput("BMI", label = NULL, value = 25.0, min = 0, max = 55, step = 0.1,
                             width = NULL)
              )             
          ),
@@ -30,10 +30,10 @@ fluidRow(
              h3("Surgery Profile", align = "center"),
              # Radio button for the type of surgery
              radioButtons("SurgeryTypeButton","Surgery:", inline = FALSE,
-                          choices = c("Colon", "Pancreas", "Stomach")),
+                          choices = c("Gallbladder", "Colon", "Pancreas", "Stomach")),
              
              radioButtons("GICancer","GI Cancer Surgery:", inline = TRUE,
-                          choices = c("Cancer Surgery", "Benign disease"))
+                          choices = c("Benign disease", "Cancer Surgery"))
          )
   ),
   column(width = 4, 
