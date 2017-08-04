@@ -1,8 +1,9 @@
-# Surgery Risk Calculator
+# Predicate - A Surgery Risk Calculator
 
-This project is a collaboration between members of the Johns Hopkins University & Medicine community to create a visually appealing way to present surgery risk information to patients.
+This project is a collaboration between members of the Johns Hopkins University & Medicine community to create a visually appealing way to present surgery risk information to patients. The goal of Predicate is to allow physicians and patients to have an informed conversation about the risks of a particular surgery prior to the procedure. The software focuses on the patient's modifiable risk factors and provides individualized profiles of what is driving the patient's risk for major complications.
 
-The goal of this software is to allow physicians and patients to have an informed conversation about the risks of a particular surgery prior to the procedure. Specifically, this software focuses on modifiable risk factors which the patient may be able to improve prior to surgery.
+At the moment this calculator is for Experimental Use Only. The Predicate was developed from the American College of Surgeons National Surgical Quality Improvement Program’s Participant Use File but has not been validated for clinical use.
+
 
 For questions or to learn more please contact Andrew Rosenblum (arosenblum @ jhu.edu) or Ira Leeds (ileeds @ jhmi.edu).
 

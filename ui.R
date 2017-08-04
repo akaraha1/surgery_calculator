@@ -15,7 +15,7 @@ library(markdown)
 suppressPackageStartupMessages(library(googleVis))
 
 dashboardPage(
-  dashboardHeader(title = "Surgery Risk Predictor", titleWidth = 325),
+  dashboardHeader(title = "Predicate"),# "A Surgery Risk Predictor", titleWidth = 480),
   dashboardSidebar(
     sidebarMenu(style = "position: fixed; overflow: visible;", id = "tab",
       menuItem("Patient Questionnaire", tabName = "predictor", icon = icon("medkit")),
@@ -114,7 +114,11 @@ dashboardPage(
                        )
                 )
               )
-      )
+      ),
+    hr(),
+    h5("Experimental Use Only. Predicate was developed from the American College of Surgeons National Surgical Quality Improvement Program’s Participant Use File but has not been validated for clinical use.",
+       align = "center")
   )
 )
+
 

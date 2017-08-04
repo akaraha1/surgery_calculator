@@ -15,6 +15,8 @@ library(grid)
 library(gridSVG)
 library(plotly)
 library(reshape2)
+#library(profvis)
+
 
 source(file.path("RegressionCalculations.R"),  local = TRUE)$value
 
@@ -23,6 +25,8 @@ dfRiskChanges <<- data.frame() #the risk changes
 
 shinyServer(function(input, output, session) {
 
+#  profvis({
+    
   observeEvent(input$Submit, {
     
     #Switches from the quertionaire view to the data view
@@ -247,6 +251,8 @@ shinyServer(function(input, output, session) {
 
   
   }) # end submit button method
+    
+  #}) for profvis
 
   dataModal <- function(failed = FALSE) {
     modalDialog(

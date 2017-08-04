@@ -25,11 +25,9 @@ df <- data.frame(
   
   end = expMajorRisk(CalcBaselineRisk()))#c(0, expMajorRisk(CalcBaselineRisk()), 0, 0, 0, 0, 0, 0, 0))
 
-print(df)
 
 df <- df[!(df$start == -1+expMajorRisk(CalcBaselineRisk())),]
 
-print(df)
 
 circle <- function(center,radius) {
   th <- seq(0,2*pi,len=200)
@@ -89,7 +87,7 @@ color <- df$color
 p2 <- ggplot() +
   geom_polygon(data = gg.1,
                aes(x,y,group = group, fill = factor(color)),
-               fill = "dodgerblue") +
+               fill = "#005eb8") +
   geom_path(data = gg.1,aes(x, y, group = group), color = "grey50") +
   
   # geom_text(data = text.1,aes(x, y, label = risk1)) +
@@ -98,8 +96,8 @@ p2 <- ggplot() +
   # geom_text(data = text.2,aes(x, y, label = "Your Current Risk"), color="white") +
   
   
-  geom_text(data=text.1,aes(x, y, label = label)) +
-  geom_polygon(data=gg.2, aes(x, y, group = group), fill="green2") +
+  geom_text(data=text.1, aes(x, y, label = label), size = 5) +
+  geom_polygon(data=gg.2, aes(x, y, group = group), fill="#FFCD00") +
   geom_path(data=gg.2, aes(x, y, group = group), color = "grey50") +
   geom_text(data=text.2, aes(x, y, label = label), color = "black") +
   

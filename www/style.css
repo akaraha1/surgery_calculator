@@ -12,6 +12,7 @@
   position: fixed;
   width:100%;
 }
+
 .content {
   padding-top: 60px;
 }
@@ -26,36 +27,36 @@
 
 /* logo */
 .skin-blue .main-header .logo {
-background-color: #4d6ce0;
+background-color: #005eb8;
 }
                                           
 /* logo when hovered */
 .skin-blue .main-header .logo:hover {
-background-color: #4d6ce0;
+background-color: #005eb8;
 }
                                           
 /* navbar (rest of the header) */
 .skin-blue .main-header .navbar {
-background-color: #4d6ce0;
+background-color: #005eb8;
 }    
 
 
 /*FOR THE DASHBOARD BOXES*/
 .box-header {
-  color:#4d6ce0;
-  background:#4d6ce0
+  color:#005eb8;
+  background:#005eb8
 }
 
 .box-title {
-  color:#FF9E1B;
-  background:#4d6ce0;
+  color:#FFCD00;
+  background:#005eb8;
   font-weight: bold;
 }
 
 .box.box-solid.box-primary{
-  border-bottom-color:#4d6ce0;
-  border-left-color:#4d6ce0;
-  border-right-color:#4d6ce0;
-  border-top-color:#4d6ce0;
+  border-bottom-color:#005eb8;
+  border-left-color:#005eb8;
+  border-right-color:#005eb8;
+  border-top-color:#005eb8;
 }
 
