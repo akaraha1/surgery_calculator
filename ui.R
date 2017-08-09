@@ -65,7 +65,7 @@ dashboardPage(
                        box(width = 12,
                            title = "Modifiable Risk Factors", solidHeader = TRUE,
                            #h3("", align = "center"),
-                           helpText("The following are mofifiable risk factors which could improve your surgery risk profile", align = "center"),
+                           helpText("The following are modifiable risk factors which could improve your surgery risk profile", align = "center"),
                            uiOutput("FunctStatusBox"),
                            uiOutput("SteroidBox"),
                            uiOutput("CHFBox"),
