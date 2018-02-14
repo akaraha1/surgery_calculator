@@ -12,10 +12,12 @@ library(plotly)
 library(ggplot2)
 library(markdown)
 
-suppressPackageStartupMessages(library(googleVis))
+#Suppress Startup Messages
+suppressPackageStartupMessages(library(shinyjs))
+suppressPackageStartupMessages(library(shinydashboard))
 
 dashboardPage(
-  dashboardHeader(title = "Predicate"),# "A Surgery Risk Predictor", titleWidth = 480),
+  dashboardHeader(title = "PREDICATE"),# "A Surgery Risk Predictor", titleWidth = 480),
   dashboardSidebar(
     sidebarMenu(style = "position: fixed; overflow: visible;", id = "tab",
       menuItem("Patient Questionnaire", tabName = "predictor", icon = icon("medkit")),
@@ -66,15 +68,27 @@ dashboardPage(
                            title = "Modifiable Risk Factors", solidHeader = TRUE,
                            #h3("", align = "center"),
                            helpText("The following are modifiable risk factors which could improve your surgery risk profile", align = "center"),
-                           uiOutput("FunctStatusBox"),
-                           uiOutput("SteroidBox"),
-                           uiOutput("CHFBox"),
-                           uiOutput("SOBBox"),
-                           uiOutput("COPDBox1"),
-                           uiOutput("smokerBox"),
-                           uiOutput("DMBox"),
-                           uiOutput("HTNBox"),
-                           uiOutput("BMIBOX")
+                           tags$div(id = 'FunctStatusBoxPlaceholder'),
+                           tags$div(id = 'SteroidBoxPlaceholder'),
+                           
+                           tags$div(id = 'CHFBoxPlaceholder'),
+                           tags$div(id = 'SOBBoxPlaceholder'),
+                           tags$div(id = 'COPDBox1Placeholder'),
+                           tags$div(id = 'smokerBoxPlaceholder'),
+                           tags$div(id = 'DMBoxPlaceholder'),
+                           tags$div(id = 'HTNBoxPlaceholder'),
+                           #tags$div(id = 'BMIBOXPlaceholder')
+                            uiOutput("BMIBOX")
+                           
+                           
+                           #uiOutput("FunctStatusBox"),
+                           #uiOutput("SteroidBox"),
+                           # uiOutput("CHFBox"),
+                           # uiOutput("SOBBox"),
+                           # uiOutput("COPDBox1"),
+                           # uiOutput("smokerBox"),
+                           # uiOutput("DMBox"),
+                           # uiOutput("HTNBox"),
                        )
               ),
               # fluidRow(
