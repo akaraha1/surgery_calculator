@@ -17,6 +17,11 @@ library(plotly)
 library(reshape2)
 #library(profvis)
 
+#Supress Startup Messages
+suppressPackageStartupMessages(library(googleVis))
+suppressPackageStartupMessages(library(ggplot2))
+suppressPackageStartupMessages(library(boxr))
+suppressPackageStartupMessages(library(gridSVG))
 
 source(file.path("RegressionCalculations.R"),  local = TRUE)$value
 
@@ -28,6 +33,8 @@ shinyServer(function(input, output, session) {
 #  profvis({
     
   observeEvent(input$Submit, {
+    
+
     
     #Switches from the quertionaire view to the data view
     # when the submit button is pressed
