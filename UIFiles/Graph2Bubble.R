@@ -50,13 +50,20 @@ text.1 <- data.frame()
 trim.trailing <- function (x) sub("\\s+$", "", x) #create the function
 
 
-if(nrow(df) >= 5) {
+if(nrow(df) >= 7) {
+  textSize <- 3
+  text.1 <- data.frame(x = ctr.x,
+                       y = -0.05,
+                       label = gsub('.{11}$', '', df$riskType))
+} else if(nrow(df) >= 4) {
+  textSize <- 5
   text.1 <- data.frame(x = ctr.x,
                        y = -0.05,
                        label = gsub('.{11}$', '', df$riskType))
   
   
 } else {
+  textSize <- 5
   print(df[1,1])
   # df[1,1] <- "Total Risk"
   df$riskType <- trim.trailing(df$riskType)
@@ -96,7 +103,7 @@ p2 <- ggplot() +
   # geom_text(data = text.2,aes(x, y, label = "Your Current Risk"), color="white") +
   
   
-  geom_text(data=text.1, aes(x, y, label = label), size = 5) +
+  geom_text(data=text.1, aes(x, y, label = label), size = textSize) +
   geom_polygon(data=gg.2, aes(x, y, group = group), fill="#FFCD00") +
   geom_path(data=gg.2, aes(x, y, group = group), color = "grey50") +
   geom_text(data=text.2, aes(x, y, label = label), color = "black") +

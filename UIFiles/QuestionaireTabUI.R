@@ -68,7 +68,7 @@ fluidRow(
                           value = FALSE, col = "RG", type = "YN"),
              #HTN
              switchButton(inputId = "HTNMeds",
-                          label = HTML(paste("Hyptension:",
+                          label = HTML(paste("Hypertension:",
                                              "(requiring medication)", sep="<br/>")),
                           value = FALSE, col = "RG", type = "YN")
              )

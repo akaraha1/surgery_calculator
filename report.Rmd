@@ -76,3 +76,5 @@ A plot of `params$n` random points.
 ```{r}
 plot(rnorm(params$n), rnorm(params$n))
 ```
+
+Experimental Use Only. Predicate was developed from the American College of Surgeons National Surgical Quality Improvement Program’s Participant Use File but has not been validated for clinical use.
